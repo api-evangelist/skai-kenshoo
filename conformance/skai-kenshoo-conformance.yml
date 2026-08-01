@@ -1,0 +1,20 @@
+generated: '2026-07-21'
+method: searched
+source: https://skai.io/skai-information-security-and-privacy-center/
+note: >-
+  Skai does not publish a public OpenAPI/AsyncAPI spec (the developer hub at developers.skai.io
+  is gated), so protocol-level conformance (oauth2/oidc/rfc9457/pagination) could not be derived.
+  The standards below are the published organizational compliance certifications.
+standards:
+- id: iso-27001
+  name: ISO/IEC 27001:2013
+  conforms: true
+  evidence: Certified per Skai Information Security and Privacy Center
+- id: soc2-type2
+  name: SOC 2 Type 2
+  conforms: true
+  evidence: Attestation covers security, availability, and confidentiality
+- id: iso-9001
+  name: ISO 9001:2015
+  conforms: true
+  evidence: Quality management system certification listed on the security center

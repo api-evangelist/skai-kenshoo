@@ -1,8 +1,25 @@
 aid: skai-kenshoo
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/skai-kenshoo.png
 name: Skai (Kenshoo)
-description: 'Skai (Kenshoo) is a company surfaced as a portfolio company of bain-capital-ventures and
-  added to the API Evangelist network as a stub for enrichment. Sector: commerce. This profile is a lead
-  awaiting the enrichment pipeline.'
+description: >-
+  Skai (formerly Kenshoo) is an AI-powered commerce media platform that helps brands and
+  agencies centralize retail media, paid search, and paid social data, then plan, activate,
+  optimize, and measure omnichannel marketing campaigns across Amazon, Google, Meta, retailers,
+  and marketplaces. The Skai/Kenshoo platform exposes a partner API (api.kenshoo.com) with a
+  developer hub for programmatic campaign management, reporting, and data integration. Products
+  include Celeste AI (a GenAI commerce-media agent), the Skai Data Hub, Retail Media, Search &
+  Social, Omnichannel Planning, and Digital Shelf Optimization.
 url: https://raw.githubusercontent.com/api-evangelist/skai-kenshoo/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -10,15 +27,83 @@ x-backed-by:
 - bain-capital-ventures
 x-tier: stub
 x-tier-reason: portfolio-lead
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 5
+  pass: local-v1
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
 - Commerce
-apis: []
+- Advertising
+- Marketing
+- Retail Media
+- Paid Search
+- Paid Social
+- Marketing Analytics
+- Advertising Technology
+- Campaign Management
+apis:
+- name: Skai (Kenshoo) API
+  description: >-
+    Partner/programmatic API for campaign management, reporting, and data integration across
+    Skai's commerce-media, paid-search, and paid-social products. Access is gated behind a
+    customer/partner agreement; the developer hub documents authentication and endpoints.
+  humanURL: https://developers.skai.io/
+  baseURL: https://api.kenshoo.com
+  tags:
+  - Advertising
+  - Marketing
+  - Campaign Management
+  properties:
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+common:
+- type: Website
+  url: https://skai.io/
+- type: DeveloperPortal
+  url: https://developers.skai.io/
+- type: Documentation
+  url: https://developers.skai.io/
+- type: APIReference
+  url: https://developers.kenshoo.com/
+- type: Pricing
+  url: https://skai.io/pricing/
+- type: Blog
+  url: https://skai.io/blog/
+- type: Support
+  url: https://skai.io/contact-us/
+- type: Login
+  url: https://app.kenshoo.com/portal
+- type: PrivacyPolicy
+  url: https://skai.io/privacy-policy/
+- type: TermsOfService
+  url: https://skai.io/legal/
+- type: GitHubOrganization
+  url: https://github.com/kenshoo
+- type: StatusPage
+  url: https://status.skai.io/
+- type: TrustCenter
+  url: https://skai.io/skai-information-security-and-privacy-center/
+- type: Compliance
+  url: https://skai.io/skai-information-security-and-privacy-center/
+- type: Security
+  url: https://skai.io/skai-information-security-and-privacy-center/
+- type: Conformance
+  url: conformance/skai-kenshoo-conformance.yml
+- type: VulnerabilityDisclosure
+  url: security/skai-kenshoo-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/skai-kenshoo-domain-security.yml
+- type: Lifecycle
+  url: lifecycle/skai-kenshoo-lifecycle.yml

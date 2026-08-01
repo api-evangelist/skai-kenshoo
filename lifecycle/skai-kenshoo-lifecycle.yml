@@ -1,0 +1,15 @@
+generated: '2026-07-21'
+method: searched
+source: https://developers.skai.io/
+versioning:
+  scheme: unknown
+  note: >-
+    The Skai/Kenshoo developer hub (developers.skai.io / developers.kenshoo.com) is a
+    single-page app whose reference is gated; the public versioning policy could not be captured.
+status_page: https://status.skai.io/
+status_pages:
+- https://status.skai.io/
+- https://status.kenshoo.com/
+deprecation:
+  policy_url: null
+  note: No public deprecation/sunset policy found.

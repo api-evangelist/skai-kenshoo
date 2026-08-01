@@ -1,0 +1,20 @@
+generated: '2026-07-21'
+method: searched
+probe: false
+source: https://skai.io/skai-information-security-and-privacy-center/
+url: https://skai.io/skai-information-security-and-privacy-center/
+name: Skai Information Security and Privacy Center
+certifications:
+- ISO/IEC 27001:2013
+- SOC 2 Type 2
+- ISO 9001:2015
+notes: >-
+  Detailed certification reports and audit letters are made available upon request under NDA.
+  SOC 2 Type 2 covers the trust principles of security, availability, and confidentiality.
+evidence:
+- source: https://skai.io/skai-information-security-and-privacy-center/
+  keywords:
+  - iso/iec 27001:2013
+  - soc 2 type 2
+  - iso 9001:2015
+  - information security and privacy center
