@@ -1,0 +1,134 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developers.skai.io/ (Authentication section of the Skai OpenAPI info.description),
+  https://login.kenshoo.com/.well-known/oauth-authorization-server,
+  https://mcp.kenshoo.com/.well-known/oauth-protected-resource,
+  https://skai-mcp-guide.vercel.app/
+docs: https://developers.skai.io/
+summary: >-
+  Two distinct auth models. The REST API uses a non-standard, long-lived refresh token
+  exchanged at a plain form-POST token endpoint for a short-lived JWT bearer access token.
+  The hosted MCP servers use standards-track OAuth 2.0 (RFC 8414 + RFC 9728 discovery,
+  authorization_code with PKCE S256) or a 90-day Personal Access Token in the Authorization
+  header.
+spec_defect:
+  finding: >-
+    The published OpenAPI declares a root-level `security: [{BearerAuth: []}]` but
+    `components.securitySchemes` is ABSENT — the scheme BearerAuth is referenced and never
+    defined. The contract is therefore not machine-resolvable for auth, and generated clients
+    cannot know the scheme is HTTP bearer with a JWT. Captured as a fix in
+    overlays/skai-kenshoo-api-security-overlay.yaml.
+  source: openapi/skai-kenshoo-api-openapi.yml
+schemes:
+- id: BearerAuth
+  type: http
+  scheme: bearer
+  bearer_format: JWT
+  in: header
+  header: Authorization
+  applies_to: REST API (https://services.kenshoo.com)
+  declared_in_spec: true
+  defined_in_spec: false
+  description: >-
+    Every REST call carries `Authorization: Bearer <access_token>`. The access token is a JWT
+    issued by the Skai login server; it is short-lived and carries agency/role context.
+- id: SkaiRefreshTokenExchange
+  type: custom
+  applies_to: REST API token issuance
+  token_endpoint: https://services.kenshoo.com/api/v1/token
+  operation_id: getAccessToken
+  method: POST
+  request_encoding: application/x-www-form-urlencoded
+  parameters:
+  - name: refresh_token
+    required: true
+    location: body
+    note: >-
+      Permanent — does not expire. Skai explicitly rejects refresh tokens sent as URL query
+      parameters; they must be in the POST body.
+  - name: client_id
+    required: true
+    location: body
+  - name: agency_id
+    required: false
+    location: body
+    note: Required when the API user is assigned to multiple agencies, to pin the token context.
+  response_fields: [access_token, expires_in, email]
+  typical_expires_in_seconds: 21600
+  description: >-
+    Not OAuth 2.0. A bespoke refresh-token grant: the developer generates a permanent refresh
+    token plus client ID once, by logging in at
+    https://login.kenshoo.com/api/dev/refresh-token, then exchanges it for access tokens.
+  operational_note: >-
+    Skai advises reusing an access token until `expires_in` elapses, because minting new
+    tokens too often trips the rate limit. Expiry is detected either by tracking `expires_in`
+    or by handling HTTP 401.
+- id: SkaiPlatformOAuth2
+  type: oauth2
+  applies_to: MCP servers (https://mcp.kenshoo.com)
+  issuer: https://login.kenshoo.com
+  authorization_endpoint: https://auth0.kenshoo.com/authorize
+  token_endpoint: https://login.kenshoo.com/api/oauth/token
+  grant_types: [authorization_code, refresh_token]
+  response_types: [code]
+  pkce: [S256]
+  token_endpoint_auth_methods: [client_secret_post, none]
+  scopes: [openid, email, profile, offline_access]
+  discovery:
+    authorization_server_metadata: https://login.kenshoo.com/.well-known/oauth-authorization-server
+    protected_resource_metadata: https://mcp.kenshoo.com/.well-known/oauth-protected-resource
+    openid_configuration: null
+    openid_configuration_note: >-
+      /.well-known/openid-configuration returns 404 on login.kenshoo.com even though the
+      `openid` scope is advertised — the OIDC discovery document is not published.
+  description: >-
+    Standards-compliant OAuth 2.0 with RFC 8414 authorization-server metadata and RFC 9728
+    protected-resource metadata, used by MCP clients (ChatGPT, Claude) that perform dynamic
+    discovery.
+- id: SkaiMCPPersonalAccessToken
+  type: apiKey
+  in: header
+  header: Authorization
+  scheme_prefix: Bearer
+  companion_header: ks-name
+  applies_to: MCP servers, all clients except ChatGPT
+  issue_url: https://login.kenshoo.com/api/dev/refresh-token
+  rotation_days: 90
+  description: >-
+    A Personal Access Token distinct from the REST bearer token. Sent as
+    `Authorization: Bearer <PAT>` together with a `ks-name` header identifying the Skai
+    account. ChatGPT does not support header-based tokens, so OAuth is the only path there.
+- id: SkaiSiteMCPOAuth
+  type: oauth2
+  applies_to: skai.io WordPress MCP adapter (marketing site, not the platform)
+  issuer: https://skai.io
+  authorization_endpoint: https://skai.io/oauth/authorize
+  token_endpoint: https://skai.io/oauth/token
+  revocation_endpoint: https://skai.io/oauth/revoke
+  grant_types: [authorization_code, refresh_token]
+  pkce: [S256]
+  scopes: [mcp]
+  token_endpoint_auth_methods: [none]
+  client_id_metadata_document_supported: true
+  discovery:
+    authorization_server_metadata: https://skai.io/.well-known/oauth-authorization-server
+identity_scoping:
+  ks_name:
+    description: >-
+      Nearly every REST operation and every MCP session is scoped by a Skai account
+      identifier — the "KS" or ks name (e.g. ks1234), found in the Skai platform under
+      Administration -> About Skai -> Server ID. It is a query parameter (`ks`) on REST and a
+      header (`ks-name`) or URL path segment on MCP.
+  agency_id:
+    description: >-
+      Multi-agency users must pin an agency context at token-exchange time; the resulting
+      access token is valid only for that agency.
+  minimum_role: >-
+    API access requires a Skai user with the Standard role or higher. Skai recommends
+    creating a dedicated service user for API requests.
+mtls: false
+openid_connect: false
+openid_connect_note: >-
+  The `openid` scope is advertised on the MCP authorization server, but no OIDC discovery
+  document is published, so OIDC cannot be claimed.

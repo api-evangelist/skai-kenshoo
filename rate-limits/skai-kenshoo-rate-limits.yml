@@ -1,0 +1,62 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developers.skai.io/ — "Rate Limits" section of the Skai OpenAPI info.description
+  (openapi/skai-kenshoo-api-openapi.yml)
+limit_count: 2
+scope_note: >-
+  Limits are per API USER, not per key, per account or per endpoint. Because the refresh
+  token is tied to a user, several integrations sharing one service user share one budget —
+  Skai's own docs recommend creating a dedicated user for API requests partly for this reason.
+limits:
+- scope: per-user
+  window: 1 minute
+  limit: 60
+  burst: null
+  applies_to: all Skai REST API endpoints
+- scope: per-user
+  window: 1 hour
+  limit: 2000
+  burst: null
+  applies_to: all Skai REST API endpoints
+exhaustion:
+  status_code: 429
+  message: API rate limit exceeded
+  retry_after_header: null
+  retry_after_note: >-
+    Skai does not document a Retry-After header on 429, and 429 is not declared as a response
+    on any of the 158 operations in the published OpenAPI — an agent reading the contract
+    alone would never anticipate it.
+response_headers:
+  documented: true
+  named: false
+  statement: >-
+    "When calling any API endpoint the response headers will show the limits relevant to this
+    user, and the number of remaining calls you can make within the current minute/hour."
+  header_names: null
+  header_names_note: >-
+    NOT RECORDED — Skai states that limit and remaining headers are returned but never names
+    them. They are neither the RFC 9239 RateLimit-* family nor the X-RateLimit-* convention on
+    any published page, and the header block is absent from components.headers in the OpenAPI
+    (components.headers is empty). Confirming the actual names requires an authenticated call.
+    Nothing is guessed here.
+  observed: false
+  observed_note: >-
+    Could not be observed anonymously: every Skai REST endpoint requires a bearer token, so an
+    unauthenticated request returns 401 before any rate-limit header is emitted.
+token_endpoint_note: >-
+  Access-token minting is itself rate-limited. Skai advises caching an access token for its
+  full `expires_in` (typically 21600s / 6h) "to prevent rate limit issues with generating new
+  tokens too often."
+mcp_limits:
+  documented: false
+  note: >-
+    No rate limits are published for the hosted MCP servers at mcp.kenshoo.com. Skai's blog
+    claims MCP reporting takes "roughly one-tenth the number of calls" of a publisher-native
+    interface, but publishes no MCP quota.
+mitigations_documented:
+- Use asynchronous analysis reports for datasets over a few thousand rows instead of polling
+  the synchronous endpoint.
+- Filter reports to non-zero metrics (e.g. impressions > 0) to shrink result sets.
+- Scope structure reports with a "last updated" filter to fetch only recently changed entities.
+- Use Bulk Update (one file) for large-scale entity changes rather than per-entity calls.

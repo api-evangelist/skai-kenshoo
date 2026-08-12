@@ -1,0 +1,180 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developers.skai.io/ (Skai OpenAPI info.description: Overview, Authentication,
+  Rate Limits, Reporting Best Practices, Group by and Segmentation) plus derivation from
+  openapi/skai-kenshoo-api-openapi.yml
+summary: >-
+  A REST-ish, RPC-flavoured contract. Resource collections are addressed as flat singular
+  paths (/api/v1/campaigns) with all filtering and identity in the query string; the account
+  identifier `ks` is a required query parameter on 51 operations. The envelope is Skai's own
+  `ApiResponse` shape, not RFC 9457. Long operations are modelled as jobs with polling.
+base_url: https://services.kenshoo.com
+authentication:
+  style: bearer JWT obtained by exchanging a permanent refresh token
+  header: 'Authorization: Bearer <access_token>'
+  detail: authentication/skai-kenshoo-authentication.yml
+  gotcha: >-
+    The OpenAPI references a `BearerAuth` security scheme that is never defined in
+    components.securitySchemes.
+tenancy:
+  parameter: ks
+  location: query
+  required_on_operations: 51
+  description: >-
+    The Skai account / server ID (e.g. ks1234), found in the platform under
+    Administration -> About Skai -> Server ID. For Social the literal value `ks=social` is
+    used. On the MCP servers the same identity is carried as a `ks-name` header or as a URL
+    path segment (/reports-mcp/ks1234).
+  agency_context: >-
+    Multi-agency users pin agency context at token issuance with an `agency_id` form field;
+    a token is valid only for the agency it was minted for.
+versioning:
+  style: URI path
+  pattern: /api/v{n}/...
+  versions_in_use: [v1, v2]
+  note: >-
+    v1 carries the overwhelming majority of the surface. v2 is used for Meta
+    (Facebook/Instagram) campaigns, ad groups and ads, and for a second generation of the
+    incrementality data-source endpoints. There is no version header, no media-type
+    versioning and no published policy for how v1 and v2 relate.
+  detail: lifecycle/skai-kenshoo-lifecycle.yml
+pagination:
+  style: cursor
+  request_params:
+  - name: page_id
+    in: query
+    required: false
+    description: >-
+      Opaque cursor. Omit it to get the first page; then pass the `next_page` or
+      `previous_page` value returned under `paging`. Example value in the spec is a
+      base64-looking token ("Mg==").
+  - name: limit
+    in: query
+    required: false
+    type: integer
+    description: Page size. No default and no maximum is documented.
+  response_field: paging
+  response_cursors: [next_page, previous_page]
+  coverage: >-
+    Cursor pagination is declared on only a handful of collection operations (page_id appears
+    on 9, limit on 6) out of 158. Most list endpoints instead bound the result set with
+    filter arrays capped at maxItems: 500 (ids, channel_campaign_ids, channel_ad_group_ids).
+    Large result sets are expected to move through the asynchronous reporting flow, not
+    through paging.
+filtering:
+  style: 'repeated query parameters (style: form, explode: true)'
+  examples:
+  - 'statuses=Active&statuses=Paused'
+  - 'ids=123&ids=456 (max 500 items)'
+  - 'channel_campaign_ids=... (max 500 items)'
+  note: Filter arrays are consistently capped at 500 items.
+field_selection:
+  style: report field lists
+  description: >-
+    Not sparse fieldsets on resources. Reporting requests carry an explicit `fields` array of
+    {name, group} objects, where group is one of ATTRIBUTES, performance metrics,
+    account-configured dimensions, conversion events, or custom metrics. The available set per
+    entity is discoverable at GET /api/v1/reports/{entity}/available_columns
+    (operationId getAvailableColumns) and POST /api/v1/relevant-columns.
+  expansion: false
+aggregation:
+  parameter: breakdown_type
+  values:
+  - value: FLAT
+    description: Unsegmented data, no grouping.
+  - value: GROUP
+    description: >-
+      Segment by the columns listed in `group_bys` (e.g. {name: Day, group: TimeSegment}).
+      Entity detail is dropped, mirroring a grid export.
+  - value: SEGMENT
+    description: >-
+      Segment by date AND an additional column: put the date column in `group_bys` and the
+      extra column in `fields`.
+  applies_to: [/api/v1/reports, /api/v1/reports/async/analysis]
+async_jobs:
+  concept: >-
+    Skai defines any operation that can take more than a few seconds as a "job". Initiating
+    one returns a job_id or execution_id.
+  poll_operations:
+  - getJobStatus (GET /api/v1/jobs/{job_id}/status)
+  - getJobResults (GET /api/v1/jobs/{job_id}/results/file)
+  - getAsyncReportStatus (GET /api/v1/reports/async/{execution_id}/status)
+  - downloadAsyncReport (GET /api/v1/reports/async/{execution_id})
+  callbacks: false
+  callbacks_note: >-
+    No webhook, callback or push notification exists. Completion is discovered only by
+    polling. Reports may alternatively be delivered to a preconfigured destination (email or
+    FTP) by setting useOriginalDeliveryMethod=true.
+  guidance: >-
+    Skai advises using async analysis reports whenever a report may return more than a few
+    thousand rows.
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No idempotency key, no request-deduplication mechanism and no conditional-request support
+    (ETag / If-Match / If-None-Match) appears anywhere in the OpenAPI or the documentation.
+    This matters here more than on most APIs: bulkUpdate (POST /api/v1/bulk_update) accepts
+    millions of rows of bid, budget and status changes, and a retried request after a timeout
+    has no safe replay semantics. Nine operations return HTTP 207 Multi-Status for partial
+    success, which makes a naive whole-request retry actively dangerous.
+request_id:
+  supported: false
+  note: >-
+    No correlation/request-id header is documented and components.headers is empty, so there
+    is no published way to reference a single call in a support conversation.
+errors:
+  envelope: Skai ApiResponse
+  shape: >-
+    {"status": "FAILED", "entities": [{"id": null, "success": false,
+    "errors": [{"field_name": "name", "error": "ILLEGAL_NAME", "parameters": {}}]}]}
+  rfc9457: false
+  media_type: application/json
+  partial_success: >-
+    HTTP 207 Multi-Status is used on Amazon DSP bulk creation endpoints; per-entity success is
+    reported in entities[].success with per-entity errors[].
+  detail: errors/skai-kenshoo-problem-types.yml
+rate_limits:
+  per_user_minute: 60
+  per_user_hour: 2000
+  status_on_exhaustion: 429
+  headers_named: false
+  detail: rate-limits/skai-kenshoo-rate-limits.yml
+content_types:
+  request: [application/json, application/x-www-form-urlencoded, multipart/form-data]
+  response: [application/json, application/x-zip-compressed]
+  note: >-
+    The token endpoint takes form-encoded input, bulk update and incrementality source files
+    are multipart uploads, and completed async reports download as a zip.
+naming:
+  paths: lower_snake_case plural nouns (/ad_groups, /product_groups, /bulk_update)
+  parameters: mixed — snake_case dominates (channel_campaign_ids, last_updated) but camelCase
+    appears too (profileId, useOriginalDeliveryMethod, columnId), sometimes for the same
+    concept (profile_id vs profileId)
+  operation_ids: camelCase
+  json_fields: mixed — camelCase in schemas (fieldName), snake_case in examples (field_name)
+  consistency: >-
+    Inconsistent. The ErrorField schema defines `fieldName` while every published error
+    example emits `field_name`; a generated client typed off the schema will not match the
+    wire format.
+spec_quality_findings:
+- >-
+  components.securitySchemes is missing entirely despite a root-level security requirement.
+- >-
+  33 of 117 paths carry no tag, so a third of the surface does not appear in any Redoc
+  navigation group.
+- >-
+  Several operations have no operationId (e.g. GET/PUT /api/v2/ad_groups, GET/POST/DELETE
+  /api/v1/rotations, the planned-budgets pair), which blocks reliable code generation and
+  tool binding.
+- >-
+  Four paths embed a raw regular expression as a path segment —
+  /api/v1/homepage/([0-9]+)/budget_oversight — instead of an OpenAPI path template. These are
+  not valid OpenAPI path items and will not resolve in a generated client.
+- >-
+  Many auto-exported operations declare only bare "200 response" / "500 response"
+  descriptions with no schema, and OPTIONS methods are published as documented operations —
+  the signature of an AWS API Gateway export rather than a hand-curated contract.
+- >-
+  429 is not declared on any operation even though a documented rate limit exists.

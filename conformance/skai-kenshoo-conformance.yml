@@ -1,20 +1,153 @@
-generated: '2026-07-21'
+generated: '2026-08-12'
 method: searched
-source: https://skai.io/skai-information-security-and-privacy-center/
-note: >-
-  Skai does not publish a public OpenAPI/AsyncAPI spec (the developer hub at developers.skai.io
-  is gated), so protocol-level conformance (oauth2/oidc/rfc9457/pagination) could not be derived.
-  The standards below are the published organizational compliance certifications.
+source: >-
+  https://skai.io/skai-information-security-and-privacy-center/ (organizational certifications),
+  https://login.kenshoo.com/.well-known/oauth-authorization-server,
+  https://mcp.kenshoo.com/.well-known/oauth-protected-resource, and
+  openapi/skai-kenshoo-api-openapi.yml (protocol conformance)
+supersedes: >-
+  The 2026-07-21 pass could only record organizational certifications because it concluded no
+  public spec existed. The Skai OpenAPI and the live OAuth discovery documents have since been
+  captured, so protocol-level conformance is now assessed rather than skipped.
 standards:
 - id: iso-27001
   name: ISO/IEC 27001:2013
   conforms: true
-  evidence: Certified per Skai Information Security and Privacy Center
+  category: organizational
+  evidence: Certified per the Skai Information Security and Privacy Center.
 - id: soc2-type2
   name: SOC 2 Type 2
   conforms: true
-  evidence: Attestation covers security, availability, and confidentiality
+  category: organizational
+  evidence: >-
+    Attestation covering security, availability and confidentiality. Reports available under
+    NDA on request.
 - id: iso-9001
   name: ISO 9001:2015
   conforms: true
-  evidence: Quality management system certification listed on the security center
+  category: organizational
+  evidence: Quality management system certification listed on the security center.
+- id: openapi-3
+  name: OpenAPI Specification 3.0.0
+  conforms: true
+  category: contract
+  evidence: >-
+    A 575 KB OpenAPI 3.0.0 document with 117 paths, 158 operations and 155 component schemas is
+    served anonymously and loaded by the Redoc developer hub at developers.skai.io.
+  caveats:
+  - 'components.securitySchemes is absent despite a root-level security requirement referencing
+    BearerAuth.'
+  - Four paths use a raw regex segment (/api/v1/homepage/([0-9]+)/budget_oversight) instead of
+    an OpenAPI path template.
+  - Several operations have no operationId.
+- id: rfc8414
+  name: RFC 8414 — OAuth 2.0 Authorization Server Metadata
+  conforms: true
+  category: protocol
+  evidence: >-
+    https://login.kenshoo.com/.well-known/oauth-authorization-server returns 200 with issuer,
+    authorization_endpoint, token_endpoint, grant_types_supported, scopes_supported,
+    response_types_supported and code_challenge_methods_supported.
+  scope: MCP servers only — the REST API is out of scope.
+- id: rfc9728
+  name: RFC 9728 — OAuth 2.0 Protected Resource Metadata
+  conforms: true
+  category: protocol
+  evidence: >-
+    https://mcp.kenshoo.com/.well-known/oauth-protected-resource returns 200 with resource,
+    authorization_servers, bearer_methods_supported and scopes_supported. The 401 challenge on
+    the MCP endpoints carries a matching WWW-Authenticate resource_metadata pointer.
+- id: rfc7636
+  name: RFC 7636 — PKCE
+  conforms: true
+  category: protocol
+  evidence: code_challenge_methods_supported ["S256"] on both published authorization servers.
+- id: oauth2
+  name: OAuth 2.0 (authorization_code + refresh_token)
+  conforms: partial
+  category: protocol
+  evidence: >-
+    The MCP layer is standards-compliant OAuth 2.0. The REST API is NOT: it uses a bespoke
+    permanent-refresh-token exchange at POST /api/v1/token with form fields refresh_token,
+    client_id and agency_id, which resembles but is not the OAuth refresh_token grant.
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  category: protocol
+  evidence: >-
+    The `openid` scope is advertised, but /.well-known/openid-configuration returns 404 on
+    login.kenshoo.com. Without a discovery document OIDC cannot be claimed.
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  category: agent
+  evidence: >-
+    First-party hosted remote MCP servers at https://mcp.kenshoo.com/reports-mcp and
+    /operations-mcp, documented in Skai's own OpenAPI (MCP tag) and setup guide, using HTTP
+    transport with OAuth 2.0 or a header PAT. Live tools/list is auth-gated (401).
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  category: agent
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json return 404 (or an HTML catch-all)
+    on every Skai host probed.
+- id: rfc9457
+  name: RFC 9457 — Problem Details for HTTP APIs
+  conforms: false
+  category: protocol
+  evidence: >-
+    Errors are application/json in Skai's own ApiResponse envelope
+    ({status, entities[{id, success, errors[]}]}). No application/problem+json, no type URI.
+- id: rfc8594
+  name: RFC 8594 — Sunset HTTP Header
+  conforms: false
+  category: protocol
+  evidence: >-
+    No Sunset or Deprecation header appears in the contract, and no deprecation policy is
+    published.
+- id: idempotency
+  name: Idempotency keys (draft-ietf-httpapi-idempotency-key-header)
+  conforms: false
+  category: protocol
+  evidence: >-
+    No idempotency key, no request deduplication and no conditional-request support anywhere
+    in the contract — including on POST /api/v1/bulk_update, which accepts millions of rows.
+- id: pagination
+  name: Cursor pagination
+  conforms: partial
+  category: protocol
+  evidence: >-
+    A real opaque-cursor scheme exists (page_id query parameter, paging.next_page /
+    paging.previous_page in the response, limit for page size) but is declared on only 9 of
+    158 operations. Most collections are bounded by 500-item filter arrays instead.
+- id: rest
+  name: RESTful resource design
+  conforms: partial
+  category: design
+  evidence: >-
+    Collection paths are flat and singular-per-verb with identity and filtering in the query
+    string; there are no /{id} resource paths for campaigns, ad groups or ads (updates are
+    PUT on the collection). 29 operations declare an unexplained HTTP 300, and OPTIONS methods
+    are published as documented operations.
+- id: webhooks
+  name: Webhooks / event callbacks
+  conforms: false
+  category: protocol
+  evidence: >-
+    No webhook, callback or push surface exists. Long-running work is a job the client must
+    poll (getJobStatus, getAsyncReportStatus); reports may alternatively be pushed to a
+    preconfigured email or FTP destination.
+not_applicable:
+- fhir
+- fapi
+- scim
+- odata
+- psd2
+- json:api
+regulatory_note: >-
+  Skai processes advertising performance and audience data for brands and agencies operating
+  globally; its privacy surface (GDPR/CCPA notices, a "Do Not Sell or Share My Personal
+  Information" link, a Cookie Policy and a Recruitment Privacy Policy) is published at
+  https://skai.io/privacy-policy/. No sector regulatory regime (financial, health, telecom)
+  applies to this API.

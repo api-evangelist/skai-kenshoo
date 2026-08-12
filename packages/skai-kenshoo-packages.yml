@@ -1,0 +1,101 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  npm registry search + registry.npmjs.org metadata, pypi.org, https://github.com/kenshoo,
+  and https://developers.skai.io/
+finding: >-
+  SKAI PUBLISHES NO FIRST-PARTY API CLIENT SDK IN ANY LANGUAGE. npm, PyPI, RubyGems, Maven
+  Central, NuGet, crates.io, Packagist and pkg.go.dev were searched for skai/kenshoo client
+  libraries and none exists; the Skai OpenAPI documents raw curl only. The four packages below
+  ARE first-party (published under the @kenshooui npm scope from repositories in the kenshoo
+  GitHub org) but they are React UI components extracted from the Skai product UI — they do
+  not call the Skai API. They are recorded here honestly and are NOT counted as SDKs.
+sdk_count: 0
+official_client_sdks: []
+package_count: 4
+packages:
+- name: '@kenshooui/react-menu'
+  registry: npm
+  url: https://www.npmjs.com/package/@kenshooui/react-menu
+  language: javascript
+  kind: ui-component
+  api_client: false
+  official: true
+  official_evidence: >-
+    Published under the @kenshooui scope; repository git+https://github.com/kenshoo/react-menu.git
+    in the kenshoo GitHub org, whose org display name is "Skai".
+  license: MIT
+  version: 4.0.5
+  published: '2021-02-09'
+  description: React Menu component.
+- name: '@kenshooui/react-multi-select'
+  registry: npm
+  url: https://www.npmjs.com/package/@kenshooui/react-multi-select
+  language: javascript
+  kind: ui-component
+  api_client: false
+  official: true
+  official_evidence: repository git+https://github.com/kenshoo/react-multi-select.git
+  license: MIT
+  version: 1.1.6
+  published: '2020-01-28'
+  description: React Multi Select component.
+- name: '@kenshooui/react-tree'
+  registry: npm
+  url: https://www.npmjs.com/package/@kenshooui/react-tree
+  language: javascript
+  kind: ui-component
+  api_client: false
+  official: true
+  official_evidence: repository git+https://github.com/kenshoo/react-tree.git
+  license: MIT
+  version: 0.0.24
+  published: '2021-02-08'
+  description: Hierarchical selection tree component.
+- name: '@kenshooui/material-tree'
+  registry: npm
+  url: https://www.npmjs.com/package/@kenshooui/material-tree
+  language: javascript
+  kind: ui-component
+  api_client: false
+  official: true
+  official_evidence: repository git+https://github.com/kenshoo/react-tree.git
+  license: MIT
+  version: 0.0.7
+  published: '2021-02-08'
+  description: Material-styled enrichment of React Tree.
+currency_finding: >-
+  Every first-party package is stale. The most recent release across all four is 2021-02-09 —
+  five and a half years before this probe. Nothing under the @kenshooui scope has been
+  published since. This is a decay signal about the published package surface only; it says
+  nothing about the API itself, which is actively developed (the current OpenAPI documents an
+  MCP integration shipped in 2026).
+not_first_party:
+  note: >-
+    These npm packages match a "kenshoo" search but are published by other parties and are NOT
+    Skai artifacts. Recorded so a later pass does not mistake them for first-party SDKs.
+  packages:
+  - {name: '@segment/analytics.js-integration-kenshoo-infinity', owner: Segment}
+  - {name: '@saaskit/kenshoo', owner: SaaSkit}
+  - {name: fixed-data-table-2-kenshoo-fork, owner: third-party fork}
+  - {name: skai-sdk, owner: 'unrelated — "Skai Protocol", a different project'}
+  - {name: '@skillful-ai/skai-sdk', owner: 'unrelated — Skillful AI'}
+  - {name: '@skai-ui/*', owner: 'unrelated — skai-oss'}
+registries_searched:
+- {registry: npm, result: '4 first-party UI packages, 0 API clients'}
+- {registry: PyPI, result: 'no skai / kenshoo / skai-api / kenshoo-api / skai-sdk package (404)'}
+- {registry: RubyGems, result: none}
+- {registry: Maven Central, result: 'no client SDK; the kenshoo GitHub org publishes JVM
+    infrastructure libraries (jesque, bigqueue, dropwizard-swagger, Fallwizard) unrelated to
+    the Skai API'}
+- {registry: NuGet, result: none}
+- {registry: crates.io, result: none}
+- {registry: Packagist, result: none}
+- {registry: pkg.go.dev, result: none}
+integration_alternatives:
+  note: >-
+    Because no first-party SDK exists, third-party iPaaS connectors are the de facto client
+    layer. Recorded as context, not as Skai artifacts.
+  connectors:
+  - {vendor: Improvado, url: 'https://improvado.io/integrations/skai-api-kenshoo-v3-api'}
+  - {vendor: Celigo, url: 'https://docs.celigo.com/hc/en-us/articles/21921771668635-Supported-Skai-Formerly-Kenshoo-APIs'}

@@ -1,0 +1,46 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://github.com/kenshoo (org display name "Skai") and registry.npmjs.org metadata for the
+  @kenshooui npm scope
+note: >-
+  Skai publishes NO embeddable/hosted UI surface for API consumers — there are no Skai
+  Elements, no hosted checkout-style widgets, no embedded dashboards and no loader script.
+  What exists is an open-source React component library, @kenshooui, extracted from the Skai
+  product UI and published for general use. It is a design-system contribution, not a way to
+  embed Skai in a customer application, and it does not talk to the Skai API.
+embeddable_surface: false
+component_count: 4
+families:
+- name: '@kenshooui React components'
+  kind: open-source react library
+  distribution: npm
+  loader: none
+  api_backed: false
+  repositories:
+  - https://github.com/kenshoo/react-menu
+  - https://github.com/kenshoo/react-multi-select
+  - https://github.com/kenshoo/react-tree
+  components:
+  - {name: React Menu, package: '@kenshooui/react-menu', version: 4.0.5, published: '2021-02-09',
+     description: Menu component.}
+  - {name: React Multi Select, package: '@kenshooui/react-multi-select', version: 1.1.6,
+     published: '2020-01-28', description: Multi-select control.}
+  - {name: React Tree, package: '@kenshooui/react-tree', version: 0.0.24, published: '2021-02-08',
+     description: 'Lightweight, easy-to-navigate hierarchical selection component.'}
+  - {name: Material Tree, package: '@kenshooui/material-tree', version: 0.0.7,
+     published: '2021-02-08', description: Material-styled enrichment of React Tree.}
+  currency: >-
+    Unmaintained. Latest release across the family is 2021-02-09; the underlying GitHub
+    repositories were last touched in a 2025 bulk housekeeping pass with no functional
+    releases since.
+zaraz_integration:
+  repository: https://github.com/kenshoo/skai-zaraz-integration
+  language: TypeScript
+  last_push: '2026-06-08'
+  description: >-
+    A Cloudflare Zaraz custom managed component that tracks clicks/conversions for Skai. This
+    IS actively maintained and is the only client-side Skai integration artifact with recent
+    commits — but it is a tag-manager component, not an embeddable UI, so it is recorded here
+    separately rather than as a component family.
+  distribution: 'source only — no npm package found'

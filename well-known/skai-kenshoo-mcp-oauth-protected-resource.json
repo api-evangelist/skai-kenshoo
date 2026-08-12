@@ -1,0 +1,1 @@
+{"resource": "https://mcp.kenshoo.com/", "authorization_servers": ["https://login.kenshoo.com"], "bearer_methods_supported": ["header"], "resource_signing_alg_values_supported": ["HS256"], "scopes_supported": ["openid", "profile", "email", "offline_access"]}

@@ -1,0 +1,112 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Skai API
+  version: 1.0.0
+extends: ../openapi/skai-kenshoo-api-openapi.yml
+x-provenance:
+  generated: '2026-08-12'
+  method: generated
+  source: >-
+    Derived from openapi/skai-kenshoo-api-openapi.yml (Skai's published OpenAPI 3.0.0),
+    authentication/skai-kenshoo-authentication.yml, rate-limits/skai-kenshoo-rate-limits.yml
+    and lifecycle/skai-kenshoo-lifecycle.yml. Every value below is stated by Skai somewhere in
+    its own documentation; the overlay only moves those statements into the machine-readable
+    contract where they are missing. The original spec is never mutated.
+  rationale: >-
+    Skai's spec references a security scheme it never defines, documents a rate limit no
+    operation declares, marks a deprecation only in prose, and ships no contact or license
+    metadata. Those are the gaps this overlay closes.
+actions:
+- target: $.info
+  description: >-
+    Add the developer hub as termsOfService/contact anchor and record the API host. Values
+    come from Skai's own developer hub and legal pages.
+  update:
+    contact:
+      name: Skai Developer Hub
+      url: https://developers.skai.io/
+    termsOfService: https://skai.io/legal/
+- target: $
+  description: >-
+    Define the BearerAuth security scheme the spec already REQUIRES at the root but never
+    declares. Skai documents it as an Authorization: Bearer header carrying a JWT access
+    token obtained from POST /api/v1/token.
+  update:
+    components:
+      securitySchemes:
+        BearerAuth:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+          description: >-
+            Skai access token. Exchange your permanent refresh token and client ID at
+            POST /api/v1/token (form-encoded body) for a short-lived JWT, then send it as
+            `Authorization: Bearer <access_token>`. Tokens typically last 21600 seconds;
+            reuse a token until it expires rather than minting a new one per call. Generate
+            the refresh token once at https://login.kenshoo.com/api/dev/refresh-token.
+- target: $
+  description: >-
+    Add the published rate-limit numbers as a reusable, machine-readable extension so an agent
+    can plan its call budget. 60 requests/minute and 2,000 requests/hour per USER, as stated in
+    the Skai Overview.
+  update:
+    components:
+      x-rate-limits:
+        scope: per-user
+        windows:
+        - {window: 1m, limit: 60}
+        - {window: 1h, limit: 2000}
+        exhaustion_status: 429
+        exhaustion_message: API rate limit exceeded
+        retry_after_header: null
+        header_names_published: false
+- target: $
+  description: >-
+    Declare a reusable 429 response. The spec declares 429 on zero operations even though the
+    limit is documented, so no generated client anticipates it.
+  update:
+    components:
+      responses:
+        TooManyRequests:
+          description: >-
+            Rate limit exceeded — 60 requests per minute or 2,000 requests per hour per user.
+            Response headers report the limits and remaining calls for the current
+            minute/hour window; Skai does not publish the header names.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+- target: $.paths['/api/v1/reports/async'].post
+  description: >-
+    Set the machine-readable `deprecated` flag. Skai marks this operation "(deprecated)" in its
+    summary string only, so no linter or generated client surfaces it. The replacement is
+    POST /api/v1/reports/async/analysis, which Skai's own summary marks "(recommended)".
+  update:
+    deprecated: true
+    x-replaced-by: asyncAnalysisReport
+    x-replacement-path: /api/v1/reports/async/analysis
+- target: $.info
+  description: >-
+    Record the reportable-entity vocabulary and the async-job convention as extensions, so an
+    agent can discover them without parsing the prose description.
+  update:
+    x-reportable-entities: [CAMPAIGN, ADGROUP, KEYWORD, AD, PRODUCT_ASSET, PRODUCT_TARGETING,
+      PORTFOLIO]
+    x-async-job-convention:
+      description: >-
+        Operations that can exceed a few seconds return a job_id or execution_id; poll for
+        status, then fetch the result file.
+      poll_operations: [getJobStatus, getAsyncReportStatus]
+      fetch_operations: [getJobResults, downloadAsyncReport]
+      callbacks: false
+    x-idempotency:
+      supported: false
+      note: >-
+        No idempotency key or request deduplication is published. Retrying a write —
+        especially bulkUpdate or an endpoint that can return 207 Multi-Status — may re-apply
+        changes that already succeeded.
+    x-mcp:
+      servers:
+      - {name: Reporting MCP, url: 'https://mcp.kenshoo.com/reports-mcp', access: read}
+      - {name: Operations MCP, url: 'https://mcp.kenshoo.com/operations-mcp', access: write}
+      guide: https://skai-mcp-guide.vercel.app/

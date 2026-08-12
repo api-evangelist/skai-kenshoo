@@ -1,0 +1,53 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  https://login.kenshoo.com/.well-known/oauth-authorization-server,
+  https://mcp.kenshoo.com/.well-known/oauth-protected-resource,
+  https://skai.io/.well-known/oauth-authorization-server
+docs: null
+docs_note: >-
+  Skai publishes no scopes/permissions reference page. Every scope below was read from live
+  RFC 8414 / RFC 9728 discovery metadata, not from prose documentation. The REST API has no
+  scope surface at all — it uses a bespoke refresh-token exchange and derives permission from
+  the Skai user's platform role.
+applies_to: MCP servers only
+authorization_servers:
+- issuer: https://login.kenshoo.com
+  used_by: https://mcp.kenshoo.com (Reporting MCP, Operations MCP)
+  scopes:
+  - name: openid
+    description: >-
+      Standard OIDC scope requesting an ID token. Advertised, though no OIDC discovery
+      document is published on this issuer.
+    source: authorization-server metadata
+  - name: profile
+    description: Standard OIDC scope for basic profile claims about the authenticating Skai user.
+    source: authorization-server + protected-resource metadata
+  - name: email
+    description: Standard OIDC scope for the authenticating Skai user's email address.
+    source: authorization-server + protected-resource metadata
+  - name: offline_access
+    description: >-
+      Requests a refresh token so an MCP client can maintain a long-lived session without
+      re-prompting the user.
+    source: authorization-server + protected-resource metadata
+- issuer: https://skai.io
+  used_by: https://skai.io/wp-json/mcp/* (WordPress MCP adapter on the marketing site)
+  scopes:
+  - name: mcp
+    description: >-
+      Single coarse scope gating the WordPress MCP adapter surface on the skai.io marketing
+      site. Unrelated to the Skai platform.
+    source: authorization-server metadata
+findings:
+- >-
+  No resource-level or action-level scopes exist. Nothing in the published metadata
+  distinguishes read from write, so an agent granted access to the Operations MCP — which
+  changes bids, budgets and campaign statuses — carries the same four scopes as one granted
+  read-only reporting access. Least-privilege delegation is not expressible through scopes;
+  Skai separates read and write by ENDPOINT (reports-mcp vs operations-mcp) rather than by
+  scope.
+- >-
+  Authorization is enforced by the Skai platform role of the underlying user (Standard or
+  higher) and by ks/agency context, not by OAuth scope.
+scope_count: 5

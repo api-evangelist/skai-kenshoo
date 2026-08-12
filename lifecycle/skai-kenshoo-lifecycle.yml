@@ -1,15 +1,87 @@
-generated: '2026-07-21'
+generated: '2026-08-12'
 method: searched
-source: https://developers.skai.io/
+source: >-
+  https://developers.skai.io/ (Skai OpenAPI), https://status.skai.io/,
+  https://skai.io/skai-information-security-and-privacy-center/
+supersedes: >-
+  The 2026-07-21 pass recorded versioning as "unknown" because the developer hub was read as a
+  gated single-page app. It is a Redoc shell; the real OpenAPI is anonymously readable at
+  https://api-gateway-documentation-production.s3.amazonaws.com/api-gateway/docs and versioning
+  is now derived from it.
 versioning:
-  scheme: unknown
+  scheme: uri-path
+  pattern: /api/v{n}/...
+  current: v1
+  versions_in_use: [v1, v2]
+  spec_version: 1.0.0
   note: >-
-    The Skai/Kenshoo developer hub (developers.skai.io / developers.kenshoo.com) is a
-    single-page app whose reference is gated; the public versioning policy could not be captured.
-status_page: https://status.skai.io/
+    v1 carries the bulk of the surface. v2 exists for Meta (Facebook/Instagram) campaigns, ad
+    groups and ads and for a second generation of the incrementality data-source endpoints.
+    No policy explains how v1 and v2 relate, whether v1 equivalents will be retired, or how a
+    new version is announced. There is no version header and no media-type versioning.
+  policy_url: null
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No deprecation or sunset policy is published, and neither the Sunset nor the Deprecation
+    response header appears anywhere in the contract. Integrators get no machine-readable
+    warning that an operation is going away.
+  deprecated_operations:
+  - operationId: runAsyncReport
+    path: POST /api/v1/reports/async
+    signal: summary text only
+    summary: Configure and run a Fusion/Structure report (deprecated)
+    replacement: asyncAnalysisReport (POST /api/v1/reports/async/analysis)
+    replacement_note: >-
+      Skai marks the analysis endpoint "(recommended)" in its own summary.
+    defect: >-
+      The word "deprecated" is in the SUMMARY STRING; the OpenAPI `deprecated: true` flag is
+      NOT set on this or any other operation. Zero of 158 operations carry the flag, so no
+      tool, linter or generated client will surface the deprecation.
+changelog:
+  url: null
+  note: >-
+    No dated API changelog or release-notes page was found on developers.skai.io,
+    developers.kenshoo.com, skai.io or any Skai subdomain probed. Product news is published
+    as press releases and blog posts, which are not a change log for the contract.
+status_page:
+  url: https://status.skai.io/
+  platform: Atlassian Statuspage
+  status: 200
 status_pages:
 - https://status.skai.io/
 - https://status.kenshoo.com/
-deprecation:
-  policy_url: null
-  note: No public deprecation/sunset policy found.
+status_page_note: >-
+  status.kenshoo.com 301-redirects to status.skai.io; they are one page under two names.
+sla:
+  url: null
+  note: No public SLA or uptime commitment was found; terms are at https://skai.io/legal/.
+support:
+  channels:
+  - url: https://skai.io/contact-us/
+    kind: contact form
+  - kind: dedicated client success support
+    note: Included from the Standard tier upward per https://skai.io/pricing/
+  - kind: online training and help center
+    note: >-
+      Advertised on the pricing page as a tier benefit. No anonymously reachable help-center
+      host was found — help.skai.io, support.skai.io and help.kenshoo.com do not resolve.
+roadmap:
+  url: null
+  note: >-
+    No public product or API roadmap. The nearest public forward-looking statement is Skai's
+    own blog (2026-08-06) saying it built four MCP servers, that Reporting and Operations are
+    live, and that "broader creation support and deeper account-level actions are still
+    rolling out, with new coverage shipping most weeks."
+maturity:
+  api_age: >-
+    Kenshoo has shipped a partner API for well over a decade; third-party connectors
+    (Improvado, Celigo) reference a "Kenshoo V3 API" generation predating the current
+    /api/v1 surface.
+  rebrand: >-
+    Kenshoo rebranded to Skai in 2021. Both developers.skai.io and developers.kenshoo.com
+    serve the same documentation and the API host remains services.kenshoo.com, so the legacy
+    domain is load-bearing, not a redirect.

@@ -1,0 +1,110 @@
+generated: '2026-08-12'
+method: probed
+source: >-
+  Live anonymous GET of /.well-known/* on every Skai host named in apis.yml, in the
+  Skai OpenAPI servers[] block, and in the Skai MCP setup guide.
+note: >-
+  Three real documents are served. login.kenshoo.com publishes RFC 8414 OAuth 2.0
+  Authorization Server Metadata, mcp.kenshoo.com publishes RFC 9728 OAuth 2.0 Protected
+  Resource Metadata for the hosted MCP servers, and the skai.io marketing site (WordPress)
+  publishes its own authorization-server metadata scoped to a WordPress MCP adapter.
+  No security.txt, no api-catalog, no openid-configuration and no agent card were found on
+  any host. skai.io answers unknown /.well-known/* paths with HTTP 410 and an HTML page,
+  and app.kenshoo.com answers 400 with HTML — both are catch-alls, not documents, and are
+  recorded as misses.
+hosts_probed:
+- skai.io
+- developers.skai.io
+- developers.kenshoo.com
+- api.kenshoo.com
+- services.kenshoo.com
+- login.kenshoo.com
+- mcp.kenshoo.com
+- app.kenshoo.com
+probes:
+- host: login.kenshoo.com
+  path: /.well-known/oauth-authorization-server
+  url: https://login.kenshoo.com/.well-known/oauth-authorization-server
+  status: 200
+  content_type: application/json;charset=utf-8
+  document: true
+  file: skai-kenshoo-login-oauth-authorization-server.json
+  spec: RFC 8414
+  summary: >-
+    issuer https://login.kenshoo.com; authorization_endpoint https://auth0.kenshoo.com/authorize;
+    token_endpoint https://login.kenshoo.com/api/oauth/token; grants authorization_code +
+    refresh_token; PKCE S256; scopes openid, email, profile, offline_access.
+- host: mcp.kenshoo.com
+  path: /.well-known/oauth-protected-resource
+  url: https://mcp.kenshoo.com/.well-known/oauth-protected-resource
+  status: 200
+  content_type: application/json; charset=utf-8
+  document: true
+  file: skai-kenshoo-mcp-oauth-protected-resource.json
+  spec: RFC 9728
+  summary: >-
+    resource https://mcp.kenshoo.com/; authorization_servers [https://login.kenshoo.com];
+    bearer_methods_supported [header]; scopes openid, profile, email, offline_access.
+- host: skai.io
+  path: /.well-known/oauth-authorization-server
+  url: https://skai.io/.well-known/oauth-authorization-server
+  status: 200
+  content_type: application/json; charset=UTF-8
+  document: true
+  file: skai-kenshoo-site-oauth-authorization-server.json
+  spec: RFC 8414
+  summary: >-
+    Separate from the platform: issuer https://skai.io with scopes_supported ["mcp"] and
+    client_id_metadata_document_supported true. Served by the WordPress MCP adapter plugin
+    running on the skai.io marketing site, not by the Skai platform.
+- host: mcp.kenshoo.com
+  path: /.well-known/oauth-protected-resource/{server}
+  url: https://mcp.kenshoo.com/.well-known/oauth-protected-resource/reports-mcp
+  status: 200
+  content_type: application/json; charset=utf-8
+  document: false
+  note: >-
+    Per-server variant echoes whatever path segment is supplied — a request for
+    /.well-known/oauth-protected-resource/bogus-mcp also returns 200 with resource
+    https://mcp.kenshoo.com/bogus-mcp. Treated as a template, not as evidence that a
+    given MCP server exists.
+misses:
+- path: /.well-known/security.txt
+  results:
+  - {url: 'https://skai.io/.well-known/security.txt', status: 410, note: HTML catch-all}
+  - {url: 'https://developers.skai.io/.well-known/security.txt', status: 404}
+  - {url: 'https://api.kenshoo.com/.well-known/security.txt', status: 404}
+  - {url: 'https://services.kenshoo.com/.well-known/security.txt', status: 404}
+  - {url: 'https://login.kenshoo.com/.well-known/security.txt', status: 404}
+- path: /.well-known/openid-configuration
+  results:
+  - {url: 'https://login.kenshoo.com/.well-known/openid-configuration', status: 404}
+  - {url: 'https://skai.io/.well-known/openid-configuration', status: 410, note: HTML catch-all}
+- path: /.well-known/api-catalog
+  results:
+  - {url: 'https://skai.io/.well-known/api-catalog', status: 410, note: HTML catch-all}
+  - {url: 'https://services.kenshoo.com/.well-known/api-catalog', status: 404}
+  - {url: 'https://developers.skai.io/.well-known/api-catalog', status: 404}
+- path: /.well-known/ai-plugin.json
+  results:
+  - {url: 'https://skai.io/.well-known/ai-plugin.json', status: 410, note: HTML catch-all}
+  - {url: 'https://developers.skai.io/.well-known/ai-plugin.json', status: 404}
+- path: /.well-known/agent-card.json
+  results:
+  - {url: 'https://skai.io/.well-known/agent-card.json', status: 410, note: HTML catch-all}
+  - {url: 'https://developers.skai.io/.well-known/agent-card.json', status: 404}
+  - {url: 'https://login.kenshoo.com/.well-known/agent-card.json', status: 404}
+  - {url: 'https://mcp.kenshoo.com/.well-known/agent-card.json', status: 404}
+  - {url: 'https://services.kenshoo.com/.well-known/agent-card.json', status: 404}
+- path: /.well-known/agent.json
+  results:
+  - {url: 'https://skai.io/.well-known/agent.json', status: 410, note: HTML catch-all}
+  - {url: 'https://developers.skai.io/.well-known/agent.json', status: 404}
+  - {url: 'https://login.kenshoo.com/.well-known/agent.json', status: 404}
+  - {url: 'https://services.kenshoo.com/.well-known/agent.json', status: 404}
+- path: /llms.txt
+  results:
+  - {url: 'https://skai.io/llms.txt', status: 410, note: HTML catch-all}
+  - {url: 'https://developers.skai.io/llms.txt', status: 404}
+  - {url: 'https://services.kenshoo.com/llms.txt', status: 404}
+checked: '2026-08-12'

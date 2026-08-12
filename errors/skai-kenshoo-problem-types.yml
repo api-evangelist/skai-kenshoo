@@ -1,0 +1,162 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/skai-kenshoo-api-openapi.yml — every 4xx/5xx response declared across 158 operations,
+  plus the error envelope documented at https://developers.skai.io/
+format: proprietary
+rfc9457: false
+rfc9457_note: >-
+  Skai does not use application/problem+json. Errors are returned as application/json in
+  Skai's own `ApiResponse` envelope. There is no `type` URI, no `title`, no `detail` and no
+  `instance` field, so a generic RFC 9457 client cannot interpret a Skai failure.
+envelope:
+  media_type: application/json
+  schema: ApiResponse
+  shape:
+    status:
+      type: string
+      enum: [SUCCESS, FAILED, PARTIAL_SUCCESS]
+      description: Overall outcome of the request.
+    entities:
+      type: array
+      description: One entry per entity the request touched.
+      items:
+        id:
+          type: integer
+          format: int64
+          description: Entity ID, or null when the failure occurred before an entity existed.
+        success:
+          type: boolean
+        errors:
+          type: array
+          description: Zero or more ErrorField objects for this entity.
+  error_field_schema:
+    declared:
+      fieldName: {type: string, description: The error field}
+      error: {type: string, description: Error message}
+      parameters: {type: object, additionalProperties: string, description: Error additional properties}
+    observed_in_examples:
+      field_name: string
+      error: string
+      parameters: object
+    defect: >-
+      The ErrorField SCHEMA names the property `fieldName` while every published error EXAMPLE
+      emits `field_name`. A client typed off the schema will not find the field on the wire.
+      Reported as a spec defect, not resolved here.
+  example_failed: |
+    {
+      "status": "FAILED",
+      "entities": [
+        {
+          "id": null,
+          "success": false,
+          "errors": [
+            { "field_name": "name", "error": "ILLEGAL_NAME" }
+          ]
+        }
+      ]
+    }
+status_codes:
+- code: 400
+  title: Bad Request
+  meaning: Validation failure on client input.
+  declared_on_operations: 69
+  typed_schema: true
+  named_responses: [BadRequest, GetCampaignBadRequest, GetPortfolioBadRequest, getAdBadRequest,
+    getAdGroupBadRequest, getEntityTagsBadRequest, getFacebookCampaignBadRequest]
+  remediation: >-
+    Read entities[].errors[] for the offending field and error token; correct and resend.
+- code: 401
+  title: Unauthorized
+  meaning: >-
+    Authentication failed — most often an expired access token. Skai names 401 as one of the
+    two supported ways to detect token expiry (the other is tracking `expires_in`).
+  declared_on_operations: 11
+  typed_schema: false
+  remediation: >-
+    Re-exchange the permanent refresh token at POST /api/v1/token (operationId getAccessToken)
+    for a new access token and retry. Cache the new token for its full `expires_in` — minting
+    tokens too often trips the rate limit.
+- code: 404
+  title: Not Found
+  meaning: Item not found.
+  declared_on_operations: 8
+  typed_schema: true
+  named_responses: [NotFound]
+  example_error_token: NOT_FOUND
+- code: 500
+  title: Internal Server Error
+  meaning: Unexpected server-side failure.
+  declared_on_operations: 111
+  typed_schema: true
+  named_responses: [InternalServerError]
+  example_error_token: 'field_name "ServerError", error "Unexpected error occurred."'
+  remediation: Retry with backoff. NOTE - the API publishes no idempotency mechanism, so a
+    blind retry of a write is not safe (see conventions/skai-kenshoo-conventions.yml).
+- code: 422
+  title: Unprocessable Entity
+  meaning: Validation failure for client input, reported as free-text strings rather than
+    ErrorField objects.
+  declared_on_operations: 0
+  typed_schema: true
+  named_responses: [UnprocessableEntity]
+  note: >-
+    The UnprocessableEntity response component is DEFINED but never referenced by any
+    operation, so no operation documents a 422. Its example carries errors[] as plain strings
+    ("name length must be between 0 and 255"), a third error shape alongside the two above.
+- code: 429
+  title: Too Many Requests
+  meaning: 'API rate limit exceeded — 60 requests/minute or 2,000 requests/hour per user.'
+  declared_on_operations: 0
+  typed_schema: false
+  defect: >-
+    429 is DOCUMENTED IN PROSE but declared on ZERO of the 158 operations. An agent generating
+    a client from the contract alone would never handle it.
+  remediation: >-
+    Back off until the next minute/hour window. Skai says limit and remaining counters are
+    returned as response headers but does not name them; no Retry-After is documented.
+partial_success:
+- code: 207
+  title: Multi-Status
+  meaning: >-
+    Per-entity outcomes differ within one request. Pair with status PARTIAL_SUCCESS in the
+    envelope and inspect entities[].success individually.
+  declared_on_operations: 9
+  typed_schema: false
+  operations: [bulkUpdateCampaignAmazonDsp, bulkCreateCampaignAmazonDsp, updateCampaignAmazonDsp,
+    createCampaignAmazonDsp, bulkUpdateAdGroupAmazonDsp, bulkCreateAdGroupAmazonDsp]
+  note: >-
+    All 207 declarations carry a bare "207 response" description with no schema. Combined with
+    the absence of idempotency, a retry after a 207 will re-apply the entities that already
+    succeeded.
+- code: 300
+  title: Multiple Choices
+  meaning: unknown
+  declared_on_operations: 29
+  typed_schema: false
+  defect: >-
+    29 operations — chiefly the incrementality data-source and monitoring endpoints — declare
+    a 300 response with nothing but the description "300 response". HTTP 300 has no meaningful
+    use in a JSON API and no Location or choice payload is described. Almost certainly an
+    artifact of an AWS API Gateway export rather than real behaviour. NOT INTERPRETED HERE.
+error_tokens:
+  documented: false
+  observed:
+  - token: ILLEGAL_NAME
+    context: entity name validation, from the BadRequest example
+  - token: NOT_FOUND
+    context: entity lookup, from the NotFound example
+  - token: ServerError
+    context: field_name used for unexpected server failures
+  note: >-
+    Skai publishes NO error-code registry. The three tokens above are the only ones that
+    appear anywhere in the public contract, and they come from response examples rather than
+    from an enumerated list. An integrator cannot enumerate the failure space in advance.
+coverage:
+  operations_total: 158
+  operations_with_any_4xx: 76
+  operations_with_typed_error_schema: 44
+  operations_with_bare_description_errors_only: 112
+  note: >-
+    Roughly a third of operations declare a machine-readable error body; the rest declare only
+    "400 response" / "500 response" strings.

@@ -1,4 +1,4 @@
-generated: '2026-07-21'
+generated: '2026-08-12'
 method: probed
 source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
 hosts:
@@ -14,7 +14,7 @@ hosts:
   cert_expires: Nov  2 16:15:15 2026 GMT
   hsts: true
   hsts_max_age: 7200
-- host: api.kenshoo.com
+- host: services.kenshoo.com
   https: true
   tls_version: TLSv1.3
   cert_expires: Nov 20 13:48:51 2026 GMT
@@ -23,18 +23,18 @@ domains:
 - domain: skai.io
   dnssec: false
   caa:
-  - 0 issue "godaddy.com"
   - 0 issue "awstrust.com"
   - 0 issue "letsencrypt.org"
+  - 0 issue "godaddy.com"
   spf: true
   dmarc: true
   dmarc_policy: none
 - domain: kenshoo.com
   dnssec: false
   caa:
-  - 0 issue "godaddy.com"
   - 0 issue "letsencrypt.org"
   - 0 issue "awstrust.com"
+  - 0 issue "godaddy.com"
   spf: true
   dmarc: true
   dmarc_policy: none

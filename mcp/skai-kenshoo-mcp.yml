@@ -1,0 +1,136 @@
+generated: '2026-08-12'
+method: searched
+source: >-
+  https://developers.skai.io/ (Skai OpenAPI, tag "MCP") and https://skai-mcp-guide.vercel.app/
+  (Skai's customer setup guide), corroborated by the live 401 + WWW-Authenticate challenge on
+  https://mcp.kenshoo.com/reports-mcp and the RFC 9728 metadata at
+  https://mcp.kenshoo.com/.well-known/oauth-protected-resource
+status: published
+note: >-
+  Skai runs first-party hosted, remote MCP servers on mcp.kenshoo.com. The tool list below is
+  the one Skai publishes in its own OpenAPI ("Available MCP tools" table under the MCP tag) and
+  repeats in the setup guide. Live tools/list introspection is auth-gated (HTTP 401 with
+  WWW-Authenticate: Bearer), so tool INPUT SCHEMAS could not be captured and are not recorded
+  here. Skai's own blog (2026-08-06) states it built four MCPs and that two — Reporting and
+  Operations — are live today.
+servers:
+- name: Skai Reporting MCP
+  url: https://mcp.kenshoo.com/reports-mcp
+  tenant_url_form: https://mcp.kenshoo.com/reports-mcp/{ksId}
+  transport: http
+  status: live
+  description: >-
+    Read-only reporting access — campaigns, ad groups, keywords, ads, products, performance
+    metrics, budgets and change-log data, unified across 100+ search, social and retail-media
+    publishers.
+  authentication:
+    oauth2:
+      authorization_servers:
+      - https://login.kenshoo.com
+      client_id_published: true
+      note: >-
+        Skai publishes a public OAuth client ID in its setup guide for ChatGPT/Claude
+        connectors; the client secret is left blank. Recorded as a documented setup value,
+        not a credential.
+    pat:
+      supported: true
+      header: Authorization
+      scheme: Bearer
+      extra_header: ks-name
+      issue_url: https://login.kenshoo.com/api/dev/refresh-token
+      rotation_days: 90
+      note: >-
+        Personal Access Token, valid 90 days, separate from the standard REST API bearer
+        token. Header-based PAT auth is used by every client except ChatGPT, which supports
+        OAuth only.
+  clients_documented:
+  - Claude Code
+  - Claude Desktop
+  - Claude Web
+  - Cursor
+  - VS Code
+  - Windsurf
+  - ChatGPT
+  - Google Gemini
+  tools:
+  - name: fetch_report
+    description: Retrieve reporting data for campaigns, ad groups, keywords, ads, or products.
+    input_schema: null
+    input_schema_note: auth-gated; requires authenticated tools/list introspection
+  - name: relevant_columns
+    description: Identify which columns are applicable for a given query.
+    input_schema: null
+    input_schema_note: auth-gated; requires authenticated tools/list introspection
+  - name: get_today
+    description: Get current-day reporting metrics.
+    input_schema: null
+    input_schema_note: auth-gated; requires authenticated tools/list introspection
+  - name: get_change_log
+    description: Retrieve the change log for campaigns and other entities.
+    input_schema: null
+    input_schema_note: auth-gated; requires authenticated tools/list introspection
+  - name: get_competitive_context
+    description: Retrieve competitive brand data and context.
+    input_schema: null
+    input_schema_note: auth-gated; requires authenticated tools/list introspection
+- name: Skai Operations MCP
+  url: https://mcp.kenshoo.com/operations-mcp
+  transport: http
+  status: live
+  description: >-
+    Write-access server for bid, budget and status changes at scale across every publisher and
+    account, with preview and approval before anything is applied. Broader entity creation and
+    deeper account-level actions are described by Skai as still rolling out.
+  authentication:
+    oauth2:
+      authorization_servers:
+      - https://login.kenshoo.com
+    pat:
+      supported: true
+      header: Authorization
+      scheme: Bearer
+      extra_header: ks-name
+  tools: []
+  tools_note: >-
+    Skai names the capability areas (bid, budget, status) but does not publish an
+    Operations MCP tool list on any anonymous page. NOT INVENTED — left empty rather than
+    guessed. Requires authenticated tools/list introspection.
+- name: skai.io site MCP (WordPress adapter)
+  url: https://skai.io/wp-json/mcp/mcp-adapter-default-server
+  alt_url: https://skai.io/wp-json/mcp/mcp-oauth-server
+  transport: http
+  status: discovered
+  description: >-
+    A second, unrelated MCP surface on the skai.io WordPress marketing site, exposed by the
+    WordPress MCP Adapter plugin. Distinct from the platform MCP servers on mcp.kenshoo.com.
+    Not referenced in any Skai documentation found.
+  authentication:
+    note: >-
+      tools/list returns HTTP 401 (rest_forbidden / mcp_unauthorized). The matching
+      authorization-server metadata at https://skai.io/.well-known/oauth-authorization-server
+      advertises scopes_supported ["mcp"].
+  tools: []
+roadmap:
+  note: >-
+    Skai states it built four MCP servers and split them into read and write layers; two are
+    live. The other two are unnamed on any public page.
+  source: https://skai.io/blog/how-write-access-mcp-closes-the-distance-between-spotting-a-problem-and-fixing-it/
+evidence:
+- url: https://mcp.kenshoo.com/reports-mcp
+  method: 'POST tools/list'
+  status: 401
+  detail: 'WWW-Authenticate: Bearer realm="https://mcp.kenshoo.com/reports-mcp", resource_metadata="https://mcp.kenshoo.com/.well-known/oauth-protected-resource/reports-mcp"'
+- url: https://mcp.kenshoo.com/.well-known/oauth-protected-resource
+  method: GET
+  status: 200
+- url: https://skai.io/wp-json/mcp
+  method: GET
+  status: 200
+  detail: 'routes: /mcp, /mcp/mcp-oauth-server, /mcp/mcp-adapter-default-server'
+- url: https://skai-mcp-guide.vercel.app/
+  method: GET
+  status: 200
+- url: https://developers.skai.io/
+  method: GET
+  status: 200
+  detail: Redoc shell loading the Skai OpenAPI, whose MCP tag documents the server and tools

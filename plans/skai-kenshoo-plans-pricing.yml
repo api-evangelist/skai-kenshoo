@@ -1,0 +1,94 @@
+generated: '2026-08-12'
+method: searched
+source: https://skai.io/pricing/
+note: >-
+  Skai publishes list prices openly — unusual for enterprise ad-tech. Tiers are gated on
+  ANNUAL ADVERTISING SPEND MANAGED THROUGH THE PLATFORM, not on API calls, seats or data
+  volume. There is no developer/API-specific plan, no free tier and no self-serve signup;
+  every tier routes to "Get Started" / "Book a Demo". API and MCP access is included with the
+  platform subscription rather than sold separately, and Skai states every tier unlocks the
+  GenAI platform including Celeste AI.
+currency: USD
+billing_period: annual
+metering_dimension: annual advertising spend managed in Skai
+commitment_note: >-
+  Skai advertises "predictable annual pricing and the flexibility to review your commitment
+  after the first three months."
+plan_count: 5
+plans:
+- name: Standard
+  price: 114000
+  currency: USD
+  period: year
+  price_display: $114k per year
+  qualifier: For advertisers spending up to $4M per year
+  spend_ceiling: 4000000
+  includes:
+  - Access 120+ publishers
+  - Best-in-class automation & optimization
+  - Online training and help center
+  - Dedicated client success support
+  - Celeste AI
+  cta: Get Started
+- name: Advanced
+  price: 276000
+  currency: USD
+  period: year
+  price_display: $276k per year
+  qualifier: For advertisers spending up to $10M per year
+  spend_ceiling: 10000000
+  includes:
+  - Everything in Standard
+  - Competitive Insights
+  - Search Term Analysis
+  cta: Get Started
+- name: Enterprise
+  price: 504000
+  currency: USD
+  period: year
+  price_display: $504k per year
+  qualifier: For advertisers spending up to $20M per year
+  spend_ceiling: 20000000
+  includes:
+  - Everything in Advanced
+  - Expanded set of read-only publishers
+  - Customizable audits & QA capabilities
+  - Expanded customer journey intelligence
+  cta: Get Started
+- name: Enterprise Premier
+  price: 756000
+  currency: USD
+  period: year
+  price_display: $756k per year
+  qualifier: For advertisers spending up to $35M per year
+  spend_ceiling: 35000000
+  includes:
+  - Everything in Enterprise
+  - Incrementality testing
+  - White glove onboarding and client success
+  - Custom solution development
+  cta: Get Started
+- name: Enterprise Premier +
+  price: null
+  currency: USD
+  period: year
+  price_display: Contact Us
+  qualifier: >-
+    For advertisers spending more than $35M per year; tailored to the business
+  spend_floor: 35000000
+  includes:
+  - Everything in Enterprise Premier
+  - Tailored scope
+  cta: Contact Us
+free_tier: false
+trial: false
+self_serve_signup: false
+api_specific_plan: false
+api_pricing_note: >-
+  No metered API pricing, no per-call charge and no API add-on are published. Rate limits are
+  fixed per user (see rate-limits/skai-kenshoo-rate-limits.yml) and do not vary by tier on any
+  published page.
+addons_note: >-
+  The OpenAPI exposes an internal add-on and spend-tracking surface (getAddonsData,
+  getAddonsUsage, requestAddon, getSpendData) implying per-account add-on entitlements, but no
+  add-on catalog or price list is published anywhere public.

@@ -1,0 +1,119 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  mcp/skai-kenshoo-mcp.yml (Skai-published MCP tool list) bound against
+  openapi/skai-kenshoo-api-openapi.yml (Skai OpenAPI 3.0.0, 158 operations)
+note: >-
+  Live MCP tools/list is auth-gated (HTTP 401), so tool input schemas are not available and
+  every binding below is by NAME AND DOCUMENTED SEMANTICS, not by comparing schemas.
+  Confidence is set accordingly. No tool or operation is invented — every operationId here
+  was grepped out of the saved spec.
+surfaces:
+  openapi:
+    file: openapi/skai-kenshoo-api-openapi.yml
+    server: https://services.kenshoo.com
+    operations: 158
+    gated: false
+    note: Spec is anonymously readable; calling it requires a bearer token.
+  mcp:
+    reporting: https://mcp.kenshoo.com/reports-mcp
+    operations: https://mcp.kenshoo.com/operations-mcp
+    gated: true
+    note: tools/list returns 401 with an OAuth challenge.
+  graphql:
+    endpoint: null
+    note: No GraphQL surface found on any Skai host.
+crosswalk:
+- tool: fetch_report
+  category: reporting
+  rest:
+  - fetchReport
+  - asyncAnalysisReport
+  - runAsyncReportById
+  - getAsyncReportStatus
+  - downloadAsyncReport
+  binding: composite
+  confidence: high
+  note: >-
+    Skai documents fetch_report as "retrieve reporting data for campaigns, ad groups,
+    keywords, ads, or products" — the same surface as POST /api/v1/reports (synchronous) and
+    the async analysis flow (POST /api/v1/reports/async/analysis, then poll
+    /api/v1/reports/async/{execution_id}/status, then GET /api/v1/reports/async/{execution_id}).
+    The tool almost certainly hides the async polling loop behind one call.
+- tool: relevant_columns
+  category: metadata
+  rest:
+  - getRelevantColumns
+  - getAvailableColumns
+  binding: direct
+  confidence: high
+  note: >-
+    POST /api/v1/relevant-columns is literally named "Get relevant columns";
+    GET /api/v1/reports/{entity}/available_columns is the full per-entity column reference.
+- tool: get_today
+  category: reporting
+  rest:
+  - fetchReport
+  binding: parameterized
+  confidence: medium
+  note: >-
+    No dedicated "today" operation exists in the REST spec. This is POST /api/v1/reports with
+    the date range pinned to the current day.
+- tool: get_change_log
+  category: audit
+  rest: []
+  binding: none
+  confidence: low
+  note: >-
+    No change-log operation is published in the REST spec. Recorded in mcp_only[].
+- tool: get_competitive_context
+  category: insights
+  rest: []
+  binding: none
+  confidence: low
+  note: >-
+    No competitive-data operation is published in the REST spec. The closest platform features
+    (Competitive Insights, Search Term Analysis) are sold on the Advanced pricing tier and are
+    not exposed as REST operations. Recorded in mcp_only[].
+mcp_only:
+- tool: get_change_log
+  reason: >-
+    Entity change-log retrieval has no public REST counterpart in the Skai OpenAPI.
+- tool: get_competitive_context
+  reason: >-
+    Competitive brand data has no public REST counterpart; it is a tier-gated platform feature
+    surfaced only through the MCP layer.
+rest_only:
+  note: >-
+    The REST contract is far larger than the reporting MCP. 153 of 158 operations have no
+    Reporting-MCP tool. The Operations MCP covers bid/budget/status writes, but Skai publishes
+    no tool names for it, so those operations cannot be bound and are listed here as REST-only.
+  groups:
+  - group: Campaign / ad group / ad management
+    operations: [getCampaigns, createCampaigns, updateCampaigns, getAdGroups, createAdGroups,
+      updateAdGroups, createAds, createProductGroups]
+    note: Candidate backing operations for the Operations MCP; binding unproven.
+  - group: Bulk operations
+    operations: [bulkUpdate, getJobStatus, getJobResults]
+  - group: Portfolios and budgets
+    operations: [getPortfolios, createPortfolios, updatePortfolios, getManualPacing,
+      updateManualPacing, getBudgetOversight, createBudgetOversight, updateBudgetOversight]
+  - group: Meta (Facebook/Instagram) entities and tags
+    operations: [getCampaignTags, updateCampaignTags, getAdGroupTags, updateAdGroupTags,
+      getAdsTags, updateAdsTags]
+  - group: Custom columns and profiles
+    operations: [getDynamicColumns, createDynamicColumns, editDynamicColumns,
+      deleteDynamicColumns, createProfile, updateProfile]
+  - group: Incrementality / data sources
+    operations: [createDataSource, updateDataSource, getDataSources, createDataLoadTask,
+      getDataLoadTask, uploadSourceFile]
+  - group: Auth
+    operations: [getAccessToken]
+coverage:
+  mcp_tools_published: 5
+  mcp_tools_bound_to_rest: 3
+  mcp_only: 2
+  rest_operations_total: 158
+  rest_operations_bound: 5
+  rest_only: 153
+  operations_mcp_tools_published: 0

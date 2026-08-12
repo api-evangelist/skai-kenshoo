@@ -1,40 +1,53 @@
 aid: skai-kenshoo
 accessModel:
-  pricing: unknown
-  onboarding: unknown
+  pricing: published
+  onboarding: sales
   trial: false
   try_now: false
   public: false
-  label: Unknown
-  confidence: low
-  source: []
-  generated: '2026-07-22'
-  method: derived
+  label: Enterprise
+  confidence: high
+  source:
+  - https://skai.io/pricing/
+  - https://developers.skai.io/
+  generated: '2026-08-12'
+  method: searched
+  note: >-
+    List prices are published openly for five tiers, but there is no free tier, no trial and no
+    self-serve signup — every tier routes to a demo or sales conversation, and API credentials
+    require a Skai platform user with the Standard role or higher.
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/skai-kenshoo.png
 name: Skai (Kenshoo)
 description: >-
   Skai (formerly Kenshoo) is an AI-powered commerce media platform that helps brands and
   agencies centralize retail media, paid search, and paid social data, then plan, activate,
-  optimize, and measure omnichannel marketing campaigns across Amazon, Google, Meta, retailers,
-  and marketplaces. The Skai/Kenshoo platform exposes a partner API (api.kenshoo.com) with a
-  developer hub for programmatic campaign management, reporting, and data integration. Products
-  include Celeste AI (a GenAI commerce-media agent), the Skai Data Hub, Retail Media, Search &
-  Social, Omnichannel Planning, and Digital Shelf Optimization.
+  optimize, and measure omnichannel marketing campaigns across Amazon, Google, Microsoft,
+  Meta, Walmart, Instacart, Kroger, Target and 120+ other publishers and marketplaces. Skai
+  publishes a real, anonymously readable OpenAPI 3.0.0 contract — 117 paths, 158 operations,
+  155 schemas — served through a Redoc developer hub at developers.skai.io and callable at
+  services.kenshoo.com, covering reporting (synchronous and asynchronous), bulk entity
+  management, campaigns, ad groups, ads, portfolios, product groups, custom columns,
+  incrementality testing and budget pacing. Alongside the REST API, Skai runs first-party
+  hosted MCP servers at mcp.kenshoo.com — a read-only Reporting MCP and a write-access
+  Operations MCP for bid, budget and status changes with preview and approval — authenticated
+  with OAuth 2.0 or a 90-day personal access token. Products include Celeste AI (a GenAI
+  commerce-media agent), the Skai Data Hub, Retail Media, Search & Social, Omnichannel
+  Planning, and Digital Shelf Optimization.
 url: https://raw.githubusercontent.com/api-evangelist/skai-kenshoo/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - bain-capital-ventures
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: profiled
+x-tier-reason: published-openapi-and-mcp
 x-enrichment:
-  date: '2026-07-21'
+  date: '2026-08-12'
   status: enriched
-  artifacts_added: 5
+  artifacts_added: 24
   pass: local-v1
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-08-12'
 tags:
 - Company
 - Commerce
@@ -46,23 +59,79 @@ tags:
 - Marketing Analytics
 - Advertising Technology
 - Campaign Management
+- Commerce Media
+- Reporting
+- MCP
+- Agent Native
+- Omnichannel
 apis:
 - name: Skai (Kenshoo) API
   description: >-
-    Partner/programmatic API for campaign management, reporting, and data integration across
-    Skai's commerce-media, paid-search, and paid-social products. Access is gated behind a
-    customer/partner agreement; the developer hub documents authentication and endpoints.
+    Skai's REST API for programmatic access to advertising data and campaign management across
+    search, social and retail-media publishers. Reporting is the primary surface — synchronous
+    for small pulls, asynchronous analysis reports for anything larger — alongside Bulk Update
+    (one file, millions of rows, hundreds of attributes) for scaled changes, typed CRUD for
+    campaigns/ad groups/ads/portfolios/product groups, a separate /api/v2 branch for Meta
+    entities, custom columns, incrementality data sources and budget pacing. Authentication is
+    a bearer JWT obtained by exchanging a permanent refresh token; requests are scoped by a
+    `ks` account identifier. Rate limited to 60 requests/minute and 2,000/hour per user.
   humanURL: https://developers.skai.io/
-  baseURL: https://api.kenshoo.com
+  baseURL: https://services.kenshoo.com
   tags:
   - Advertising
   - Marketing
   - Campaign Management
+  - Reporting
+  - Retail Media
+  - Commerce Media
   properties:
   - type: Documentation
     url: https://developers.skai.io/
   - type: APIReference
     url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-api-openapi.yml
+  - type: Overlay
+    url: overlays/skai-kenshoo-api-overlay.yaml
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- name: Skai MCP Servers
+  description: >-
+    First-party hosted, remote Model Context Protocol servers exposing the Skai platform to AI
+    assistants. The Reporting MCP is read-only and publishes five tools — fetch_report,
+    relevant_columns, get_today, get_change_log and get_competitive_context — two of which
+    (get_change_log, get_competitive_context) have no REST equivalent. The Operations MCP
+    carries write access for bid, budget and status changes at scale, with preview and approval
+    before anything is applied. Authentication is OAuth 2.0 against login.kenshoo.com
+    (authorization_code + PKCE S256, RFC 8414 and RFC 9728 discovery published) or a 90-day
+    personal access token sent with a ks-name header. Documented clients include Claude Code,
+    Claude Desktop, Claude Web, ChatGPT, Cursor, VS Code, Windsurf and Google Gemini.
+  humanURL: https://skai-mcp-guide.vercel.app/
+  baseURL: https://mcp.kenshoo.com
+  tags:
+  - MCP
+  - Agent Native
+  - Reporting
+  - Campaign Management
+  properties:
+  - type: MCPServer
+    url: mcp/skai-kenshoo-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/skai-kenshoo-tool-crosswalk.yml
+  - type: Documentation
+    url: https://skai-mcp-guide.vercel.app/
+  - type: OAuthScopes
+    url: scopes/skai-kenshoo-scopes.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -77,6 +146,8 @@ common:
   url: https://developers.skai.io/
 - type: APIReference
   url: https://developers.kenshoo.com/
+- type: GettingStarted
+  url: https://developers.skai.io/#section/Authentication
 - type: Pricing
   url: https://skai.io/pricing/
 - type: Blog
@@ -107,3 +178,33 @@ common:
   url: security/skai-kenshoo-domain-security.yml
 - type: Lifecycle
   url: lifecycle/skai-kenshoo-lifecycle.yml
+- type: Authentication
+  url: authentication/skai-kenshoo-authentication.yml
+- type: OAuthScopes
+  url: scopes/skai-kenshoo-scopes.yml
+- type: Conventions
+  url: conventions/skai-kenshoo-conventions.yml
+- type: ErrorCatalog
+  url: errors/skai-kenshoo-problem-types.yml
+- type: DataModel
+  url: data-model/skai-kenshoo-data-model.yml
+- type: RateLimits
+  url: rate-limits/skai-kenshoo-rate-limits.yml
+- type: Plans
+  url: plans/skai-kenshoo-plans-pricing.yml
+- type: Packages
+  url: packages/skai-kenshoo-packages.yml
+- type: Components
+  url: components/skai-kenshoo-components.yml
+- type: WellKnown
+  url: well-known/skai-kenshoo-well-known.yml
+- type: LLMsTxt
+  url: llms/skai-kenshoo-llms.txt
+- type: MCPServer
+  url: mcp/skai-kenshoo-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/skai-kenshoo-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/skai-kenshoo-api-overlay.yaml

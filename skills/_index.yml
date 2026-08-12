@@ -1,0 +1,49 @@
+generated: '2026-08-12'
+method: generated
+source: >-
+  openapi/skai-kenshoo-api-openapi.yml (Skai's published OpenAPI 3.0.0),
+  mcp/skai-kenshoo-mcp.yml, conventions/skai-kenshoo-conventions.yml and
+  errors/skai-kenshoo-problem-types.yml. Skai publishes no AGENTS.md and no packaged agent
+  skills of its own; these are authored by API Evangelist and grounded exclusively in
+  operationIds verified present in the saved spec.
+provider_published_skills: false
+skill_count: 4
+skills:
+- name: skai-authenticate
+  file: skai-kenshoo-authenticate.md
+  summary: >-
+    Mint and cache a Skai access token by exchanging the permanent refresh token, and
+    understand why the REST API is not OAuth.
+  operations: [getAccessToken]
+  prerequisite_for: [skai-pull-performance-report, skai-bulk-update-entities]
+- name: skai-pull-performance-report
+  file: skai-kenshoo-pull-performance-report.md
+  summary: >-
+    Discover account-specific columns, choose sync vs async, pick the right breakdown_type, run
+    the report and download the zipped result.
+  operations: [getAvailableColumns, getRelevantColumns, fetchReport, asyncAnalysisReport,
+    getAsyncReportStatus, downloadAsyncReport]
+- name: skai-bulk-update-entities
+  file: skai-kenshoo-bulk-update-entities.md
+  summary: >-
+    Change bids, budgets, statuses and targeting at scale through Bulk Update, track the job,
+    and handle partial success safely on an API with no idempotency.
+  operations: [bulkUpdate, getJobStatus, getJobResults, getCampaigns, updateCampaigns,
+    getAdGroups, updateAdGroups]
+- name: skai-connect-mcp
+  file: skai-kenshoo-connect-mcp.md
+  summary: >-
+    Connect an assistant to the Reporting and Operations MCP servers, choose between OAuth and
+    a 90-day PAT, and keep the read/write boundary intact.
+  operations: []
+  surface: mcp
+cross_cutting_rules_embedded:
+- 'Rate limit: 60 requests/minute and 2,000/hour PER USER; 429 on exhaustion with no
+  Retry-After and no 429 declared on any operation.'
+- 'No idempotency of any kind — writes are not safely replayable, and a retry after HTTP 207
+  re-applies rows that already succeeded.'
+- 'No webhooks — long-running work is a job the client must poll.'
+- 'Error envelope is Skai ApiResponse ({status, entities[{id, success, errors[]}]}), not
+  RFC 9457, and no error-code registry is published.'
+- 'The ks account parameter scopes 51 operations and is separate from the token.'
+- 'Every entity carries both a Skai integer id and the publisher channel id.'

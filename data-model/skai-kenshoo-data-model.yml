@@ -1,0 +1,243 @@
+generated: '2026-08-12'
+method: derived
+source: >-
+  openapi/skai-kenshoo-api-openapi.yml — 155 component schemas, their $ref graph and their
+  id-reference fields (profile_id, campaign_id, ad_group_id, portfolio_id, channel_*_id),
+  cross-checked against the reportable entity table Skai publishes at https://developers.skai.io/
+note: >-
+  The Skai object graph is an advertising hierarchy replicated across every publisher, plus a
+  parallel Meta-specific branch that does not share schemas with the main branch. Every entity
+  carries BOTH a Skai-internal integer id AND the publisher's own identifier
+  (channel_campaign_id, channel_ad_group_id, channel_account_id) — the dual-identity design is
+  the core of the model and the thing an integrator must understand first.
+identity:
+  internal_id:
+    field: id
+    type: integer (int64)
+    description: Skai's own surrogate key for the entity.
+  channel_id:
+    fields: [channel_campaign_id, channel_ad_group_id, channel_account_id, channel_id]
+    type: string
+    description: >-
+      The publisher's native identifier for the same object (Google Ads, Amazon Ads, Meta,
+      Walmart, etc.). Most filter parameters accept either.
+  tenancy:
+    fields: [ks, agency_id, profile_id]
+    description: >-
+      `ks` (account/server ID) scopes almost every request; agency_id scopes the access token;
+      profile_id scopes entities within an account.
+  prefixes: none
+  prefixes_note: >-
+    Skai does not use typed id prefixes (no cmp_, no ag_). IDs are bare integers, so an id
+    alone does not identify its entity type.
+entities:
+- name: Agency
+  description: Top-level tenant grouping in the Skai platform; the context an access token is
+    minted for.
+  key: agency_id
+  schemas: [TestStructureDTO, MasterAccount]
+  operations: [getAgencyBrands, getTopmostParent, getAgencyKsApps]
+- name: Account (KS)
+  description: >-
+    A Skai server/account instance, identified by the ks name (e.g. ks1234). Not modelled as
+    a schema — it is a required query parameter on 51 operations.
+  key: ks
+  operations: [getAccountData, getSpendData, getAddonsData]
+- name: Profile
+  description: >-
+    A configuration container within an account holding currency, display and landing URLs,
+    and serving as the parent scope for campaigns and portfolios.
+  key: profile_id
+  schemas: [Profile, EditProfile, SourceProfile, CustomerProfile]
+  operations: [createProfile, updateProfile]
+- name: Portfolio
+  description: >-
+    A budget aggregation and pacing unit spanning campaigns. Carries business cycle, rollover,
+    monitor metrics and bid-strategy settings.
+  key: id
+  schemas: [createPortfolio, editPortfolio, GetPortfolioEntitySuccessResponse]
+  operations: [getPortfolios, createPortfolios, updatePortfolios, getManualPacing,
+    updateManualPacing]
+- name: Campaign
+  description: >-
+    Publisher campaign. Holds budget, budget_type, search_bid, content_bid, status, dates,
+    campaign_type and shopping settings.
+  key: id
+  schemas: [CampaignDTO, editCampaign, GetCampaignEntitySuccessResponse]
+  operations: [getCampaigns, createCampaigns, updateCampaigns]
+- name: AdGroup
+  description: Publisher ad group / ad set. Holds bid, bidding_method, budget, status, dates.
+  key: id
+  schemas: [AdGroupDTO, getAdGroupEntitySuccessResponse]
+  operations: [getAdGroups, createAdGroups, updateAdGroups]
+- name: Ad
+  description: Individual creative under an ad group.
+  key: id
+  schemas: [ad, adDTO]
+  operations: [createAds]
+- name: ProductGroup
+  description: Product grouping for Shopping and Pinterest Shopping campaigns.
+  schemas: []
+  operations: [createProductGroups]
+- name: MetaCampaign
+  description: >-
+    Meta (Facebook/Instagram) campaign. A SEPARATE schema branch from CampaignDTO — different
+    fields, different endpoints (/api/v2/campaigns), different id semantics (channel_id +
+    account_id).
+  schemas: [facebookCampaign, facebookCampaignBid, facebookCampaignBudget, facebookCampaignType,
+    getFacebookCampaignApiResponse]
+  operations: [getCampaignTags, updateCampaignTags]
+- name: MetaAdGroup
+  schemas: [FacebookAdGroupDTO, facebookAdgroupType, facebookFrequencySpec, facebookImpressionCaps]
+  operations: [getAdGroupTags, updateAdGroupTags]
+- name: MetaAd
+  schemas: [facebookAdCreative, facebookEditAdCreative, facebookAdCreativeDTO, facebookAdBid,
+    facebookAdType, facebookPromotedObject]
+  operations: [getAdsTags, updateAdsTags]
+- name: DynamicColumn
+  description: >-
+    Customer-defined custom column (formula-based calculated metric) bound to an entity_type
+    and allow-listed to profiles.
+  schemas: [DynamicColumn, DynamicColumnsResponse, GetDynamicColumnsResponse]
+  operations: [getDynamicColumns, createDynamicColumns, editDynamicColumns, deleteDynamicColumns]
+- name: Report
+  description: >-
+    A report request/response. Synchronous or asynchronous; async execution is identified by
+    execution_id and downloads as a zip.
+  schemas: [asyncReportRequest, asyncReportByIdRequest, asyncReportFusionField,
+    asyncReportStructureField, ReportFilter, ReportResponseStructure, ReportApiResponseDTO,
+    reportDestination, QueryFilter, GroupDTO]
+  operations: [fetchReport, asyncAnalysisReport, runAsyncReport, runAsyncReportById,
+    getAsyncReportStatus, downloadAsyncReport, getAvailableColumns, getRelevantColumns]
+- name: Job
+  description: >-
+    Handle for any operation taking more than a few seconds — bulk updates and async reports.
+    Polled for status, then for a results file.
+  key: job_id
+  schemas: [reportsJob]
+  operations: [getJobStatus, getJobResults, bulkUpdate]
+- name: DataSource
+  description: >-
+    Incrementality/measurement data source, with data-load tasks, source-file uploads, FTP
+    users and request workflow.
+  key: data_source_id
+  operations: [createDataSource, updateDataSource, getDataSources, getDataSourceStatus,
+    createDataLoadTask, getDataLoadTask, uploadSourceFile, createDataSourceRequests]
+- name: Test
+  description: Incrementality test, its monitoring data, activation instructions and results.
+  key: test_id
+  schemas: [TestStructureDTO, TestCampaignDTO, ApiResponseTestDTO, SummaryReportDTO]
+  operations: [getTestStatuses, getTestStatusById, getTestStatusByAlgoType, endTest,
+    getActivationInstructions, updateActivationInstructions]
+- name: BudgetOversight
+  description: Pacing-monitor plan attached to a homepage scope, with currencies and filters.
+  operations: [getBudgetOversight, createBudgetOversight, updateBudgetOversight,
+    getBudgetOversightByOwner, getBudgetOversightWidgetData]
+- name: Chat
+  description: >-
+    Conversational AI surface (Celeste) — chats and their exchanges, with an abort control.
+  key: chat_id
+  operations: [listChats, createChat, deleteChat, listChatExchanges, createChatExchange,
+    getChatExchange, abortChatExchange]
+- name: Spotlight
+  description: Insight/segment surface with its own AI conversation endpoints and export.
+  operations: [createSpotlight, exportSpotlight, markSpotlightRead, getSpotlightMetrics,
+    spotlightPivotDrillDown, createSpotlightAiConversation, askSpotlightAiQuestion,
+    getSpotlightAiAnswer]
+relationships:
+- from: Agency
+  to: Account
+  type: has_many
+  via: agency_id
+- from: Account
+  to: Profile
+  type: has_many
+  via: ks
+- from: Profile
+  to: Campaign
+  type: has_many
+  via: profile_id
+  evidence: CampaignDTO.profile_id
+- from: Profile
+  to: Portfolio
+  type: has_many
+  via: profile_id
+  evidence: createPortfolio.profile_id, editPortfolio.profile_id
+- from: Profile
+  to: AdGroup
+  type: has_many
+  via: profile_id
+  evidence: AdGroupDTO.profile_id
+- from: Campaign
+  to: AdGroup
+  type: has_many
+  via: campaign_id
+  evidence: AdGroupDTO.campaign_id and AdGroupDTO.channel_campaign_id
+- from: AdGroup
+  to: Ad
+  type: has_many
+  via: ad_group_id
+  evidence: adDTO.ad_group_id, ad.ad_group_id
+- from: Portfolio
+  to: Campaign
+  type: has_many
+  via: portfolio_id
+  evidence: facebookCampaignType.portfolio_id
+  confidence: medium
+  note: >-
+    The Portfolio -> Campaign link is asserted in prose (portfolios are "budget aggregations
+    across campaigns") but the only explicit portfolio_id field found sits on the Meta
+    campaign-type schema. The main CampaignDTO does not carry portfolio_id.
+- from: Campaign
+  to: ChannelAccount
+  type: belongs_to
+  via: channel_account_id
+  evidence: CampaignDTO.channel_account_id, editCampaign.channel_account_id
+- from: MetaCampaign
+  to: MetaAdGroup
+  type: has_many
+  via: campaign_id
+  evidence: FacebookAdGroupDTO.campaign_id
+- from: MetaAd
+  to: MetaPage
+  type: belongs_to
+  via: page_id
+  evidence: facebookAdCreative.page_id, facebookPromotedObject.page_id
+- from: Test
+  to: Campaign
+  type: has_many
+  via: campaign_external_id
+  evidence: TestCampaignDTO.campaign_external_id, TestCampaignDTO.profile_id
+- from: Job
+  to: Report
+  type: has_many
+  via: job_id
+  evidence: reportsJob.reports
+reportable_entities:
+  source: https://developers.skai.io/ (Overview -> Reportable entity types)
+  note: >-
+    The reporting surface exposes entity types that are NOT all first-class CRUD resources.
+    KEYWORD, PRODUCT_ASSET and PRODUCT_TARGETING are reportable and bulk-updatable but have no
+    dedicated REST create/read/update operations.
+  entities:
+  - {type: CAMPAIGN, publishers: all, crud: true}
+  - {type: ADGROUP, publishers: all, crud: true}
+  - {type: KEYWORD, publishers: 'Search, Retail Media', crud: false}
+  - {type: AD, publishers: all, crud: partial}
+  - {type: PRODUCT_ASSET, publishers: 'Retail Media, Search Shopping', crud: false}
+  - {type: PRODUCT_TARGETING, publishers: Retail Media, crud: false}
+  - {type: PORTFOLIO, publishers: all, crud: true}
+findings:
+- >-
+  The Meta branch is a parallel model, not a specialization. facebookCampaign shares no schema
+  with CampaignDTO and lives on /api/v2. Client code cannot treat a campaign uniformly across
+  publishers.
+- >-
+  There are no /{id} resource paths for the core entities. Reads, creates and updates all
+  address the collection (GET/POST/PUT /api/v1/campaigns) with identity in the query string or
+  body, so the model has no canonical per-entity URL to link to or cache against.
+- >-
+  Full attribute coverage lives in Bulk Update, not in the typed CRUD schemas. Skai states the
+  campaign/ad-group/ad endpoints cover "common attributes" only and directs anything richer
+  (targeting, extensions, dimension labels, publisher-specific fields) to
+  POST /api/v1/bulk_update — so the OpenAPI schemas do not describe the full object.
