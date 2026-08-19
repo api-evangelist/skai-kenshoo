@@ -1,0 +1,3784 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Skai API",
+    "version": "1.0.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Default",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "get addon usage by id and billing account id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/add-ons/:addon_id"
+          },
+          "docs": "get addon usage by id and billing account id"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/add-ons/{addon_id}",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/add-ons/:addon_id"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "create add ons request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/add-ons-request"
+          },
+          "docs": "create add ons request"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/{billingAccountId}/add-ons-request",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/add-ons-request"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "create add ons request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/accounts/addon-request"
+          },
+          "docs": "create add ons request"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/addon-request",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/addon-request"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get account addons data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/addons"
+          },
+          "docs": "get account addons data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/{billingAccountId}/addons",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/addons"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get addons usage by billing account id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/add-ons"
+          },
+          "docs": "get addons usage by billing account id"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/add-ons",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/add-ons"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get account spend data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/accounts/spend"
+          },
+          "docs": "get account spend data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/spend",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/spend"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "update add-on usage data",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/add-ons/:billingAccountId/usage"
+          },
+          "docs": "update add-on usage data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/add-ons/{billingAccountId}/usage",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/add-ons/:billingAccountId/usage"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get topmost parent by billing account id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/accounts/topmost-parent"
+          },
+          "docs": "get topmost parent by billing account id"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/topmost-parent",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/topmost-parent"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get account addons data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/accounts/addons"
+          },
+          "docs": "get account addons data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/addons",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/addons"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get account plan overview data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/data"
+          },
+          "docs": "get account plan overview data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/{billingAccountId}/data",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/data"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get account spend data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/spend"
+          },
+          "docs": "get account spend data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/accounts/{billingAccountId}/spend",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/accounts/:billingAccountId/spend"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get relevant columns",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/relevant-columns"
+          },
+          "docs": "Get relevant columns"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/relevant-columns",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/relevant-columns"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "request spotlight and segments data",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/spotlight"
+          },
+          "docs": "request spotlight and segments data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlight",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlight"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "ask a question",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/ai/conversation/message"
+          },
+          "docs": "ask a question"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlights/ai/conversation/message",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/ai/conversation/message"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "request spotlight and segments data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/available_metrics"
+          },
+          "docs": "request spotlight and segments data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlights/available_metrics",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/available_metrics"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "update spotlight read status",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/spotlight/read-status"
+          },
+          "docs": "update spotlight read status"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlight/read-status",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlight/read-status"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "ask a question",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/ai/conversation/message/:messageId"
+          },
+          "docs": "ask a question"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlights/ai/conversation/message/{messageId}",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/ai/conversation/message/:messageId"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "request conversation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/ai/conversation"
+          },
+          "docs": "request conversation"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlights/ai/conversation",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlights/ai/conversation"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "exports spotlights of specific KS, view and profiles.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/spotlight/export"
+          },
+          "docs": "exports spotlights of specific KS, view and profiles."
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlight/export",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlight/export"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "request spotlight pivot drill down",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/spotlight/pivot-drill-down"
+          },
+          "docs": "request spotlight pivot drill down"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/spotlight/pivot-drill-down",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/spotlight/pivot-drill-down"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "update data source",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources/:data_source_id",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "data_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "update data source"
+        },
+        {
+          "info": {
+            "name": "update data source options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources/:data_source_id"
+          },
+          "docs": "update data source options"
+        },
+        {
+          "info": {
+            "name": "get data source info by name",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources/info",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "get data source info by name"
+        },
+        {
+          "info": {
+            "name": "get data source info by name options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources/info"
+          },
+          "docs": "get data source info by name options"
+        },
+        {
+          "info": {
+            "name": "get data load task new",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_load_tasks/:data_load_task_id",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "data_load_task_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "get data load task new"
+        },
+        {
+          "info": {
+            "name": "incrementality data loader options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_load_tasks/:data_load_task_id"
+          },
+          "docs": "incrementality data loader options"
+        },
+        {
+          "info": {
+            "name": "Upload source file to S3",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/files/upload"
+          },
+          "docs": "Upload source file to S3"
+        },
+        {
+          "info": {
+            "name": "incrementality data loader options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/files/upload"
+          },
+          "docs": "incrementality data loader options"
+        },
+        {
+          "info": {
+            "name": "create new data load task - new",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_load_tasks",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "create new data load task - new"
+        },
+        {
+          "info": {
+            "name": "incrementality data loader options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_load_tasks"
+          },
+          "docs": "incrementality data loader options"
+        },
+        {
+          "info": {
+            "name": "create new data load task",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/data_load_tasks"
+          },
+          "docs": "create new data load task"
+        },
+        {
+          "info": {
+            "name": "incrementality data loader options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/data_load_tasks"
+          },
+          "docs": "incrementality data loader options"
+        },
+        {
+          "info": {
+            "name": "get data status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources/:data_source_id/status",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "data_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "get data status"
+        },
+        {
+          "info": {
+            "name": "get data status options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources/:data_source_id/status"
+          },
+          "docs": "get data status options"
+        },
+        {
+          "info": {
+            "name": "create new data source",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "create new data source"
+        },
+        {
+          "info": {
+            "name": "create new data source options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies/:agency_id/data_sources"
+          },
+          "docs": "create new data source options"
+        },
+        {
+          "info": {
+            "name": "get data load task",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/data_load_tasks/:task_id"
+          },
+          "docs": "get data load task"
+        },
+        {
+          "info": {
+            "name": "incrementality data loader options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/data_load_tasks/:task_id"
+          },
+          "docs": "incrementality data loader options"
+        },
+        {
+          "info": {
+            "name": "Get test result explanation file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v2/agencies/:agency_id/monitoring/results-explanation-file",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get test result explanation file"
+        },
+        {
+          "info": {
+            "name": "Get test result explanation file",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v2/agencies/:agency_id/monitoring/results-explanation-file"
+          },
+          "docs": "Get test result explanation file"
+        },
+        {
+          "info": {
+            "name": "Abort chat exchange",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges/:exchange_id/abort"
+          },
+          "docs": "Abort chat exchange"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/chats/{chat_id}/exchanges/{exchange_id}/abort",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges/:exchange_id/abort"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get Chat with its exchanges",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges"
+          },
+          "docs": "Get Chat with its exchanges"
+        },
+        {
+          "info": {
+            "name": "Create chat exchange",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges"
+          },
+          "docs": "Create chat exchange"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/chats/{chat_id}/exchanges",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get user Chats",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/chats"
+          },
+          "docs": "Get user Chats"
+        },
+        {
+          "info": {
+            "name": "Create chat",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/chats"
+          },
+          "docs": "Create chat"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/chats",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/chats"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get answer for exchange",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges/:exchange_id"
+          },
+          "docs": "Get answer for exchange"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/chats/{chat_id}/exchanges/{exchange_id}",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id/exchanges/:exchange_id"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Delete chat",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id"
+          },
+          "docs": "Delete chat"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/chats/{chat_id}",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/chats/:chat_id"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get manual pacing settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/portfolio-manager/:ksname/portfolios/:portfolioId/manual-pacing"
+          },
+          "docs": "Get manual pacing settings"
+        },
+        {
+          "info": {
+            "name": "Update manual pacing settings",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/portfolio-manager/:ksname/portfolios/:portfolioId/manual-pacing"
+          },
+          "docs": "Update manual pacing settings"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/portfolio-manager/{ksname}/portfolios/{portfolioId}/manual-pacing",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/portfolio-manager/:ksname/portfolios/:portfolioId/manual-pacing"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get planned budgets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/portfolio-manager/:ksname/portfolios/:portfolioId/planned-budgets"
+          },
+          "docs": "Get planned budgets"
+        },
+        {
+          "info": {
+            "name": "Update planned budgets",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/portfolio-manager/:ksname/portfolios/:portfolioId/planned-budgets"
+          },
+          "docs": "Update planned budgets"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/portfolio-manager/{ksname}/portfolios/{portfolioId}/planned-budgets",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/portfolio-manager/:ksname/portfolios/:portfolioId/planned-budgets"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get a new API access token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/token"
+          },
+          "docs": "Get a new API access token"
+        },
+        {
+          "info": {
+            "name": "getTemplate",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/templates/:type/:id"
+          }
+        },
+        {
+          "info": {
+            "name": "getErrorReport",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/error_report/:plan_id/:execution_uuid"
+          }
+        },
+        {
+          "info": {
+            "name": "getOperatorsConfig",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/operators"
+          }
+        },
+        {
+          "info": {
+            "name": "getFunctions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/functions"
+          }
+        },
+        {
+          "info": {
+            "name": "previewFormulas",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/preview/formulas"
+          }
+        },
+        {
+          "info": {
+            "name": "getPlans",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/plans"
+          }
+        },
+        {
+          "info": {
+            "name": "previewTemplate",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/preview/:template_type"
+          }
+        },
+        {
+          "info": {
+            "name": "listTemplates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/templates/:type"
+          }
+        },
+        {
+          "info": {
+            "name": "createTemplate",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/templates/:type"
+          }
+        },
+        {
+          "info": {
+            "name": "updateTemplate",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/templates/:type"
+          }
+        },
+        {
+          "info": {
+            "name": "patchTemplate",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://services.kenshoo.com/api/v1/templates/:type"
+          }
+        },
+        {
+          "info": {
+            "name": "get test status by algo type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/:test_id/algo-types/:algo_type/datasources/:datasource_id/monitoring-data"
+          },
+          "docs": "get test status by algo type"
+        },
+        {
+          "info": {
+            "name": "get test status options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/:test_id/algo-types/:algo_type/datasources/:datasource_id/monitoring-data"
+          },
+          "docs": "get test status options"
+        },
+        {
+          "info": {
+            "name": "Get all test statuses per agency id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/statuses",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get all test statuses per agency id"
+        },
+        {
+          "info": {
+            "name": "Get all test statuses options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/statuses"
+          },
+          "docs": "Get all test statuses options"
+        },
+        {
+          "info": {
+            "name": "get test status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/:test_id",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "test_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "get test status"
+        },
+        {
+          "info": {
+            "name": "get test status options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/:test_id"
+          },
+          "docs": "get test status options"
+        },
+        {
+          "info": {
+            "name": "export monitoring data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/:test_id/data",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "test_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "export monitoring data"
+        },
+        {
+          "info": {
+            "name": "export monitoring data options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/agencies/:agency_id/monitoring/tests/:test_id/data"
+          },
+          "docs": "export monitoring data options"
+        },
+        {
+          "info": {
+            "name": "Fetch rotations by ksName and adGroupIds",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/rotations"
+          },
+          "docs": "Fetch rotations by ksName and adGroupIds"
+        },
+        {
+          "info": {
+            "name": "Save rotations in bulk",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/rotations"
+          },
+          "docs": "Save rotations in bulk"
+        },
+        {
+          "info": {
+            "name": "Delete rotations in bulk",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://services.kenshoo.com/api/v1/rotations"
+          },
+          "docs": "Delete rotations in bulk"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/rotations",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/rotations"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get widget data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v2/budget_oversight/([0-9]+)/widget_data"
+          },
+          "docs": "Get widget data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v2/budget_oversight/([0-9]+)/widget_data",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v2/budget_oversight/([0-9]+)/widget_data"
+          }
+        },
+        {
+          "info": {
+            "name": "get activation instructions result",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/tests/:testId/activationInstructions"
+          },
+          "docs": "get activation instructions result"
+        },
+        {
+          "info": {
+            "name": "create activation instructions",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/tests/:testId/activationInstructions"
+          },
+          "docs": "create activation instructions"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/tests/{testId}/activationInstructions",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/tests/:testId/activationInstructions"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get agency brands",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/brands/:agencyId"
+          },
+          "docs": "get agency brands"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/brands/{agencyId}",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/brands/:agencyId"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "polling activation instructions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/tasks/:taskId"
+          },
+          "docs": "polling activation instructions"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/tasks/{taskId}",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/tasks/:taskId"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "create agency brand",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/brands"
+          },
+          "docs": "create agency brand"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/brands",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/brands"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "update data source",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v2/incrementality/agencies/:agency_id/data_sources/:data_source_id",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "data_source_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "update data source"
+        },
+        {
+          "info": {
+            "name": "update data source options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v2/incrementality/agencies/:agency_id/data_sources/:data_source_id"
+          },
+          "docs": "update data source options"
+        },
+        {
+          "info": {
+            "name": "create new data source",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v2/incrementality/agencies/:agency_id/data_sources",
+            "params": [
+              {
+                "name": "agency_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "create new data source"
+        },
+        {
+          "info": {
+            "name": "create new data source options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v2/incrementality/agencies/:agency_id/data_sources"
+          },
+          "docs": "create new data source options"
+        },
+        {
+          "info": {
+            "name": "AutomatedAction",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/automated_actions",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "AutomatedAction"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/reports",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/reports",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ]
+          },
+          "docs": "for cross origin requests"
+        },
+        {
+          "info": {
+            "name": "Delete metric meta data",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://services.kenshoo.com/api/v1/metric-meta-data",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ]
+          },
+          "docs": "Delete metric meta data"
+        },
+        {
+          "info": {
+            "name": "End test",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/tests/:testId/end"
+          },
+          "docs": "End test"
+        },
+        {
+          "info": {
+            "name": "Export data source data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/dataSources/agency/:agencyId/:dataSourceId/data"
+          },
+          "docs": "Export data source data"
+        },
+        {
+          "info": {
+            "name": "incrementality data source manager options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/dataSources/agency/:agencyId/:dataSourceId/data"
+          },
+          "docs": "incrementality data source manager options"
+        },
+        {
+          "info": {
+            "name": "Get ks-agency pairs with type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies-ks"
+          },
+          "docs": "Get ks-agency pairs with type"
+        },
+        {
+          "info": {
+            "name": "incrementality data source manager options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/agencies-ks"
+          },
+          "docs": "incrementality data source manager options"
+        },
+        {
+          "info": {
+            "name": "Create data source request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ds-requests/agency/:agencyId"
+          },
+          "docs": "Create data source request"
+        },
+        {
+          "info": {
+            "name": "Create data source request",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ds-requests/agency/:agencyId"
+          },
+          "docs": "Create data source request"
+        },
+        {
+          "info": {
+            "name": "Get agency data sources",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/dataSources/agency/:agencyId"
+          },
+          "docs": "Get agency data sources"
+        },
+        {
+          "info": {
+            "name": "incrementality data source manager options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/dataSources/agency/:agencyId"
+          },
+          "docs": "incrementality data source manager options"
+        },
+        {
+          "info": {
+            "name": "Create ftp user",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ftp-users/agency/:agencyId"
+          },
+          "docs": "Create ftp user"
+        },
+        {
+          "info": {
+            "name": "Create ftp user",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ftp-users/agency/:agencyId"
+          },
+          "docs": "Create ftp user"
+        },
+        {
+          "info": {
+            "name": "Get data source request",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ds-requests/:dataSourceRequestId"
+          },
+          "docs": "Get data source request"
+        },
+        {
+          "info": {
+            "name": "Create data source request",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ds-requests/:dataSourceRequestId"
+          },
+          "docs": "Create data source request"
+        },
+        {
+          "info": {
+            "name": "Update data source request",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ds-requests/:dataSourceRequestId"
+          },
+          "docs": "Update data source request"
+        },
+        {
+          "info": {
+            "name": "Get data source request",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/incrementality/ds-requests/:dataSourceRequestId"
+          },
+          "docs": "Get data source request"
+        },
+        {
+          "info": {
+            "name": "Get currencies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/budget_oversight/currencies"
+          },
+          "docs": "Get currencies"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/budget_oversight/currencies",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/budget_oversight/currencies"
+          }
+        },
+        {
+          "info": {
+            "name": "Get home-page user permissions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/homepage_auth/user_permissions"
+          },
+          "docs": "Get home-page user permissions"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/homepage_auth/user_permissions",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/homepage_auth/user_permissions"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "get all configuration homepage values by type and field.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/configuration/:configuration_type/:configuration_field/homepage_values"
+          },
+          "docs": "get all configuration homepage values by type and field."
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/configuration/{configuration_type}/{configuration_field}/homepage_values",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/configuration/:configuration_type/:configuration_field/homepage_values"
+          }
+        },
+        {
+          "info": {
+            "name": "get homepage scope with evaluated profiles.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/homepage_context/([0-9]+)/scope"
+          },
+          "docs": "get homepage scope with evaluated profiles."
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/homepage_context/([0-9]+)/scope",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/homepage_context/([0-9]+)/scope"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get available filters",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/budget_oversight/available_filters"
+          },
+          "docs": "Get available filters"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/budget_oversight/available_filters",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/budget_oversight/available_filters"
+          }
+        },
+        {
+          "info": {
+            "name": "Get budget oversight.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/homepage/([0-9]+)/budget_oversight"
+          },
+          "docs": "Get budget oversight."
+        },
+        {
+          "info": {
+            "name": "Create budget oversight.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/homepage/([0-9]+)/budget_oversight"
+          },
+          "docs": "Create budget oversight."
+        },
+        {
+          "info": {
+            "name": "Update budget oversight.",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/homepage/([0-9]+)/budget_oversight"
+          },
+          "docs": "Update budget oversight.\n"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/homepage/([0-9]+)/budget_oversight",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/homepage/([0-9]+)/budget_oversight"
+          }
+        },
+        {
+          "info": {
+            "name": "best practices info",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/homepage_context/([0-9]+)/best_practice_info"
+          },
+          "docs": "best practices info"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/homepage_context/([0-9]+)/best_practice_info",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/homepage_context/([0-9]+)/best_practice_info"
+          },
+          "docs": "For cross-origin requests"
+        },
+        {
+          "info": {
+            "name": "Get is pacing monitor name unique",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/homepage/([0-9]+)/budget_oversight/is_name_unique"
+          },
+          "docs": "Get is pacing monitor name unique"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/homepage/([0-9]+)/budget_oversight/is_name_unique",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/homepage/([0-9]+)/budget_oversight/is_name_unique"
+          }
+        },
+        {
+          "info": {
+            "name": "Get widget data",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/budget_oversight/([0-9]+)/widget_data"
+          },
+          "docs": "Get widget data"
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/budget_oversight/([0-9]+)/widget_data",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/budget_oversight/([0-9]+)/widget_data"
+          }
+        },
+        {
+          "info": {
+            "name": "get all configuration values by type and field.",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/configuration/:configuration_type/:configuration_field/values"
+          },
+          "docs": "get all configuration values by type and field."
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/configuration/{configuration_type}/{configuration_field}/values",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/configuration/:configuration_type/:configuration_field/values"
+          }
+        },
+        {
+          "info": {
+            "name": "Get all the budget oversight plans owned by the current user",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/pacing_monitor/budget_oversight/by_owner"
+          },
+          "docs": "Get all the budget oversight plans owned by the current user"
+        },
+        {
+          "info": {
+            "name": "Export Media plan.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/pacing_monitor/media_plan/export"
+          },
+          "docs": "Export Media plan."
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/pacing_monitor/media_plan/export",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/pacing_monitor/media_plan/export"
+          }
+        },
+        {
+          "info": {
+            "name": "Import Media plan.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/pacing_monitor/media_plan/import"
+          },
+          "docs": "Import Media plan."
+        },
+        {
+          "info": {
+            "name": "OPTIONS /api/v1/pacing_monitor/media_plan/import",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/pacing_monitor/media_plan/import"
+          }
+        },
+        {
+          "info": {
+            "name": "Create new item sets",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/itemsets"
+          },
+          "docs": "Create new item sets"
+        },
+        {
+          "info": {
+            "name": "Create item sets options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/itemsets"
+          },
+          "docs": "Create item sets options"
+        },
+        {
+          "info": {
+            "name": "Create AmazonDSP Campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/order/dsp"
+          },
+          "docs": "Create AmazonDSP Campaign"
+        },
+        {
+          "info": {
+            "name": "Edit AmazonDSP Campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/order/dsp"
+          },
+          "docs": "Edit AmazonDSP Campaign"
+        },
+        {
+          "info": {
+            "name": "AmazonDSP Campaign creation",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/order/dsp"
+          },
+          "docs": "AmazonDSP Campaign creation"
+        },
+        {
+          "info": {
+            "name": "Get AmazonDSP Campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/order/dsp/:orderId",
+            "params": [
+              {
+                "name": "orderId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get AmazonDSP Campaign"
+        },
+        {
+          "info": {
+            "name": "Edit AmazonDSP Campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/order/dsp/:orderId",
+            "params": [
+              {
+                "name": "orderId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Edit AmazonDSP Campaign"
+        },
+        {
+          "info": {
+            "name": "Get AmazonDSP Campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/order/dsp/:orderId"
+          },
+          "docs": "Get AmazonDSP Campaign"
+        },
+        {
+          "info": {
+            "name": "Get line item",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/:lineItemId",
+            "params": [
+              {
+                "name": "lineItemId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get line item"
+        },
+        {
+          "info": {
+            "name": "Get line-item",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/:lineItemId"
+          },
+          "docs": "Get line-item"
+        },
+        {
+          "info": {
+            "name": "Get AmazonDSP Ad Group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp/:lineItemId",
+            "params": [
+              {
+                "name": "lineItemId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get AmazonDSP Ad Group"
+        },
+        {
+          "info": {
+            "name": "Edit AmazonDSP Ad Group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp/:lineItemId",
+            "params": [
+              {
+                "name": "lineItemId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Edit AmazonDSP Ad Group"
+        },
+        {
+          "info": {
+            "name": "Get AmazonDSP Ad Group",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp/:lineItemId"
+          },
+          "docs": "Get AmazonDSP Ad Group"
+        },
+        {
+          "info": {
+            "name": "get available categories for line item",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp/productCategories"
+          },
+          "docs": "get available categories for line item"
+        },
+        {
+          "info": {
+            "name": "get available categories for line item",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp/productCategories"
+          },
+          "docs": "get available categories for line item"
+        },
+        {
+          "info": {
+            "name": "Get AmazonDSP inventories",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/inventory"
+          },
+          "docs": "Get AmazonDSP inventories"
+        },
+        {
+          "info": {
+            "name": "Create inventories options",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/inventory"
+          },
+          "docs": "Create inventories options"
+        },
+        {
+          "info": {
+            "name": "Create AmazonDSP Ad Group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp"
+          },
+          "docs": "Create AmazonDSP Ad Group"
+        },
+        {
+          "info": {
+            "name": "Edit AmazonDSP Ad Group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp"
+          },
+          "docs": "Edit AmazonDSP Ad Group"
+        },
+        {
+          "info": {
+            "name": "AmazonDSP Ad Group creation",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp"
+          },
+          "docs": "AmazonDSP Ad Group creation"
+        },
+        {
+          "info": {
+            "name": "Create AmazonDSP Ad Group async",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp-async"
+          },
+          "docs": "Create AmazonDSP Ad Group async"
+        },
+        {
+          "info": {
+            "name": "AmazonDSP Ad Group creation async",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp-async"
+          },
+          "docs": "AmazonDSP Ad Group creation async"
+        },
+        {
+          "info": {
+            "name": "Edit AmazonDSP Ad Group async",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp-async/:lineItemId",
+            "params": [
+              {
+                "name": "lineItemId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Edit AmazonDSP Ad Group async"
+        },
+        {
+          "info": {
+            "name": "Get AmazonDSP Ad Group async",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/entities-creator/line-item/dsp-async/:lineItemId"
+          },
+          "docs": "Get AmazonDSP Ad Group async"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Profile",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Copy an existing profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/profiles",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new profile by copying an existing profile and applying all of its attributes to the new profile."
+        },
+        {
+          "info": {
+            "name": "Edit an existing profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/profiles/:profile_id",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "profile_id",
+                "value": "",
+                "type": "path",
+                "description": "The id of profile to edit"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit an existing profile"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Asynchronous Reports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Configure and run any existing report by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/reports/async/existing_report/:report_id",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "useOriginalDeliveryMethod",
+                "value": "true",
+                "type": "query",
+                "description": "Set this parameter to true for the report to be delivered to its original destination (the one that is set in the report configuration in Skai, e.g. an email address or an FTP location)"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger a run of an existing report, previously created in the Skai interface, by report ID. This is available for all report types in Skai"
+        },
+        {
+          "info": {
+            "name": "Poll report execution status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/reports/async/:execution_id/status",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "execution_id",
+                "value": "",
+                "type": "path",
+                "description": "The execution id received in response to the 'Run a Report' API call."
+              }
+            ]
+          },
+          "docs": "After calling the API to trigger a report, the Skai query will begin processing. The runtime may vary between a few seconds and an hour, depending on the scope of the report and the amount of data returned.\n\nThis API call is designed to be run at recurring polling intervals so that you can inquire from the Skai API when the report is ready. A best practice would be to run the report manually a few times to figure out the average run time before deciding on the polling interval you will use.\n\nFor"
+        },
+        {
+          "info": {
+            "name": "Configure and run a Fusion/Structure report (deprecated)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/reports/async",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Trigger a Fusion/Structure/Tracking template report run asynchronously.\n\n**For new integrations, use [POST /api/v1/reports/async/analysis](#operation/asyncAnalysisReport) instead.** This endpoint runs legacy template-based reports, which expose a fixed subset of columns and entity types. It remains fully supported for existing clients — but if you start here, you may find that columns you need later are not available through these templates. The analysis endpoint gives access to the full column "
+        },
+        {
+          "info": {
+            "name": "Configure and run an analysis grid report (recommended)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/reports/async/analysis",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Run a report asynchronously and download the results as a file. Use this instead of [Synchronous Reports](#operation/fetchReport) when your dataset exceeds 1,000 rows, or when you want to avoid blocking on a long-running query.\n\nThe request body uses the same `entity`, `fields`, `date_range`, `filters`, and `sort` structure as the synchronous report endpoint — refer to [Available Columns](#operation/getAvailableColumns) for field names and groups.\n\n#### Workflow\n\n**1. Submit** — this endpoint re"
+        },
+        {
+          "info": {
+            "name": "Download completed report file",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/reports/async/:execution_id",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "execution_id",
+                "value": "",
+                "type": "path",
+                "description": "The execution id received in response to the 'Run a Report' API call."
+              }
+            ]
+          },
+          "docs": "Once the report status polling produces a COMPLETED status, use this API to download the compressed report file."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Meta Ad Groups",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Ad Groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v2/ad_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by ad group ID.\nReturns ad groups whose IDs are included in your list.\n"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get ad groups API call allows you to retrieve ad group information.\nThe result is a list of ad group objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new ad group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v2/ad_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new ad group"
+        },
+        {
+          "info": {
+            "name": "Edit an existing ad group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v2/ad_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit an existing ad group"
+        },
+        {
+          "info": {
+            "name": "Get Ad Groups tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/ad_groups/tags",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by ad group ID.\nReturns ad groups whose IDs are included in your list.\n"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get ad group tags API call allows you to retrieve a tags assigned to ad group.\nThe result is a list of ad group tags assignment objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Edit Ad Group tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/ad_groups/tags",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit Ad Group tags"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Meta Ads",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Ads",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v2/ads",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by ad ID.\nReturns ad whose IDs are included in your list.\n"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get ads API call allows you to retrieve ad information.\nThe result is a list of ad objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new ad",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v2/ads",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new ad"
+        },
+        {
+          "info": {
+            "name": "Edit an existing ad",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v2/ads",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit an existing ad"
+        },
+        {
+          "info": {
+            "name": "Get Ads tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/ads/tags",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by ad group ID.\nReturns ad groups whose IDs are included in your list.\n"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get ad tags API call allows you to retrieve a tags assigned to ad.\nThe result is a list of Ad tags assignment objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Edit Ad tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/ads/tags",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit Ad tags"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Meta Campaigns",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get campaigns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v2/campaigns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by campaign ID.\nReturns the campaigns whose campaign IDs are included in your list.\n"
+              }
+            ]
+          },
+          "docs": "Get campaigns API call allows you to retrieve campaign information.\nThe result is a list of campaign objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v2/campaigns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new campaign"
+        },
+        {
+          "info": {
+            "name": "Edit an existing campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v2/campaigns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit an existing campaign"
+        },
+        {
+          "info": {
+            "name": "Get Campaigns tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/campaigns/tags",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by ad group ID.\nReturns ad groups whose IDs are included in your list.\n"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Get campaign tags API call allows you to retrieve a tags assigned to campaign.\nThe result is a list of Campaign tags assignment objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Edit Campaign tags",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/campaigns/tags",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit Campaign tags"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Campaign attribution window config",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get attribution window configs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/attributions",
+            "params": [
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by campaign ID.\nReturns the campaigns whose campaign IDs are included in your list.\n"
+              }
+            ]
+          },
+          "docs": "Get attribution config by Meta campaign id\n"
+        },
+        {
+          "info": {
+            "name": "Create campaign attribution configs",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/attributions",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Create campaign attribution configs"
+        },
+        {
+          "info": {
+            "name": "Update campaign attribution config",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/attributions",
+            "params": [
+              {
+                "name": "ks",
+                "value": "social",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Update campaign attribution config"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "External Reports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get External Score Providers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/external-reports",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "profileId",
+                "value": "123",
+                "type": "query",
+                "description": "Profile ID to retrieve providers for"
+              },
+              {
+                "name": "espId",
+                "value": "9",
+                "type": "query",
+                "description": "ESP ID to retrieve full config for. Pass -1 to get a blank default config."
+              }
+            ]
+          },
+          "docs": "Two variants depending on parameters provided:\n- `profileId` only → lists all ESPs for the profile (`GET /api/v1/external-reports/{profileId}`)\n- `profileId` + `espId` → returns full config for one ESP (`GET /api/v1/external-reports/config/{profileId}/{espId}`)\n\nPass `espId = -1` to retrieve a blank default config (useful as a template when creating a new provider)."
+        },
+        {
+          "info": {
+            "name": "Create a new ESP provider",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/external-reports",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "profileId",
+                "value": "123",
+                "type": "query",
+                "description": "Profile ID to create the provider under"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new External Score Provider under the given profile (`POST /api/v1/external-reports/config/{profileId}`).\nSend the full configuration in the request body. Use `GET` with `espId = -1` to get a blank config as a starting point.\n\n**Note:** GCS (Google Cloud Storage) protocol is not supported. Use the UI or multipart endpoint for GCS providers."
+        },
+        {
+          "info": {
+            "name": "Update an existing ESP provider",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/external-reports",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "profileId",
+                "value": "123",
+                "type": "query",
+                "description": "Profile ID the provider belongs to"
+              },
+              {
+                "name": "espId",
+                "value": "9",
+                "type": "query",
+                "description": "ID of the ESP to update"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Replaces the full configuration of an existing ESP (`PUT /api/v1/external-reports/config/{profileId}/{espId}`).\nProvider name cannot be changed after creation. Send the complete config object — partial updates not supported (use PATCH for that).\n\n**Note:** GCS protocol is not supported."
+        },
+        {
+          "info": {
+            "name": "Delete an ESP provider",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://services.kenshoo.com/api/v1/external-reports",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "profileId",
+                "value": "123",
+                "type": "query",
+                "description": "Profile ID the provider belongs to"
+              },
+              {
+                "name": "espId",
+                "value": "9",
+                "type": "query",
+                "description": "ID of the ESP to delete"
+              }
+            ]
+          },
+          "docs": "Permanently deletes an External Score Provider (`DELETE /api/v1/external-reports/{profileId}/{espId}`)."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Product Groups",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a new product group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/product_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create one or more product groups within a Shopping campaign ad group.\n\n**For bulk product group management** use [Bulk Update (One File)](#tag/Bulk-Update) with `bulk_update_type=PRODUCT_GROUP`."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Columns",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get custom column by name or profile",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/columns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "sourceName",
+                "value": "",
+                "type": "query",
+                "description": "The data source name. Currently, `FlexibleColumns` is the only supported value\n"
+              },
+              {
+                "name": "columnName",
+                "value": "",
+                "type": "query",
+                "description": "Filter by column name. Returns the custom columns name equals this input.\n"
+              },
+              {
+                "name": "profileId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by profile ID. Returns the custom columns assigned to this profile."
+              }
+            ]
+          },
+          "docs": "Retrieve the details of an existing custom column.\nEnter the column name in the query parameters. If the name contains spaces, replace them with 20% or send the profile ID in the query parameters.\nYou must use either the column name or profile ID parameter. You cannot use both. "
+        },
+        {
+          "info": {
+            "name": "Create custom column",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/columns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve a list of custom columns and create them in bulk, and define the profiles that are allowed to use each column. \n\nThe response contains the newly created columns, including status and an error message as relevant."
+        },
+        {
+          "info": {
+            "name": "Delete custom column",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://services.kenshoo.com/api/v1/columns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Retrieve a list of custom columns and delete them in bulk.\nThe response contains the deleted columns, including status and an error message as relevant."
+        },
+        {
+          "info": {
+            "name": "Edit profile allow list",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/columns/:columnId",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "sourceName",
+                "value": "",
+                "type": "query",
+                "description": "The data source name. Currently, `FlexibleColumns` is the only supported value\n"
+              },
+              {
+                "name": "columnId",
+                "value": "",
+                "type": "path",
+                "description": "The custom column id. Must be unique."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit the list of profiles in which a custom column can be used.\n\nThis PUT request overrides the existing profile list with the list you provide."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Jobs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Job results",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/jobs/:job_id/results/file",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "info_level",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Job results"
+        },
+        {
+          "info": {
+            "name": "Job status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/jobs/:job_id/status",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "job_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Job status"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Portfolios",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get portfolios",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/portfolios",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by portfolio ID.\nReturns the portfolios whose IDs are included in your list.\n"
+              },
+              {
+                "name": "profile_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by profile ID.\nReturns the campaigns whose profile ID equals your profile ID.\n"
+              }
+            ]
+          },
+          "docs": "Get portfolios API call, allows you to retrieve portfolio information. You can filter by profile ID or request specific portfolios by their IDs.\nThe result is a list of portfolio objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new portfolio",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/portfolios",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new portfolio"
+        },
+        {
+          "info": {
+            "name": "Edit an existing portfolio",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/portfolios",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Edit an existing portfolio"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "AutomatedAction",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "CreateAutomatedAction",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/automated_actions",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Ads",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create a new product ad",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/ads",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a new product ad"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Available Columns",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get available columns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/reports/:entity/available_columns",
+            "params": [
+              {
+                "name": "entity",
+                "value": "",
+                "type": "path",
+                "description": "Important: For product grids use entity=PRODUCT_ASSET. For product targeting use entity=PRODUCT_TARGETING."
+              },
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "profile_id",
+                "value": "412",
+                "type": "query",
+                "description": "For _Cross-Profile_ columns, use `profile_id=0`. \nFor _Single-Profile_ columns, use the id of a single profile, like `profile_id=412`.\n"
+              }
+            ]
+          },
+          "docs": "Get available columns for all Analysis Grid reports. Relevant to [synchronous reports](#operation/fetchReport) and [asynchronous analysis grid reports](#operation/asyncAnalysisReport)\n\n#### Cross-Profile vs Single-Profile\nSome columns groups in Skai available across all profiles, including in views where no specific profile is requested (Cross-Profile). Others column groups are defined within a profile (even when many profiles have identical definitions), and can only be pulled in single-profile"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Campaigns",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get campaigns",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/campaigns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by campaign ID.\nReturns the campaigns whose campaign IDs are included in your list.\n"
+              },
+              {
+                "name": "channel_campaign_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by channel campaign ID.\nReturns the campaigns whose channel campaign IDs are included in your list.\n"
+              },
+              {
+                "name": "profile_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by profile ID.\nReturns the campaigns whose profile ID equals your profile ID.\n"
+              },
+              {
+                "name": "channel_types",
+                "value": "",
+                "type": "query",
+                "description": "Filter by channel type.\nReturns the campaigns whose channel types are included in the list.\n"
+              },
+              {
+                "name": "statuses",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status.\nReturns campaigns whose statuses are included in the list.\n"
+              }
+            ]
+          },
+          "docs": "Get campaigns API call allows you to retrieve campaign information. You can filter by multiple fields, such as the profile ID and channel type, or request specific campaigns by their IDs.\nThe result is a list of campaign objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/campaigns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create one or more campaigns. Supported attributes are documented in the request body schema below (name, budget, bid, status, dates, campaign type).\n\n**Need more attributes?** Use [Bulk Update (One File)](#tag/Bulk-Update) to create campaigns with the full range of settings including targeting, extensions, dimension labels, and publisher-specific fields."
+        },
+        {
+          "info": {
+            "name": "Edit an existing campaign",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/campaigns",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update one or more campaigns. Editable attributes are documented in the request body schema below.\n\n**Need more attributes?** Use [Bulk Update (One File)](#tag/Bulk-Update) for bulk edits with the full attribute set."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Synchronous Reports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Fetch a report",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/reports",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Fetch reporting data for any entity type across all connected publisher accounts.\n\n**Supported entities:** `CAMPAIGN` `ADGROUP` `KEYWORD` `AD` `PRODUCT_ASSET` `PRODUCT_TARGETING` `PORTFOLIO`\n\nLess commonly used entities — `LOCATIONS`, `NEGATIVE_KEYWORDS`, `SITELINK`, `CREATIVE_ASSET`, `ASSET_GROUP` — are also supported. Use [Available Columns](#operation/getAvailableColumns) with the relevant entity to retrieve their column lists.\n\n#### Building a request\n\n1. **Choose an `entity`** — the grid yo"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Bulk Update",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Make bulk changes to multiple entities",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/bulk_update",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "file_delimiter",
+                  "type": "text",
+                  "value": ""
+                },
+                {
+                  "name": "bulk_update_type",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "docs": "Upload a CSV bulksheet to create and update campaigns, ad groups, keywords, ads, and more — across dozens of publishers — in a single API call.\n\n#### Unmatched publisher breadth\n\nNo other platform offers programmatic create and edit operations across this many publishers in one API. Skai's Bulk Update covers:\n\n| Category | Publishers |\n|---|---|\n| Search | Google Ads, Microsoft Ads, Yahoo Japan, Baidu, and others |\n| Retail Media | Amazon (SP/SB/SD), Walmart (SP/SB/SV), Instacart, Criteo, DoorDa"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Ad Groups",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get Ad Groups",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://services.kenshoo.com/api/v1/ad_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              },
+              {
+                "name": "page_id",
+                "value": "Mg==",
+                "type": "query",
+                "description": "Allows you to traverse pages by using the values for \"next_page\" and \"previous_page\" included under \"paging\" in the response.\nTo return the first page, do not include page_id in the request.\n"
+              },
+              {
+                "name": "ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by ad group ID.\nReturns ad groups whose IDs are included in your list.\n"
+              },
+              {
+                "name": "channel_ad_group_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by channel ad group ID.\nReturns the ad groups whose channel ad group IDs are included in your list.\n"
+              },
+              {
+                "name": "campaign_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by campaign ID.\nReturns the ad groups whose campaign IDs are included in your list.\n"
+              },
+              {
+                "name": "channel_campaign_ids",
+                "value": "",
+                "type": "query",
+                "description": "Filter by channel campaign ID.\nReturns the ad groups whose channel campaign IDs are included in your list.\n"
+              },
+              {
+                "name": "profile_id",
+                "value": "",
+                "type": "query",
+                "description": "Filter by profile ID.\nReturns the ad groups whose profile ID equals your profile ID.\n"
+              },
+              {
+                "name": "channel_types",
+                "value": "",
+                "type": "query",
+                "description": "Filter by channel type.\nReturns the ad groups whose channel types are included in the list.\n"
+              },
+              {
+                "name": "statuses",
+                "value": "",
+                "type": "query",
+                "description": "Filter by status.\nReturns the ad groups whose statuses are included in the list.\n"
+              }
+            ]
+          },
+          "docs": "Get ad groups API call allows you to retrieve ad group information. You can filter by multiple fields, such as the profile ID and channel type, or request specific ad groups by their IDs.\nThe result is a list of ad group objects that can be paged through using the returned next_page/previous_page values.\n"
+        },
+        {
+          "info": {
+            "name": "Create a new ad group",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://services.kenshoo.com/api/v1/ad_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create one or more ad groups. Supported attributes are documented in the request body schema below.\n\n**Need more attributes?** Use [Bulk Update (One File)](#tag/Bulk-Update) to create ad groups with the full range of settings."
+        },
+        {
+          "info": {
+            "name": "Edit an existing ad group",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://services.kenshoo.com/api/v1/ad_groups",
+            "params": [
+              {
+                "name": "ks",
+                "value": "1234",
+                "type": "query",
+                "description": "The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update one or more ad groups. Editable attributes are documented in the request body schema below.\n\n**Need more attributes?** Use [Bulk Update (One File)](#tag/Bulk-Update) for the full attribute set."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "End Test",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "endTestOptions",
+            "type": "http"
+          },
+          "http": {
+            "method": "OPTIONS",
+            "url": "https://services.kenshoo.com/api/v1/tests/:testId/end"
+          }
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
