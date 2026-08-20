@@ -62,6 +62,22 @@ tags:
 - Commerce Media
 - Reporting
 - MCP
+- agent-native
+- Omnichannel
+tags_raw:
+- Company
+- Commerce
+- Advertising
+- Marketing
+- Retail Media
+- Paid Search
+- Paid Social
+- Marketing Analytics
+- Advertising Technology
+- Campaign Management
+- Commerce Media
+- Reporting
+- MCP
 - Agent Native
 - Omnichannel
 apis:
@@ -119,6 +135,11 @@ apis:
   humanURL: https://skai-mcp-guide.vercel.app/
   baseURL: https://mcp.kenshoo.com
   tags:
+  - MCP
+  - agent-native
+  - Reporting
+  - Campaign Management
+  tags_raw:
   - MCP
   - Agent Native
   - Reporting
