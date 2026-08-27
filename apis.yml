@@ -81,57 +81,16 @@ tags_raw:
 - Agent Native
 - Omnichannel
 apis:
-- name: Skai (Kenshoo) API
-  description: >-
-    Skai's REST API for programmatic access to advertising data and campaign management across
-    search, social and retail-media publishers. Reporting is the primary surface — synchronous
-    for small pulls, asynchronous analysis reports for anything larger — alongside Bulk Update
-    (one file, millions of rows, hundreds of attributes) for scaled changes, typed CRUD for
-    campaigns/ad groups/ads/portfolios/product groups, a separate /api/v2 branch for Meta
-    entities, custom columns, incrementality data sources and budget pacing. Authentication is
-    a bearer JWT obtained by exchanging a permanent refresh token; requests are scoped by a
-    `ks` account identifier. Rate limited to 60 requests/minute and 2,000/hour per user.
-  humanURL: https://developers.skai.io/
-  baseURL: https://services.kenshoo.com
-  tags:
-  - Advertising
-  - Marketing
-  - Campaign Management
-  - Reporting
-  - Retail Media
-  - Commerce Media
-  properties:
-  - type: Documentation
-    url: https://developers.skai.io/
-  - type: APIReference
-    url: https://developers.kenshoo.com/
-  - type: GettingStarted
-    url: https://developers.skai.io/#section/Authentication
-  - type: OpenAPI
-    url: openapi/skai-kenshoo-api-openapi.yml
-  - type: Overlay
-    url: overlays/skai-kenshoo-api-overlay.yaml
-  - type: Authentication
-    url: authentication/skai-kenshoo-authentication.yml
-  - type: Conventions
-    url: conventions/skai-kenshoo-conventions.yml
-  - type: ErrorCatalog
-    url: errors/skai-kenshoo-problem-types.yml
-  - type: DataModel
-    url: data-model/skai-kenshoo-data-model.yml
-  - type: RateLimits
-    url: rate-limits/skai-kenshoo-rate-limits.yml
 - name: Skai MCP Servers
   description: >-
-    First-party hosted, remote Model Context Protocol servers exposing the Skai platform to AI
-    assistants. The Reporting MCP is read-only and publishes five tools — fetch_report,
-    relevant_columns, get_today, get_change_log and get_competitive_context — two of which
-    (get_change_log, get_competitive_context) have no REST equivalent. The Operations MCP
-    carries write access for bid, budget and status changes at scale, with preview and approval
-    before anything is applied. Authentication is OAuth 2.0 against login.kenshoo.com
-    (authorization_code + PKCE S256, RFC 8414 and RFC 9728 discovery published) or a 90-day
-    personal access token sent with a ks-name header. Documented clients include Claude Code,
-    Claude Desktop, Claude Web, ChatGPT, Cursor, VS Code, Windsurf and Google Gemini.
+    First-party hosted, remote Model Context Protocol servers exposing the Skai platform to AI assistants.
+    The Reporting MCP is read-only and publishes five tools — fetch_report, relevant_columns, get_today,
+    get_change_log and get_competitive_context — two of which (get_change_log, get_competitive_context)
+    have no REST equivalent. The Operations MCP carries write access for bid, budget and status changes
+    at scale, with preview and approval before anything is applied. Authentication is OAuth 2.0 against
+    login.kenshoo.com (authorization_code + PKCE S256, RFC 8414 and RFC 9728 discovery published) or a
+    90-day personal access token sent with a ks-name header. Documented clients include Claude Code, Claude
+    Desktop, Claude Web, ChatGPT, Cursor, VS Code, Windsurf and Google Gemini.
   humanURL: https://skai-mcp-guide.vercel.app/
   baseURL: https://mcp.kenshoo.com
   tags:
@@ -153,6 +112,1455 @@ apis:
     url: https://skai-mcp-guide.vercel.app/
   - type: OAuthScopes
     url: scopes/skai-kenshoo-scopes.yml
+- aid: skai-kenshoo:skai-kenshoo-accounts-api
+  name: Skai (Kenshoo) Accounts API
+  description: The Accounts API from Skai (Kenshoo) — 8 operation(s) for accounts.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-accounts-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-ad-groups-api
+  name: Skai (Kenshoo) Ad Groups API
+  description: >-
+    Create, update, and retrieve ad groups.
+
+
+    > **Scope:** This API covers common ad group attributes — name, bid, status, and targeting basics.
+
+    > For the full range of ad group settings use [Bulk Update (One File)](#tag/Bulk-Update).
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (excl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Ad Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-ad-groups-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-add-ons-api
+  name: Skai (Kenshoo) Add Ons API
+  description: The Add Ons API from Skai (Kenshoo) — 3 operation(s) for add ons.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Add Ons
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-add-ons-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-ads-api
+  name: Skai (Kenshoo) Ads API
+  description: >-
+    Create, update, and retrieve ads.
+
+
+    > **Scope:** This API covers status updates and tag management for ads.
+
+    > For full ad creation and attribute management use [Bulk Update (One File)](#tag/Bulk-Update).
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (excl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Ads
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-ads-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-agencies-api
+  name: Skai (Kenshoo) Agencies API
+  description: The Agencies API from Skai (Kenshoo) — 5 operation(s) for agencies.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Agencies
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-agencies-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-asynchronous-reports-api
+  name: Skai (Kenshoo) Asynchronous Reports API
+  description: >-
+    The Asynchronous Reports API from Skai (Kenshoo) — 5 operation(s) for asynchronous reports.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Asynchronous Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-asynchronous-reports-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-automated-actions-api
+  name: Skai (Kenshoo) Automated Actions API
+  description: The Automated Actions API from Skai (Kenshoo) — 1 operation(s) for automated actions.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Automated Actions
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-automated-actions-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-automatedaction-api
+  name: Skai (Kenshoo) Automated Action API
+  description: The AutomatedAction API from Skai (Kenshoo) — 1 operation(s) for automatedaction.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - AutomatedAction
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-automatedaction-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-available-columns-api
+  name: Skai (Kenshoo) Available Columns API
+  description: The Available Columns API from Skai (Kenshoo) — 1 operation(s) for available columns.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Available Columns
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-available-columns-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-brands-api
+  name: Skai (Kenshoo) Brands API
+  description: The Brands API from Skai (Kenshoo) — 2 operation(s) for brands.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Brands
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-brands-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-budget-oversight-api
+  name: Skai (Kenshoo) Budget Oversight API
+  description: The Budget Oversight API from Skai (Kenshoo) — 4 operation(s) for budget oversight.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Budget Oversight
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-budget-oversight-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-bulk-update-api
+  name: Skai (Kenshoo) Bulk Update API
+  description: >-
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (excl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Bulk Update
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-bulk-update-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-campaign-attribution-window-config-api
+  name: Skai (Kenshoo) Campaign attribution window config API
+  description: >-
+    The Campaign attribution window config API from Skai (Kenshoo) — 1 operation(s) for campaign attribution
+    window config.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Campaign attribution window config
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-campaign-attribution-window-config-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-campaigns-api
+  name: Skai (Kenshoo) Campaigns API
+  description: >-
+    Create, update, and retrieve campaigns.
+
+
+    > **Scope:** This API covers common campaign attributes — name, budget, bid, status, dates, and campaign
+    type.
+
+    > For the full range of campaign settings (targeting, extensions, dimension labels, and publisher-specific
+    fields)
+
+    > use [Bulk Update (One File)](#tag/Bulk-Update), which handles millions of rows across all non-Meta
+    publishers.
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (excl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Campaigns
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-campaigns-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-chats-api
+  name: Skai (Kenshoo) Chats API
+  description: The Chats API from Skai (Kenshoo) — 5 operation(s) for chats.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Chats
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-chats-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-columns-api
+  name: Skai (Kenshoo) Columns API
+  description: The Columns API from Skai (Kenshoo) — 2 operation(s) for columns.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Columns
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-columns-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-configuration-api
+  name: Skai (Kenshoo) Configuration API
+  description: The Configuration API from Skai (Kenshoo) — 2 operation(s) for configuration.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-configuration-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-end-test-api
+  name: Skai (Kenshoo) End Test API
+  description: The End Test API from Skai (Kenshoo) — 1 operation(s) for end test.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - End Test
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-end-test-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-entities-creator-api
+  name: Skai (Kenshoo) Entities Creator API
+  description: The Entities Creator API from Skai (Kenshoo) — 10 operation(s) for entities creator.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Entities Creator
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-entities-creator-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-error-report-api
+  name: Skai (Kenshoo) Error Report API
+  description: The Error Report API from Skai (Kenshoo) — 1 operation(s) for error report.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Error Report
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-error-report-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-external-reports-api
+  name: Skai (Kenshoo) External Reports API
+  description: The External Reports API from Skai (Kenshoo) — 1 operation(s) for external reports.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - External Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-external-reports-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-functions-api
+  name: Skai (Kenshoo) Functions API
+  description: The Functions API from Skai (Kenshoo) — 1 operation(s) for functions.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Functions
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-functions-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-homepage-api
+  name: Skai (Kenshoo) Homepage API
+  description: The Homepage API from Skai (Kenshoo) — 2 operation(s) for homepage.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Homepage
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-homepage-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-homepage-auth-api
+  name: Skai (Kenshoo) Homepage Auth API
+  description: The Homepage Auth API from Skai (Kenshoo) — 1 operation(s) for homepage auth.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Homepage Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-homepage-auth-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-homepage-context-api
+  name: Skai (Kenshoo) Homepage Context API
+  description: The Homepage Context API from Skai (Kenshoo) — 2 operation(s) for homepage context.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Homepage Context
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-homepage-context-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-incrementality-api
+  name: Skai (Kenshoo) Incrementality API
+  description: The Incrementality API from Skai (Kenshoo) — 17 operation(s) for incrementality.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Incrementality
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-incrementality-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-jobs-api
+  name: Skai (Kenshoo) Jobs API
+  description: >-
+    Operations that can take more than a few seconds are defined as **jobs**.
+
+    Initiating such operations will return a _job_id_, which can then be used to query the status of the
+    job, and once completed to query the job results.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-jobs-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-meta-ad-groups-api
+  name: Skai (Kenshoo) Meta Ad Groups API
+  description: >-
+    Manage dimension tags on Meta ad groups.
+
+
+    > **Scope:** This section covers applying and removing Skai dimension labels on Meta ad groups.
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #326bc7;" >Meta</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Meta Ad Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-meta-ad-groups-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-meta-ads-api
+  name: Skai (Kenshoo) Meta Ads API
+  description: >-
+    Manage dimension tags on Meta ads.
+
+
+    > **Scope:** This section covers applying and removing Skai dimension labels on Meta ads.
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #326bc7;" >Meta</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Meta Ads
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-meta-ads-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-meta-campaigns-api
+  name: Skai (Kenshoo) Meta Campaigns API
+  description: >-
+    Manage dimension tags on Meta campaigns.
+
+
+    > **Scope:** This section covers applying and removing Skai dimension labels on Meta campaigns.
+
+    > For Meta campaign creation and full management, contact your Skai account team.
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #326bc7;" >Meta</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Meta Campaigns
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-meta-campaigns-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-metric-meta-data-api
+  name: Skai (Kenshoo) Metric Meta Data API
+  description: The Metric Meta Data API from Skai (Kenshoo) — 1 operation(s) for metric meta data.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Metric Meta Data
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-metric-meta-data-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-operators-api
+  name: Skai (Kenshoo) Operators API
+  description: The Operators API from Skai (Kenshoo) — 1 operation(s) for operators.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Operators
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-operators-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-pacing-monitor-api
+  name: Skai (Kenshoo) Pacing Monitor API
+  description: The Pacing Monitor API from Skai (Kenshoo) — 3 operation(s) for pacing monitor.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Pacing Monitor
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-pacing-monitor-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-plans-api
+  name: Skai (Kenshoo) Plans API
+  description: The Plans API from Skai (Kenshoo) — 1 operation(s) for plans.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Plans
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-plans-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-portfolio-manager-api
+  name: Skai (Kenshoo) Portfolio Manager API
+  description: The Portfolio Manager API from Skai (Kenshoo) — 2 operation(s) for portfolio manager.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Portfolio Manager
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-portfolio-manager-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-portfolios-api
+  name: Skai (Kenshoo) Portfolios API
+  description: >-
+    Retrieve and update portfolio budgets and settings.
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (excl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Portfolios
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-portfolios-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-preview-api
+  name: Skai (Kenshoo) Preview API
+  description: The Preview API from Skai (Kenshoo) — 2 operation(s) for preview.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Preview
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-preview-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-product-groups-api
+  name: Skai (Kenshoo) Product Groups API
+  description: >-
+    Create, update, and retrieve product groups for Shopping campaigns.
+
+
+    > **Scope:** Covers product group creation and status updates.
+
+    > For bulk product group management use [Bulk Update (One File)](#tag/Bulk-Update).
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Search Shopping</span>
+
+    <span style="color: white; padding: 8px; background-color: #f44336;" >Pinterest Shopping</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Product Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-product-groups-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-profile-api
+  name: Skai (Kenshoo) Profile API
+  description: >-
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (excl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Profile
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-profile-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-relevant-columns-api
+  name: Skai (Kenshoo) Relevant Columns API
+  description: The Relevant Columns API from Skai (Kenshoo) — 1 operation(s) for relevant columns.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Relevant Columns
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-relevant-columns-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-reports-api
+  name: Skai (Kenshoo) Reports API
+  description: >-
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #4CAF50;" >Search</span>
+
+    <span style="color: white; padding: 8px; background-color: #2196F3;" >Social (incl. Meta)</span>
+
+    <span style="color: white; padding: 8px; background-color: #A29A22;" >Retail Media</span>
+
+    </dl>
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-reports-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-rotations-api
+  name: Skai (Kenshoo) Rotations API
+  description: The Rotations API from Skai (Kenshoo) — 1 operation(s) for rotations.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Rotations
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-rotations-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-spotlight-api
+  name: Skai (Kenshoo) Spotlight API
+  description: The Spotlight API from Skai (Kenshoo) — 4 operation(s) for spotlight.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Spotlight
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-spotlight-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-spotlights-api
+  name: Skai (Kenshoo) Spotlights API
+  description: The Spotlights API from Skai (Kenshoo) — 4 operation(s) for spotlights.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Spotlights
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-spotlights-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-synchronous-reports-api
+  name: Skai (Kenshoo) Synchronous Reports API
+  description: >-
+    The Synchronous Reports API from Skai (Kenshoo) — 1 operation(s) for synchronous reports.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Synchronous Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-synchronous-reports-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-tasks-api
+  name: Skai (Kenshoo) Tasks API
+  description: The Tasks API from Skai (Kenshoo) — 1 operation(s) for tasks.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Tasks
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-tasks-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-templates-api
+  name: Skai (Kenshoo) Templates API
+  description: The Templates API from Skai (Kenshoo) — 2 operation(s) for templates.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-templates-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-tests-api
+  name: Skai (Kenshoo) Tests API
+  description: The Tests API from Skai (Kenshoo) — 2 operation(s) for tests.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Tests
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-tests-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
+- aid: skai-kenshoo:skai-kenshoo-token-api
+  name: Skai (Kenshoo) Token API
+  description: The Token API from Skai (Kenshoo) — 1 operation(s) for token.
+  humanURL: https://developers.skai.io/
+  baseURL: https://services.kenshoo.com
+  tags:
+  - Token
+  properties:
+  - type: OpenAPI
+    url: openapi/skai-kenshoo-token-api-openapi.yml
+  - type: Documentation
+    url: https://developers.skai.io/
+  - type: APIReference
+    url: https://developers.kenshoo.com/
+  - type: GettingStarted
+    url: https://developers.skai.io/#section/Authentication
+  - type: Authentication
+    url: authentication/skai-kenshoo-authentication.yml
+  - type: Conventions
+    url: conventions/skai-kenshoo-conventions.yml
+  - type: ErrorCatalog
+    url: errors/skai-kenshoo-problem-types.yml
+  - type: DataModel
+    url: data-model/skai-kenshoo-data-model.yml
+  - type: RateLimits
+    url: rate-limits/skai-kenshoo-rate-limits.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
