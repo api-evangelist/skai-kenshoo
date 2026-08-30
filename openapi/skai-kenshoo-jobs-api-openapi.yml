@@ -1,0 +1,204 @@
+openapi: 3.2.0
+info:
+  title: Skai Jobs API
+  description: "# Overview\nSkai APIs provide programmatic access to advertising data and campaign management across Search, Social, and Retail Media publishers.\n\n## Choosing the Right API\n\n| What you want to do | API to use | Scale | Notes |\n|---|---|---|---|\n| Pull performance data, metrics, or any reportable field | [Reporting](#tag/Synchronous-Reports) or [Async Reporting](#tag/Asynchronous-Reports) | Unlimited | Primary data access API — the main Skai value-prop |\n| Discover what columns and metrics are available | [Available Columns](#operation/getAvailableColumns) | — | Full list of reportable fields per entity type |\n| Create or update campaigns, keywords, bids, budgets, targeting, and more — at scale | [Bulk Update (One File)](#tag/Bulk-Update) | Millions of rows | Supports Skai's main entity types and hundreds of attributes; all publishers except Meta |\n| Create/update a small number of campaigns or ad groups (common attributes only) | [Campaigns](#tag/Campaigns) / [Ad Groups](#tag/Ad-Groups) / [Ads](#tag/Ads) | Thousands | Limited attribute set — use Bulk Update for full control |\n| Manage Meta (Facebook/Instagram) entities | [Meta Campaigns](#tag/Meta-Campaigns) / [Meta Ad Groups](#tag/Meta-Ad-Groups) / [Meta Ads](#tag/Meta-Ads) | Thousands | Meta-specific tag and attribution management |\n| Use Skai from an AI coding assistant (Claude, Cursor, ChatGPT, Windsurf) | [MCP Integration](#tag/MCP) | — | Full reporting access via natural language |\n\nSkai APIs are RESTful and language agnostic. Authentication uses Bearer tokens over HTTPS.\n\n## What Data Can I Access?\n\nSkai aggregates advertising data across three publisher categories:\n\n| Publisher category | Examples |\n|---|---|\n| **Search** | Google Ads, Microsoft Ads, Yahoo Japan, Baidu, and others |\n| **Social (excl. Meta)** | Pinterest, Snapchat, TikTok, LinkedIn, Reddit, and others |\n| **Social (Meta)** | Facebook, Instagram |\n| **Retail Media** | Amazon Ads, Walmart, Instacart, Kroger, Target, and 100+ others |\n\n**Reportable entity types:**\n\n| Entity | Description | Publishers |\n|---|---|---|\n| `CAMPAIGN` | Campaign-level data | All |\n| `ADGROUP` | Ad group / ad set level | All |\n| `KEYWORD` | Keyword-level performance and settings | Search, Retail Media |\n| `AD` | Individual ad creatives | All |\n| `PRODUCT_ASSET` | Product-level data for shopping and retail media (called \"Products\" in the Skai UI) | Retail Media, Search Shopping |\n| `PRODUCT_TARGETING` | Product targeting entities — ASINs, categories, and product attributes | Retail Media |\n| `PORTFOLIO` | Portfolio-level budget aggregations and pacing | All |\n\n**Available metric categories per entity:**\n\n- **Performance** — Impressions, Clicks, Cost, Conversions, Revenue, ROAS, CTR, CPC, and more\n- **Attributes** — Names, statuses, budgets, bids, targeting settings, and publisher-specific fields\n- **Account-configured** — Dimensions (custom tagging labels), Conversion events (publisher, pixel, and 3rd-party), Custom Metrics (formula-based calculations your team defines)\n\nUse [Available Columns](#operation/getAvailableColumns) to see the complete column list for any entity — including full descriptions and types. A static reference is embedded in that endpoint's documentation.\n\n\n## Authentication\nThe Skai API uses the Bearer authentication scheme.\nThe first step is to generate a *refresh token* (once), which you can then exchange for a temporary *access token*, programmatically, before making an API call.\n\n> Note: The user you use to generate your *refresh token* will determine the token's permissions. API access is allowed for users with Standard role or higher.\nIt is recommended that you create and use a specialized user for your API requests.\n\n\n#### Step 1: Get a Refresh Token\nYou only need to do this once, for each API user you plan to use. \n\nLog into [this page](https://login.kenshoo.com/api/dev/refresh-token) in order to get your *refresh token* and *client ID*. The user you log in with will be the user accessing the API. \nPlease store your refresh token in a secure place. While it is not possible to recover a refresh token, you can generate a new one. The refresh token does not expire.\n\n\n#### Step 2: Generating an Access Token\nBefore making API calls, your code uses the permanent *refresh token* to generate a temporary *access token*.\n\nMake a call to /api/v1/token (as shown below) with your *refresh token* and *client ID* to generate an *access token*:\n\n    curl -X POST -d \"refresh_token=<YourToken>&client_id=<Your Client Id>\" \\\n    https://services.kenshoo.com/api/v1/token\n\nNote: the client_id and refresh token should be sent in the POST request body, as the refresh token is confidential and should not be sent as url param.\nthe API will reject refresh tokens sent in url params.\n\nGet token for specific agency context:\nIn case your API user is assigned to multi accounts (agencies), you should explicitly specify in the get access-token request which agency context you would like to receive the token for.\nJust add to the request mentioned above another form param called *agency_id*, and pass the relevant agency ID like this:\n    \n    curl -X POST -d \"refresh_token=<YourToken>&client_id=<Your Client Id>&agency_id=<Your Agency Id>\" \\\n    https://services.kenshoo.com/api/v1/token\n\nToken expiration:\nPlease check for token expiration before sending another API request , you have 2 options:\n\n1. Call the API and get 401 status code indicating authentication failed.\n2. Consider the *expires_in* field of the token to issue a new access token.\n\nThe response will return a JSON containing the token and time for expiration in seconds.\nIt is recommended to use the token expiration time and reuse tokens while they are still valid, to prevent rate limit issues with generating new tokens too often.\n\n    {\"email\":\"my.user@skai.io\",\"expires_in\":21600,\"access_token\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGxvbWkuY29oZW5Ac2thaS5pbyIsImV4cCI6MTcxNDU2NjgxMSwiaXNzIjoiaHR0cDovL2tlbnNob28uY29tL2xvZ2luLXNlcnZlciIsInVzZXJpZCI6MzU5NDMsImFnZW5jeUlkIjoxNSwibmFtZSI6IlNobG9taSBDb2hlbiIsInJvbGVzIjpbIktlbnNob28gQWRtaW4iLCJTa2FpIERldmVsb3BlciJdLCJhZ2VuY3lfcm9sZXMiOlt7ImFnZW5jeUlkIjoxNSwicm9sZSI6IktlbnNob28gQWRtaW4ifV0sImJpbGxpbmdJZCI6OTIwMzEsImFwaWMiOiI5MjAzMSIsIm9yaSI6ImFwaSIsImFsbG93ZWRfYXBwcyI6W119.R3tHoaecUrMGzijnF5suo9SVsffXWbWxdMv5fdB3Jx8\"}\n\n\n\n\n\n#### Step 3: Making an API call\nWith any API call to all Skai APIs, you must send a valid *access token* in the Authorization header when making requests. For example:\n\n    curl -H \"Authorization: Bearer <token>\" -X POST \\\n    https://services.kenshoo.com/api/v1/campaigns\n\n\n## Rate Limits\nAPI calls are limited per user, to the following:\n  - 60 requests per minute\n  - 2,000 requests per hour\n\nWhen you meet the limit, you receive the following 429 HTTP error: “API rate limit exceeded”.\nWhen calling any API endpoint the response headers will show the limits relevant to this user, and the number of remaining calls you can make within the current minute/hour.\n\n\n## Reporting Best Practices\n\n- **Filter for non-zero data:** For performance reports, filter to rows where a key metric (e.g., impressions > 0) to reduce report size and speed up generation.\n- **Scope structure reports:** Apply a filter like \"Last updated > X days ago\" to retrieve only recently changed entities.\n- **Use Async for large datasets:** If your report may return more than a few thousand rows, use [Async Analysis Reports](#tag/Asynchronous-Reports) and poll for results rather than the synchronous endpoint.\n\n\n## Group by and Segmentation\n### Understanding Group by and Segmentation\nWhen querying the /api/v1/reports/async/analysis and /reports endpoints, the breakdown_type parameter\ndetermines how data is structured.\n- FLAT: Returns unsegmented data without any grouping.\n- GROUP: Allows data segmentation based on specified columns (e.g., by date).\n- SEGMENT: Enables segmentation by date and an additional column, such as CampaignId.\n\n### How Group by works\nWhen using \"breakdown_type\": \"GROUP\", the group_bys parameter defines how the data is grouped. For instance:\n\"group_bys\": [ { \"name\": \"Day\", \"group\": \"TimeSegment\" } ]\n               This groups data only by date, meaning campaign details won’t be included, similar to what is displayed in the grid export.\n\n| Conv. | Cost | Day        |\n|-------|------|------------|\n|   2   |  100 | 09/29/2024 |\n|   3   |  200 | 09/28/2024 |\n\n### Using SEGMENT for Additional Grouping\nTo segment data by both date and another column (e.g., CampaignId), use \"breakdown_type\": \"SEGMENT\", specifying only the date column under group_bys while including the additional column in fields. Example:\n\"breakdown_type\": \"SEGMENT\",\n\"group_bys\": [ { \"name\": \"Day\", \"group\": \"TimeSegment\" } ],\n\"fields\": [ { \"name\": \"CampaignId\", \"group\": \"ATTRIBUTES\" } ]\n\nThis ensures data is segmented by day while preserving campaign details.\n\n| Campaign ID | Conv. | Cost | Day        |\n|-------------|-------|------|------------|\n| 25000       |   1   |  50  | 09/29/2024 |\n| 25001       |   1   |  50  | 09/29/2024 |\n| 25000       |   2   |  150 | 09/28/2024 |\n| 25001       |   1   |  50  | 09/28/2024 |\n"
+  version: 1.0.0
+  x-logo:
+    url: https://grid.kenshoo.com/resources-frontend/latest/kenshoo_logo/skai-logo-devportal.svg
+    backgroundColor: '#FFFFFF'
+    altText: Skai
+servers:
+- url: https://services.kenshoo.com
+security:
+- BearerAuth: []
+tags:
+- name: Jobs
+  description: 'Operations that can take more than a few seconds are defined as **jobs**.
+
+    Initiating such operations will return a _job_id_, which can then be used to query the status of the job, and once completed to query the job results.
+
+    '
+paths:
+  /api/v1/jobs/{job_id}/results/file:
+    get:
+      tags:
+      - Jobs
+      summary: Job results
+      operationId: getJobResults
+      parameters:
+      - $ref: '#/components/parameters/ks'
+      - name: job_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: info_level
+        in: query
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          enum:
+          - SUMMARY
+          - BREAKDOWN
+      responses:
+        200:
+          description: OK
+          content:
+            multipart/form-data:
+              schema:
+                type: string
+                description: The job result in file form.
+                format: binary
+              example: '<a file with results will be returned here.
+
+                See relevant examples in the documentation of each bulk operation>'
+        404:
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                type: string
+                description: There are no results when the info level SUMMARY and job ID c42f1168-4cd6-42e8-b654-2a7f0043699e are selected.
+                example: There are no results when the info level SUMMARY and job ID c42f1168-4cd6-42e8-b654-2a7f0043699e are selected.
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/jobs/{job_id}/status:
+    get:
+      tags:
+      - Jobs
+      summary: Job status
+      operationId: getJobStatus
+      parameters:
+      - $ref: '#/components/parameters/ks'
+      - name: job_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                description: The status of the Skai job.
+                enum:
+                - JOB_PENDING
+                - JOB_RUNNING
+                - JOB_COMPLETED
+                - JOB_COMPLETED_WITH_FAILURES
+        404:
+          description: NOT FOUND
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Job ID not found
+              example: Job ID not found
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+  responses:
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+  parameters:
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
+x-tagGroups:
+- name: Reporting
+  tags:
+  - Available Columns
+  - Synchronous Reports
+  - Asynchronous Reports
+- name: Bulk Operations
+  tags:
+  - Jobs
+  - Bulk Update
+- name: AI & MCP
+  tags:
+  - MCP
+- name: Objects
+  tags:
+  - Profile
+  - Campaigns
+  - Ad Groups
+  - Ads
+  - Product Groups
+  - Portfolios
+  - Meta Campaigns
+  - Meta Ad Groups
+  - Meta Ads
+  - Columns

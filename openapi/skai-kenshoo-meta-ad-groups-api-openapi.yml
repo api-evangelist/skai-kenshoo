@@ -1,0 +1,888 @@
+openapi: 3.2.0
+info:
+  title: Skai Meta Ad Groups API
+  description: "# Overview\nSkai APIs provide programmatic access to advertising data and campaign management across Search, Social, and Retail Media publishers.\n\n## Choosing the Right API\n\n| What you want to do | API to use | Scale | Notes |\n|---|---|---|---|\n| Pull performance data, metrics, or any reportable field | [Reporting](#tag/Synchronous-Reports) or [Async Reporting](#tag/Asynchronous-Reports) | Unlimited | Primary data access API — the main Skai value-prop |\n| Discover what columns and metrics are available | [Available Columns](#operation/getAvailableColumns) | — | Full list of reportable fields per entity type |\n| Create or update campaigns, keywords, bids, budgets, targeting, and more — at scale | [Bulk Update (One File)](#tag/Bulk-Update) | Millions of rows | Supports Skai's main entity types and hundreds of attributes; all publishers except Meta |\n| Create/update a small number of campaigns or ad groups (common attributes only) | [Campaigns](#tag/Campaigns) / [Ad Groups](#tag/Ad-Groups) / [Ads](#tag/Ads) | Thousands | Limited attribute set — use Bulk Update for full control |\n| Manage Meta (Facebook/Instagram) entities | [Meta Campaigns](#tag/Meta-Campaigns) / [Meta Ad Groups](#tag/Meta-Ad-Groups) / [Meta Ads](#tag/Meta-Ads) | Thousands | Meta-specific tag and attribution management |\n| Use Skai from an AI coding assistant (Claude, Cursor, ChatGPT, Windsurf) | [MCP Integration](#tag/MCP) | — | Full reporting access via natural language |\n\nSkai APIs are RESTful and language agnostic. Authentication uses Bearer tokens over HTTPS.\n\n## What Data Can I Access?\n\nSkai aggregates advertising data across three publisher categories:\n\n| Publisher category | Examples |\n|---|---|\n| **Search** | Google Ads, Microsoft Ads, Yahoo Japan, Baidu, and others |\n| **Social (excl. Meta)** | Pinterest, Snapchat, TikTok, LinkedIn, Reddit, and others |\n| **Social (Meta)** | Facebook, Instagram |\n| **Retail Media** | Amazon Ads, Walmart, Instacart, Kroger, Target, and 100+ others |\n\n**Reportable entity types:**\n\n| Entity | Description | Publishers |\n|---|---|---|\n| `CAMPAIGN` | Campaign-level data | All |\n| `ADGROUP` | Ad group / ad set level | All |\n| `KEYWORD` | Keyword-level performance and settings | Search, Retail Media |\n| `AD` | Individual ad creatives | All |\n| `PRODUCT_ASSET` | Product-level data for shopping and retail media (called \"Products\" in the Skai UI) | Retail Media, Search Shopping |\n| `PRODUCT_TARGETING` | Product targeting entities — ASINs, categories, and product attributes | Retail Media |\n| `PORTFOLIO` | Portfolio-level budget aggregations and pacing | All |\n\n**Available metric categories per entity:**\n\n- **Performance** — Impressions, Clicks, Cost, Conversions, Revenue, ROAS, CTR, CPC, and more\n- **Attributes** — Names, statuses, budgets, bids, targeting settings, and publisher-specific fields\n- **Account-configured** — Dimensions (custom tagging labels), Conversion events (publisher, pixel, and 3rd-party), Custom Metrics (formula-based calculations your team defines)\n\nUse [Available Columns](#operation/getAvailableColumns) to see the complete column list for any entity — including full descriptions and types. A static reference is embedded in that endpoint's documentation.\n\n\n## Authentication\nThe Skai API uses the Bearer authentication scheme.\nThe first step is to generate a *refresh token* (once), which you can then exchange for a temporary *access token*, programmatically, before making an API call.\n\n> Note: The user you use to generate your *refresh token* will determine the token's permissions. API access is allowed for users with Standard role or higher.\nIt is recommended that you create and use a specialized user for your API requests.\n\n\n#### Step 1: Get a Refresh Token\nYou only need to do this once, for each API user you plan to use. \n\nLog into [this page](https://login.kenshoo.com/api/dev/refresh-token) in order to get your *refresh token* and *client ID*. The user you log in with will be the user accessing the API. \nPlease store your refresh token in a secure place. While it is not possible to recover a refresh token, you can generate a new one. The refresh token does not expire.\n\n\n#### Step 2: Generating an Access Token\nBefore making API calls, your code uses the permanent *refresh token* to generate a temporary *access token*.\n\nMake a call to /api/v1/token (as shown below) with your *refresh token* and *client ID* to generate an *access token*:\n\n    curl -X POST -d \"refresh_token=<YourToken>&client_id=<Your Client Id>\" \\\n    https://services.kenshoo.com/api/v1/token\n\nNote: the client_id and refresh token should be sent in the POST request body, as the refresh token is confidential and should not be sent as url param.\nthe API will reject refresh tokens sent in url params.\n\nGet token for specific agency context:\nIn case your API user is assigned to multi accounts (agencies), you should explicitly specify in the get access-token request which agency context you would like to receive the token for.\nJust add to the request mentioned above another form param called *agency_id*, and pass the relevant agency ID like this:\n    \n    curl -X POST -d \"refresh_token=<YourToken>&client_id=<Your Client Id>&agency_id=<Your Agency Id>\" \\\n    https://services.kenshoo.com/api/v1/token\n\nToken expiration:\nPlease check for token expiration before sending another API request , you have 2 options:\n\n1. Call the API and get 401 status code indicating authentication failed.\n2. Consider the *expires_in* field of the token to issue a new access token.\n\nThe response will return a JSON containing the token and time for expiration in seconds.\nIt is recommended to use the token expiration time and reuse tokens while they are still valid, to prevent rate limit issues with generating new tokens too often.\n\n    {\"email\":\"my.user@skai.io\",\"expires_in\":21600,\"access_token\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGxvbWkuY29oZW5Ac2thaS5pbyIsImV4cCI6MTcxNDU2NjgxMSwiaXNzIjoiaHR0cDovL2tlbnNob28uY29tL2xvZ2luLXNlcnZlciIsInVzZXJpZCI6MzU5NDMsImFnZW5jeUlkIjoxNSwibmFtZSI6IlNobG9taSBDb2hlbiIsInJvbGVzIjpbIktlbnNob28gQWRtaW4iLCJTa2FpIERldmVsb3BlciJdLCJhZ2VuY3lfcm9sZXMiOlt7ImFnZW5jeUlkIjoxNSwicm9sZSI6IktlbnNob28gQWRtaW4ifV0sImJpbGxpbmdJZCI6OTIwMzEsImFwaWMiOiI5MjAzMSIsIm9yaSI6ImFwaSIsImFsbG93ZWRfYXBwcyI6W119.R3tHoaecUrMGzijnF5suo9SVsffXWbWxdMv5fdB3Jx8\"}\n\n\n\n\n\n#### Step 3: Making an API call\nWith any API call to all Skai APIs, you must send a valid *access token* in the Authorization header when making requests. For example:\n\n    curl -H \"Authorization: Bearer <token>\" -X POST \\\n    https://services.kenshoo.com/api/v1/campaigns\n\n\n## Rate Limits\nAPI calls are limited per user, to the following:\n  - 60 requests per minute\n  - 2,000 requests per hour\n\nWhen you meet the limit, you receive the following 429 HTTP error: “API rate limit exceeded”.\nWhen calling any API endpoint the response headers will show the limits relevant to this user, and the number of remaining calls you can make within the current minute/hour.\n\n\n## Reporting Best Practices\n\n- **Filter for non-zero data:** For performance reports, filter to rows where a key metric (e.g., impressions > 0) to reduce report size and speed up generation.\n- **Scope structure reports:** Apply a filter like \"Last updated > X days ago\" to retrieve only recently changed entities.\n- **Use Async for large datasets:** If your report may return more than a few thousand rows, use [Async Analysis Reports](#tag/Asynchronous-Reports) and poll for results rather than the synchronous endpoint.\n\n\n## Group by and Segmentation\n### Understanding Group by and Segmentation\nWhen querying the /api/v1/reports/async/analysis and /reports endpoints, the breakdown_type parameter\ndetermines how data is structured.\n- FLAT: Returns unsegmented data without any grouping.\n- GROUP: Allows data segmentation based on specified columns (e.g., by date).\n- SEGMENT: Enables segmentation by date and an additional column, such as CampaignId.\n\n### How Group by works\nWhen using \"breakdown_type\": \"GROUP\", the group_bys parameter defines how the data is grouped. For instance:\n\"group_bys\": [ { \"name\": \"Day\", \"group\": \"TimeSegment\" } ]\n               This groups data only by date, meaning campaign details won’t be included, similar to what is displayed in the grid export.\n\n| Conv. | Cost | Day        |\n|-------|------|------------|\n|   2   |  100 | 09/29/2024 |\n|   3   |  200 | 09/28/2024 |\n\n### Using SEGMENT for Additional Grouping\nTo segment data by both date and another column (e.g., CampaignId), use \"breakdown_type\": \"SEGMENT\", specifying only the date column under group_bys while including the additional column in fields. Example:\n\"breakdown_type\": \"SEGMENT\",\n\"group_bys\": [ { \"name\": \"Day\", \"group\": \"TimeSegment\" } ],\n\"fields\": [ { \"name\": \"CampaignId\", \"group\": \"ATTRIBUTES\" } ]\n\nThis ensures data is segmented by day while preserving campaign details.\n\n| Campaign ID | Conv. | Cost | Day        |\n|-------------|-------|------|------------|\n| 25000       |   1   |  50  | 09/29/2024 |\n| 25001       |   1   |  50  | 09/29/2024 |\n| 25000       |   2   |  150 | 09/28/2024 |\n| 25001       |   1   |  50  | 09/28/2024 |\n"
+  version: 1.0.0
+  x-logo:
+    url: https://grid.kenshoo.com/resources-frontend/latest/kenshoo_logo/skai-logo-devportal.svg
+    backgroundColor: '#FFFFFF'
+    altText: Skai
+servers:
+- url: https://services.kenshoo.com
+security:
+- BearerAuth: []
+tags:
+- name: Meta Ad Groups
+  description: 'Manage dimension tags on Meta ad groups.
+
+
+    > **Scope:** This section covers applying and removing Skai dimension labels on Meta ad groups.
+
+
+    <dl>
+
+    <span>Publishers:</span>
+
+    <span style="color: white; padding: 8px; background-color: #326bc7;" >Meta</span>
+
+    </dl>
+
+    '
+paths:
+  /api/v2/ad_groups:
+    get:
+      tags:
+      - Meta Ad Groups
+      summary: Get Ad Groups
+      description: 'Get ad groups API call allows you to retrieve ad group information.
+
+        The result is a list of ad group objects that can be paged through using the returned next_page/previous_page values.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/ksV2'
+      - $ref: '#/components/parameters/pageId'
+      - $ref: '#/components/parameters/adGroupIds'
+      - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          $ref: '#/components/responses/getFacebookAdGroupEntitySuccessResponse'
+        400:
+          $ref: '#/components/responses/getAdGroupBadRequest'
+    put:
+      tags:
+      - Meta Ad Groups
+      summary: Edit an existing ad group
+      parameters:
+      - $ref: '#/components/parameters/ksV2'
+      requestBody:
+        $ref: '#/components/requestBodies/EditFacebookAdgroup'
+      responses:
+        200:
+          $ref: '#/components/responses/EntitySuccessResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+      - Meta Ad Groups
+      summary: Create a new ad group
+      parameters:
+      - $ref: '#/components/parameters/ksV2'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateFacebookAdgroup'
+      responses:
+        201:
+          $ref: '#/components/responses/EntitySuccessResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/ad_groups/tags:
+    get:
+      tags:
+      - Meta Ad Groups
+      summary: Get Ad Groups tags
+      description: 'Get ad group tags API call allows you to retrieve a tags assigned to ad group.
+
+        The result is a list of ad group tags assignment objects that can be paged through using the returned next_page/previous_page values.
+
+        '
+      operationId: getAdGroupTags
+      parameters:
+      - $ref: '#/components/parameters/ksV2'
+      - $ref: '#/components/parameters/pageId'
+      - $ref: '#/components/parameters/adGroupIds'
+      - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          $ref: '#/components/responses/getEntityTagsSuccessResponse'
+        400:
+          $ref: '#/components/responses/getEntityTagsBadRequest'
+    put:
+      tags:
+      - Meta Ad Groups
+      summary: Edit Ad Group tags
+      operationId: updateAdGroupTags
+      parameters:
+      - $ref: '#/components/parameters/ksV2'
+      requestBody:
+        $ref: '#/components/requestBodies/editEntityTagsRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/EntitySuccessResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  responses:
+    getAdGroupBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getAdGroupApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    getFacebookAdGroupEntitySuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getFacebookAdGroupApiResponse'
+          example:
+          - status: SUCCESS
+            entities:
+            - id: 100
+              name: new name
+              status: ACTIVE
+              targeting:
+                targeting_id: 123
+              schedule:
+                start_time: 2026-01-01 00:00
+                end_time: 2026-01-14 23:59
+              campaign_id: 1
+            paging:
+              previous_page: null
+              next_page: MQ==
+            error_message: null
+    getEntityTagsBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
+    getEntityTagsSuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+          - id: 100
+            tags:
+            - name: tag1
+              category: cat
+            - name: tag2
+              category: dog
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+  schemas:
+    getEntityTagsApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/getEntityTagsResponse'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    getFacebookAdGroupApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/FacebookAdGroupDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    facebookTargeting:
+      type: object
+      properties:
+        targeting_id:
+          type: integer
+          description: Targeting ID
+      description: Targeting
+    AdGroupDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the ad group
+        channel_ad_group_id:
+          type: string
+          description: Publisher ID of the ad group
+        name:
+          type: string
+          description: Ad group name
+        campaign_id:
+          type: integer
+          description: Skai ID of the campaign
+        channel_campaign_id:
+          type: string
+          description: Publisher ID of the campaign
+        profile_id:
+          type: integer
+          description: Skai ID of the profile
+        channel_type:
+          type: string
+          description: Ad group channel type
+          enum:
+          - Google
+          - Microsoft
+          - Universal
+          - Yandex
+          - Baidu
+          - YahooJapan
+          - YahooGemini
+          - Pinterest
+          - Amazon
+          - Facebook
+          - Walmart
+        search_bid:
+          type: integer
+          description: Default search bid in the profile's currency
+        bidding_method:
+          $ref: '#/components/schemas/AdgroupBiddingMethod'
+        start_date:
+          type: string
+          description: Ad group start date
+          format: yyyy-MM-dd
+        end_date:
+          type: string
+          description: Ad group end date
+          format: yyyy-MM-dd
+        status:
+          $ref: '#/components/schemas/AdgroupStatus'
+        budget:
+          type: integer
+          description: Ad group budget in the profile's currency
+        budget_type:
+          $ref: '#/components/schemas/AdgroupBudgetType'
+    Paging:
+      type: object
+      properties:
+        previous_page:
+          type: string
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    facebookAdgroupBudget:
+      type: object
+      properties:
+        budget:
+          type: number
+          description: Ad group budget in the profile's currency
+        type:
+          type: string
+          description: Budget type
+          enum:
+          - DAILY
+          - LIFETIME
+        pacing_types:
+          type: array
+          description: Budget pacing types
+          items:
+            type: string
+            enum:
+            - STANDARD
+            - NO_PACING
+            - DAY_PARTING
+            - DISABLED
+        spend_limit:
+          $ref: '#/components/schemas/facebookSpendLimit'
+        caps:
+          oneOf:
+          - $ref: '#/components/schemas/facebookImpressionCaps'
+      description: Adgroup budget
+    tag:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Tag name
+        category:
+          type: string
+          description: Category name
+    facebookSpendLimit:
+      type: object
+      properties:
+        min:
+          type: number
+          description: Minimum spend limit
+        max:
+          type: number
+          description: Maximum spend limit
+      description: Budget spend limit
+    editEntityTagsRequest:
+      required:
+      - id
+      - operation_type
+      - tags
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
+          type: array
+          description: Tags
+          items:
+            $ref: '#/components/schemas/tag'
+        operation_type:
+          $ref: '#/components/schemas/operationType'
+      description: The properties for editing entity tags
+      example:
+      - id: 100
+        tags:
+        - name: tag1
+          category: cat
+        - name: tag2
+          category: dog
+        operation_type: ATTACH
+    facebookAdgroupStatus:
+      type: string
+      description: Status
+      enum:
+      - ACTIVE
+      - PAUSED
+      - DELETED
+      - ARCHIVED
+      - WITH_ISSUES
+      - IN_PROCESS
+      - CAMPAIGN_PAUSED
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    facebookAdgroupType:
+      type: object
+      properties:
+        promoted_object:
+          $ref: '#/components/schemas/facebookPromotedObject'
+        frequency_spec:
+          $ref: '#/components/schemas/facebookFrequencySpec'
+        attribution_spec:
+          type: array
+          description: Attribution spec
+          items:
+            $ref: '#/components/schemas/facebookAttributionSpec'
+        conversion_location:
+          type: string
+          description: Conversion location
+          enum:
+          - WEBSITE
+          - APP
+          - MESSENGER
+          - APPLINKS_AUTOMATIC
+          - WHATSAPP
+          - SHOP_AUTOMATIC
+          - UNDEFINED
+          - INSTAGRAM_DIRECT
+          - PHONE_CALL
+          - MESSAGING_INSTAGRAM_DIRECT_MESSENGER
+          - ON_AD
+          - ON_POST
+          - ON_VIDEO
+          - ON_EVENT
+          - ON_PAGE
+      description: Adgroup type
+    getAdGroupApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/AdGroupDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    operationType:
+      type: string
+      description: Operation type
+      enum:
+      - ATTACH
+      - DETACH
+    facebookImpressionCaps:
+      type: object
+      properties:
+        daily_impression_cap:
+          type: integer
+          description: Daily impression cap
+        lifetime_impression_cap:
+          type: integer
+          description: Lifetime impression cap
+      description: Impression caps
+    facebookAdgroupScheduling:
+      type: object
+      properties:
+        days:
+          type: array
+          description: Scheduling days
+          items:
+            type: integer
+        start_minute:
+          type: integer
+          description: Scheduling start minute
+        end_minute:
+          type: integer
+          description: Scheduling end minute
+      description: Adgroup scheduling
+    FacebookAdGroupDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the ad group
+        channel_id:
+          type: string
+          description: Publisher ID of the ad group
+        campaign_id:
+          type: integer
+          description: Skai ID of the campaign
+        name:
+          type: string
+          description: Ad group name
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupStatus'
+        budget:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBudget'
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBid'
+        targeting:
+          oneOf:
+          - $ref: '#/components/schemas/facebookTargeting'
+        schedule:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupSchedule'
+        ad_group_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupType'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+    AdgroupBiddingMethod:
+      type: string
+      description: Will inherit from the campaign's bidding method, if not included
+      enum:
+      - ManualCPC
+      - ManualCPM
+      - ENHANCED_CPC
+      - TARGET_CPA
+      - TARGET_SPEND
+      - TARGET_ROAS
+    CreateFacebookAdgroup:
+      required:
+      - campaign_id
+      - name
+      - schedule
+      - status
+      - targeting
+      type: object
+      properties:
+        campaign_id:
+          type: integer
+          description: Skai ID of the campaign
+        name:
+          type: string
+          description: Ad group name
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupStatus'
+        budget:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBudget'
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBid'
+        targeting:
+          oneOf:
+          - $ref: '#/components/schemas/facebookTargeting'
+        schedule:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupSchedule'
+        ad_group_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupType'
+      description: The properties for the newly created ad group
+      example:
+      - campaign_id: 232608652
+        name: name
+        status: PAUSED
+        schedule:
+          start_time: 2026-01-01 00:00
+          end_time: 2026-01-14 23:59
+        targeting:
+          targeting_id: 123
+    facebookAttributionSpec:
+      type: object
+      properties:
+        window_days:
+          type: integer
+          description: Window days
+        event:
+          type: string
+          description: Event
+          enum:
+          - CLICK_THROUGH
+          - VIEW_THROUGH
+      description: Attribution spec
+    facebookFrequencySpec:
+      type: object
+      properties:
+        interval_days:
+          type: integer
+          description: Interval days
+        max_frequency:
+          type: integer
+          description: Max frequency
+        event:
+          type: string
+          description: Event
+          enum:
+          - IMPRESSIONS
+          - VIDEO_VIEWS_2S
+      description: Frequency spec
+    facebookPromotedObject:
+      type: object
+      properties:
+        page_id:
+          type: integer
+          description: Page ID
+        product_catalog_id:
+          type: integer
+          description: Product catalog ID
+      description: Promoted object
+    AdgroupStatus:
+      type: string
+      description: Status
+      enum:
+      - ACTIVE
+      - PAUSED
+      - DELETED
+      - REVIEW
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    facebookAdgroupSchedule:
+      type: object
+      properties:
+        start_time:
+          type: string
+          description: Adgroup start time
+        end_time:
+          type: string
+          description: Adgroup end time
+        specific_time:
+          $ref: '#/components/schemas/facebookAdgroupScheduling'
+      description: Adgroup schedule
+    AdgroupBudgetType:
+      type: string
+      enum:
+      - DAILY
+      - LIFETIME
+    facebookAdgroupBid:
+      type: object
+      properties:
+        strategy:
+          type: string
+          description: Adgroup bid strategy
+          enum:
+          - UNDEFINED
+          - LOWEST_COST_WITHOUT_CAP
+          - LOWEST_COST_WITH_BID_CAP
+          - TARGET_COST
+          - COST_CAP
+          - LOWEST_COST_WITH_MIN_ROAS
+        billing_event:
+          type: string
+          description: Adgroup billing event
+          enum:
+          - IMPRESSIONS
+          - LINK_CLICKS
+          - APP_INSTALLS
+          - PAGE_LIKES
+          - OFFER_CLAIMS
+          - POST_ENGAGEMENT
+          - VIDEO_VIEWS
+          - TWO_SECOND_CONTINUOUS_VIDEO_VIEWS
+          - THRUPLAY
+        optimization_goal:
+          type: string
+          description: Adgroup optimization goal
+          enum:
+          - NONE
+          - APP_INSTALLS
+          - CLICKS
+          - ENGAGED_USERS
+          - EXTERNAL
+          - EVENT_RESPONSES
+          - IMPRESSIONS
+          - LINK_CLICKS
+          - OFFER_CLAIMS
+          - OFFSITE_CONVERSIONS
+          - PAGE_ENGAGEMENT
+          - PAGE_LIKES
+          - POST_ENGAGEMENT
+          - REACH
+          - SOCIAL_IMPRESSIONS
+          - VIDEO_VIEWS
+          - LEAD_GENERATION
+          - APP_EVENTS
+          - CONVERSION_EVENTS
+          - BRAND_AWARENESS
+          - STORE_VISITS
+          - VALUE
+          - LANDING_PAGE_VIEWS
+          - AD_RECALL_LIFT
+          - TWO_SECOND_CONTINUOUS_VIDEO_VIEWS
+          - OFFLINE_CONVERSIONS
+          - THRUPLAY
+          - DERIVED_EVENTS
+          - CONVERSATIONS
+          - STORE_SALES
+          - INCREMENTAL_OFFSITE_CONVERSIONS
+          - ONSITE_CONVERSIONS
+          - APP_INSTALLS_AND_OFFSITE_CONVERSIONS
+        bid_amount:
+          type: number
+          description: Adgroup bid amount
+        roas_average_floor:
+          type: integer
+          description: Adgroup ROAS average floor
+      description: Adgroup bid
+    getEntityTagsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/tag'
+    EditFacebookAdgroup:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the ad group
+        name:
+          type: string
+          description: Ad group name
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupStatus'
+        budget:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBudget'
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBid'
+        targeting:
+          oneOf:
+          - $ref: '#/components/schemas/facebookTargeting'
+        schedule:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupSchedule'
+        ad_group_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupType'
+      description: The properties for the edited ad group
+      example:
+      - id: 100
+        name: new name
+        status: ACTIVE
+  requestBodies:
+    editEntityTagsRequest:
+      description: The entity tags edit request details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/editEntityTagsRequest'
+      required: true
+    EditFacebookAdgroup:
+      description: The ad group details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EditFacebookAdgroup'
+      required: true
+    CreateFacebookAdgroup:
+      description: The ad group details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CreateFacebookAdgroup'
+      required: true
+  parameters:
+    pageId:
+      name: page_id
+      in: query
+      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
+
+        To return the first page, do not include page_id in the request.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: Mg==
+    limit:
+      name: limit
+      in: query
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
+    adGroupIds:
+      name: ids
+      in: query
+      description: 'Filter by ad group ID.
+
+        Returns ad groups whose IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
+    ksV2:
+      name: ks
+      in: query
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: social
+x-tagGroups:
+- name: Reporting
+  tags:
+  - Available Columns
+  - Synchronous Reports
+  - Asynchronous Reports
+- name: Bulk Operations
+  tags:
+  - Jobs
+  - Bulk Update
+- name: AI & MCP
+  tags:
+  - MCP
+- name: Objects
+  tags:
+  - Profile
+  - Campaigns
+  - Ad Groups
+  - Ads
+  - Product Groups
+  - Portfolios
+  - Meta Campaigns
+  - Meta Ad Groups
+  - Meta Ads
+  - Columns

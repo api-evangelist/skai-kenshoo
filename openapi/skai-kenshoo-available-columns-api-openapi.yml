@@ -1,0 +1,1432 @@
+openapi: 3.2.0
+info:
+  title: Skai Available Columns API
+  description: "# Overview\nSkai APIs provide programmatic access to advertising data and campaign management across Search, Social, and Retail Media publishers.\n\n## Choosing the Right API\n\n| What you want to do | API to use | Scale | Notes |\n|---|---|---|---|\n| Pull performance data, metrics, or any reportable field | [Reporting](#tag/Synchronous-Reports) or [Async Reporting](#tag/Asynchronous-Reports) | Unlimited | Primary data access API — the main Skai value-prop |\n| Discover what columns and metrics are available | [Available Columns](#operation/getAvailableColumns) | — | Full list of reportable fields per entity type |\n| Create or update campaigns, keywords, bids, budgets, targeting, and more — at scale | [Bulk Update (One File)](#tag/Bulk-Update) | Millions of rows | Supports Skai's main entity types and hundreds of attributes; all publishers except Meta |\n| Create/update a small number of campaigns or ad groups (common attributes only) | [Campaigns](#tag/Campaigns) / [Ad Groups](#tag/Ad-Groups) / [Ads](#tag/Ads) | Thousands | Limited attribute set — use Bulk Update for full control |\n| Manage Meta (Facebook/Instagram) entities | [Meta Campaigns](#tag/Meta-Campaigns) / [Meta Ad Groups](#tag/Meta-Ad-Groups) / [Meta Ads](#tag/Meta-Ads) | Thousands | Meta-specific tag and attribution management |\n| Use Skai from an AI coding assistant (Claude, Cursor, ChatGPT, Windsurf) | [MCP Integration](#tag/MCP) | — | Full reporting access via natural language |\n\nSkai APIs are RESTful and language agnostic. Authentication uses Bearer tokens over HTTPS.\n\n## What Data Can I Access?\n\nSkai aggregates advertising data across three publisher categories:\n\n| Publisher category | Examples |\n|---|---|\n| **Search** | Google Ads, Microsoft Ads, Yahoo Japan, Baidu, and others |\n| **Social (excl. Meta)** | Pinterest, Snapchat, TikTok, LinkedIn, Reddit, and others |\n| **Social (Meta)** | Facebook, Instagram |\n| **Retail Media** | Amazon Ads, Walmart, Instacart, Kroger, Target, and 100+ others |\n\n**Reportable entity types:**\n\n| Entity | Description | Publishers |\n|---|---|---|\n| `CAMPAIGN` | Campaign-level data | All |\n| `ADGROUP` | Ad group / ad set level | All |\n| `KEYWORD` | Keyword-level performance and settings | Search, Retail Media |\n| `AD` | Individual ad creatives | All |\n| `PRODUCT_ASSET` | Product-level data for shopping and retail media (called \"Products\" in the Skai UI) | Retail Media, Search Shopping |\n| `PRODUCT_TARGETING` | Product targeting entities — ASINs, categories, and product attributes | Retail Media |\n| `PORTFOLIO` | Portfolio-level budget aggregations and pacing | All |\n\n**Available metric categories per entity:**\n\n- **Performance** — Impressions, Clicks, Cost, Conversions, Revenue, ROAS, CTR, CPC, and more\n- **Attributes** — Names, statuses, budgets, bids, targeting settings, and publisher-specific fields\n- **Account-configured** — Dimensions (custom tagging labels), Conversion events (publisher, pixel, and 3rd-party), Custom Metrics (formula-based calculations your team defines)\n\nUse [Available Columns](#operation/getAvailableColumns) to see the complete column list for any entity — including full descriptions and types. A static reference is embedded in that endpoint's documentation.\n\n\n## Authentication\nThe Skai API uses the Bearer authentication scheme.\nThe first step is to generate a *refresh token* (once), which you can then exchange for a temporary *access token*, programmatically, before making an API call.\n\n> Note: The user you use to generate your *refresh token* will determine the token's permissions. API access is allowed for users with Standard role or higher.\nIt is recommended that you create and use a specialized user for your API requests.\n\n\n#### Step 1: Get a Refresh Token\nYou only need to do this once, for each API user you plan to use. \n\nLog into [this page](https://login.kenshoo.com/api/dev/refresh-token) in order to get your *refresh token* and *client ID*. The user you log in with will be the user accessing the API. \nPlease store your refresh token in a secure place. While it is not possible to recover a refresh token, you can generate a new one. The refresh token does not expire.\n\n\n#### Step 2: Generating an Access Token\nBefore making API calls, your code uses the permanent *refresh token* to generate a temporary *access token*.\n\nMake a call to /api/v1/token (as shown below) with your *refresh token* and *client ID* to generate an *access token*:\n\n    curl -X POST -d \"refresh_token=<YourToken>&client_id=<Your Client Id>\" \\\n    https://services.kenshoo.com/api/v1/token\n\nNote: the client_id and refresh token should be sent in the POST request body, as the refresh token is confidential and should not be sent as url param.\nthe API will reject refresh tokens sent in url params.\n\nGet token for specific agency context:\nIn case your API user is assigned to multi accounts (agencies), you should explicitly specify in the get access-token request which agency context you would like to receive the token for.\nJust add to the request mentioned above another form param called *agency_id*, and pass the relevant agency ID like this:\n    \n    curl -X POST -d \"refresh_token=<YourToken>&client_id=<Your Client Id>&agency_id=<Your Agency Id>\" \\\n    https://services.kenshoo.com/api/v1/token\n\nToken expiration:\nPlease check for token expiration before sending another API request , you have 2 options:\n\n1. Call the API and get 401 status code indicating authentication failed.\n2. Consider the *expires_in* field of the token to issue a new access token.\n\nThe response will return a JSON containing the token and time for expiration in seconds.\nIt is recommended to use the token expiration time and reuse tokens while they are still valid, to prevent rate limit issues with generating new tokens too often.\n\n    {\"email\":\"my.user@skai.io\",\"expires_in\":21600,\"access_token\":\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzaGxvbWkuY29oZW5Ac2thaS5pbyIsImV4cCI6MTcxNDU2NjgxMSwiaXNzIjoiaHR0cDovL2tlbnNob28uY29tL2xvZ2luLXNlcnZlciIsInVzZXJpZCI6MzU5NDMsImFnZW5jeUlkIjoxNSwibmFtZSI6IlNobG9taSBDb2hlbiIsInJvbGVzIjpbIktlbnNob28gQWRtaW4iLCJTa2FpIERldmVsb3BlciJdLCJhZ2VuY3lfcm9sZXMiOlt7ImFnZW5jeUlkIjoxNSwicm9sZSI6IktlbnNob28gQWRtaW4ifV0sImJpbGxpbmdJZCI6OTIwMzEsImFwaWMiOiI5MjAzMSIsIm9yaSI6ImFwaSIsImFsbG93ZWRfYXBwcyI6W119.R3tHoaecUrMGzijnF5suo9SVsffXWbWxdMv5fdB3Jx8\"}\n\n\n\n\n\n#### Step 3: Making an API call\nWith any API call to all Skai APIs, you must send a valid *access token* in the Authorization header when making requests. For example:\n\n    curl -H \"Authorization: Bearer <token>\" -X POST \\\n    https://services.kenshoo.com/api/v1/campaigns\n\n\n## Rate Limits\nAPI calls are limited per user, to the following:\n  - 60 requests per minute\n  - 2,000 requests per hour\n\nWhen you meet the limit, you receive the following 429 HTTP error: “API rate limit exceeded”.\nWhen calling any API endpoint the response headers will show the limits relevant to this user, and the number of remaining calls you can make within the current minute/hour.\n\n\n## Reporting Best Practices\n\n- **Filter for non-zero data:** For performance reports, filter to rows where a key metric (e.g., impressions > 0) to reduce report size and speed up generation.\n- **Scope structure reports:** Apply a filter like \"Last updated > X days ago\" to retrieve only recently changed entities.\n- **Use Async for large datasets:** If your report may return more than a few thousand rows, use [Async Analysis Reports](#tag/Asynchronous-Reports) and poll for results rather than the synchronous endpoint.\n\n\n## Group by and Segmentation\n### Understanding Group by and Segmentation\nWhen querying the /api/v1/reports/async/analysis and /reports endpoints, the breakdown_type parameter\ndetermines how data is structured.\n- FLAT: Returns unsegmented data without any grouping.\n- GROUP: Allows data segmentation based on specified columns (e.g., by date).\n- SEGMENT: Enables segmentation by date and an additional column, such as CampaignId.\n\n### How Group by works\nWhen using \"breakdown_type\": \"GROUP\", the group_bys parameter defines how the data is grouped. For instance:\n\"group_bys\": [ { \"name\": \"Day\", \"group\": \"TimeSegment\" } ]\n               This groups data only by date, meaning campaign details won’t be included, similar to what is displayed in the grid export.\n\n| Conv. | Cost | Day        |\n|-------|------|------------|\n|   2   |  100 | 09/29/2024 |\n|   3   |  200 | 09/28/2024 |\n\n### Using SEGMENT for Additional Grouping\nTo segment data by both date and another column (e.g., CampaignId), use \"breakdown_type\": \"SEGMENT\", specifying only the date column under group_bys while including the additional column in fields. Example:\n\"breakdown_type\": \"SEGMENT\",\n\"group_bys\": [ { \"name\": \"Day\", \"group\": \"TimeSegment\" } ],\n\"fields\": [ { \"name\": \"CampaignId\", \"group\": \"ATTRIBUTES\" } ]\n\nThis ensures data is segmented by day while preserving campaign details.\n\n| Campaign ID | Conv. | Cost | Day        |\n|-------------|-------|------|------------|\n| 25000       |   1   |  50  | 09/29/2024 |\n| 25001       |   1   |  50  | 09/29/2024 |\n| 25000       |   2   |  150 | 09/28/2024 |\n| 25001       |   1   |  50  | 09/28/2024 |\n"
+  version: 1.0.0
+  x-logo:
+    url: https://grid.kenshoo.com/resources-frontend/latest/kenshoo_logo/skai-logo-devportal.svg
+    backgroundColor: '#FFFFFF'
+    altText: Skai
+servers:
+- url: https://services.kenshoo.com
+security:
+- BearerAuth: []
+tags:
+- name: Available Columns
+paths:
+  /api/v1/reports/{entity}/available_columns:
+    get:
+      tags:
+      - Available Columns
+      summary: Get available columns
+      description: 'Get available columns for all Analysis Grid reports. Relevant to [synchronous reports](#operation/fetchReport) and [asynchronous analysis grid reports](#operation/asyncAnalysisReport)
+
+
+        #### Cross-Profile vs Single-Profile
+
+        Some columns groups in Skai available across all profiles, including in views where no specific profile is requested (Cross-Profile). Others column groups are defined within a profile (even when many profiles have identical definitions), and can only be pulled in single-profile requests (Single-Profile).
+
+
+        #### report_supported field:
+
+        Shows whether the column is supported for reporting. `true` → Supported and can be included in reports. `false` → Not supported for reporting.
+
+
+        #### Understanding the returned column groups:
+
+        | Column Group in the API         | Availability                      | Group Name in Skai Column Selection UI  | Description                                                                                                                         |
+
+        |---------------------------------|-----------------------------------|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+
+        | Attributes                      | Cross-Profile and Single-Profile  | Attributes                              | Attributes of your campaigns, native to Skai                                                                                        |
+
+        | Performance                     | Cross-Profile and Single-Profile  | Performance                             | Performance metrics native to Skai                                                                                                  |
+
+        | AttributionForecasting          | Cross-Profile and Single-Profile  | Attribution Forecasting                 | Skai''s forecasted metrics                                                                                                           |
+
+        | CustomMetricsPlus               | Cross-Profile and Single-Profile  | Custom metrics+                         | Organization level formula based columns, defined by users in your organization. Editable under _Dimensions & Categories_           |
+
+        | Dimensions                      | Cross-Profile and Single-Profile  | Dimensions                              | Organization level labeling column, defined by users in your organization. Editable under _Settings_ -> _Custom metrics & columns_  |
+
+        | SmartTags                       | Cross-Profile and Single-Profile  | Smart tags                              | Skai AI-powered insights                                                                                                            |
+
+        | ChannelCustomerConversionTypes  | Cross-Profile and Single-Profile  | Publisher report conversions            | Conversions and revenue from publisher APIs. Names editable under _Settings_ -> _Conversions_                                       |
+
+        | ExternalCustomerConversionTypes | Cross-Profile and Single-Profile  | External report conversion              | Conversions and revenue from Files and Integrations. Names editable under _Settings_ -> _Conversions_                               |
+
+        | ProxyCustomerConversionTypes    | Cross-Profile and Single-Profile  | Skai pixel conversion                   | Conversions and revenue from Skai''s Pixel. Names editable under _Settings_ -> _Conversions_                                         |
+
+        | Custom Solutions                | Cross-Profile and Single-Profile  | Custom Solutions                        | Columns powered by Skai Labs'' custom solutions                                                                                      |
+
+        | ConversionTypes                 | Single-Profile                    | Conversion Columns                      | Conversion Columns set up per profile, often publisher specific. Editable under _Settings_ -> _Conversion columns_ within a profile |
+
+        | CustomMetrics                   | Single-Profile                    | Custom metrics (legacy)                 | Legacy formula based columns, defined by users in your organization. Editable under _Profile settings_ -> _Custom Metrics (legacy)_ |
+
+
+        <div style="background:#e3f2fd;border-left:4px solid #1976d2;padding:12px 16px;margin:12px 0;border-radius:0 4px 4px 0;">
+
+        <strong>This is a partial list of commonly used columns.</strong> Skai supports hundreds of additional account-configured columns:
+
+        <strong>Dimensions</strong> — custom tagging labels you define and apply to campaigns, ad groups, and keywords;
+
+        <strong>Conversion events</strong> — tracked by publishers, Skai pixel, and 3rd-party integrations, each appearing as a count and a revenue column;
+
+        <strong>Custom Metrics</strong> — formula-based calculations your team creates (e.g. ROAS, CPA targets);
+
+        and more.
+
+
+        Call this endpoint authenticated to see your <strong>full account-specific column set</strong>.
+
+        </div>
+
+
+        #### Column Reference
+
+
+        > **Column name** is what to put in your API request. **Display name** is what users see in the Skai UI.
+
+
+        > **Types at a glance:** `STRING` = text · `INTEGER`/`FLOAT`/`BIG_INTEGER` = number · `MONETARY`/`NULLABLE_MONETARY` = currency (profile currency) · `PERCENT` = percentage · `BOOLEAN_DISPLAY` = Yes/No · `DATE`/`SERVER_DATE` = date or datetime · `INTEGER_ID` = numeric identifier · Other types are Skai-specific display formats (value is string or number depending on context).
+
+
+
+        ##### CAMPAIGN
+
+
+        **Performance** (21 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AverageCPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `AveragePosition` | Avg. Pos. | FLOAT | Avg. Pos. |
+
+        | `CPM` | CPM | MONETARY | CPM |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conversion` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `ConversionRate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `CostConversion` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Engagement` | Engagement | INTEGER | The number of user engagements with your ads. |
+
+        | `Impressions` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `ImprAbsTop` | Impr. (Abs.Top) % | PERCENT | The percentage of ad impressions that are shown as the very first ad above the organic search results |
+
+        | `ImprTop` | Impr. (Top) % | PERCENT | The percentage of ad impressions that are shown anywhere above the organic search results. |
+
+        | `ImpressionShare` | Impression Share (IS) | PERCENT | The percentage of ad impressions you''ve received divided by the estimated number of impressions you were eligible to receive. |
+
+        | `LostImpressionShareBudget` | Lost IS (Budget) | PERCENT | The percentage of impressions lost due to budget constraints. |
+
+        | `LostImpressionShareRank` | Lost IS (Rank) | PERCENT | The percentage of Impressions lost due to rank constraints. |
+
+        | `PostImpression` | Post Imps. Conv. | FLOAT | The number of impressions of your ads that led to a conversion. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `ROI` | ROI | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Revenue` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `RevConversion` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+
+        **Attributes** (61 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AI Max` | AI Max | STRING | Shows whether AI Max is enabled for this Google Search campaign. |
+
+        | `AccountName` | Account Name | STRING | Name of the account, if available, or the username configured in Skai to access the account |
+
+        | `BidStrategyAdLocation` | Bid Strategy Ad Location | STRING | The customer locations for which you set bid strategy rules to set targets. |
+
+        | `BidStrategyMaxCPC` | Bid Strategy Max. CPC | MONETARY | The bid set to express the highest amount you are willing to pay for an ad click. |
+
+        | `BidStrategyTarget` | Bid Strategy Target | STRING | The value for your publisher-optimized campaigns. |
+
+        | `Brand entity ID` | Brand entity ID | STRING | The brand ID that the campaign is associated with. Required for sellers creating Sponsored Brands campaigns when the brand entity name is empty. |
+
+        | `Brand entity name` | Brand entity name | STRING | The brand name that the campaign is associated with. Required for sellers creating Sponsored Brands campaigns when the brand entity ID is empty. |
+
+        | `BudgetType` | Budget Type | STRING | Budget Type for this campaign |
+
+        | `BidStrategy` | Campaign Bid Strategy | STRING | The bid strategy for the campaign. |
+
+        | `Campaign End Date` | Campaign End Date | DATE | The date the campaign is scheduled to stop running. |
+
+        | `CampaignType` | Campaign Goal | STRING | The type of campaign. |
+
+        | `CampaignId` | Campaign ID | INTEGER | The campaign ID in Skai. |
+
+        | `CampaignName` | Campaign Name | STRING | The campaign name in Skai. |
+
+        | `CampaignOrderLine` | Campaign Order Line | STRING | The ID of the order line used in the Pinterest campaign. |
+
+        | `Campaign Priority` | Campaign Priority | STRING | The campaign selected to serve ads for the product when there are multiple campaigns that advertise the same product.  |
+
+        | `Campaign Start Date` | Campaign Start Date | DATE | The date the campaign is scheduled to start running. |
+
+        | `StatusToDisplay` | Campaign Status | STRING | The status of the campaign. |
+
+        | `AdvertisingChannelSubType` | Campaign subtype | STRING | A specific classification or category within a broader campaign type. |
+
+        | `channelCategory` | Channel | STRING | A publisher attribute such as the campaign ID or ad ID. |
+
+        | `ChannelAccountId` | Channel Account ID | INTEGER | The publisher account ID in Skai. |
+
+        | `channelStatus` | Channel Account Status | STRING | The status of the publisher account. |
+
+        | `ChannelAccountUserName` | Channel Account Username | STRING | The username associated with the publisher account. |
+
+        | `CampaignIdInChannel` | Channel Campaign ID | STRING | The campaign ID in the publisher. |
+
+        | `SaleCountry` | Country of Sale | STRING | The App Store geographical locations where you’re promoting your app. |
+
+        | `CreateDate` | Creation Date | DATETIME | The date and time at which the Skai entity was created. |
+
+        | `DailyBudget` | Daily Budget | MONETARY | The daily budget for the campaign. |
+
+        | `DailySpendCap` | Daily Spend Cap | MONETARY | The daily spend cap of the campaign.  |
+
+        | `campaignDayParting` | Dayparting | STRING | Indicates whether dayparting has been scheduled for the campaign, and whether it is managed manually or automated by AI. |
+
+        | `DeliveryMethod` | Delivery Method | STRING | Indicates how the budget is paced. |
+
+        | `DesktopBidAdjustment` | Desktop Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `Disapproval Reason` | Disapproval Reason | STRING | Why the publisher disapproved the ad. |
+
+        | `DisplayUrl` | Display URL | STRING | The display URL of the ad. |
+
+        | `FailureReason` | Failure Reason | STRING | The latest error recorded upon a failed attempt to sync entity changes to the publisher. |
+
+        | `Homepage Bid Adj.` | Homepage Bid Adj. | FLOAT | A percentage increase in the bid for this placement. |
+
+        | `LandUrl` | Landing URL | STRING | The destination URL (for non-upgraded ads) or final URL (for upgraded ads). |
+
+        | `LifetimeSpendCap` | Lifetime Spend Cap | MONETARY | The campaign''s lifetime spend cap amount. |
+
+        | `LocalInventoryAds` | Local Inventory Ads | BOOLEAN | Indicates if your Shopping campaign has local inventory ads. |
+
+        | `MerchantId` | Merchant ID | INTEGER | A unique identification number attached to a business that tells the payment processing systems involved in a transaction where to send which funds. |
+
+        | `MobileBidAdjustment` | Mobile Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `Monthly Budget` | Monthly Budget | MONETARY | The monthly budget limit. |
+
+        | `Optimization strategies` | Optimization strategies | STRING | The type of bid changes the publisher is allowed to perform dynamically in order to optimize performance. |
+
+        | `UploadFlag` | Pending Upload | BOOLEAN | Indicates whether the campaign contains entity changes that need to be uploaded to the publisher. |
+
+        | `Placements` | Placements | STRING | The location on the website where an ad can be displayed. |
+
+        | `PortfolioId` | Portfolio ID | INTEGER | The ID of the Skai portfolio. |
+
+        | `PortfolioName` | Portfolio Name | STRING | The name of the Skai portfolio. |
+
+        | `ProfileId` | Profile ID | INTEGER | The Skai profile ID. |
+
+        | `ProfileName` | Profile Name | STRING | The Skai profile name. |
+
+        | `ProfileStatus` | Profile Status | STRING | The Skai profile status. |
+
+        | `Channel` | Publisher | STRING | The name of the publisher serving the ads. |
+
+        | `AutoTaggingEnabled` | Publisher Auto-Tagging Enabled | BOOLEAN | Indicates whether the campaign has auto-tagging enabled in the publisher. |
+
+        | `Recommended daily budget` | Recommended daily budget | MONETARY | **Amazon:** Budget recommended by Amazon to minimize your campaign''s chances of running out of budget and missing out on impressions, clicks, and sales. **Walmart:** The latest daily budget recommendation to minimize the possibility of going out of budget. |
+
+        | `ScheduleFlag` | Scheduled | BOOLEAN | Indicates whether dayparting or a future start date have been scheduled for the campaign. |
+
+        | `Search in Grid Bid Adj.` | Search In-Grid Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `ShoppingCampaign` | Shopping Campaign | BOOLEAN | Indicates whether the campaign is a Shopping campaign. |
+
+        | `Stock Up Bid Adj.` | Stock Up Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `StructureOptimization` | Structure Optimization | STRING | For Shopping campaigns, an indication whether Skai structure optimization is enabled. |
+
+        | `TabletBidAdjustment` | Tablet Bid Adj. | FLOAT | The tablet bid adjustment for the ad group. |
+
+        | `Top of Search Bid Adj.` | Top of Search Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `TrackingLevel` | Tracking Level | STRING | The entity tracking level for the campaign. |
+
+        | `TrackingTemplate` | Tracking Template | STRING | Information added to the base URL for tracking purposes. Applicable for upgraded URLs. |
+
+        | `Weekly Budget` | Weekly Budget | MONETARY | The weekly ad spend limit. |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+        ##### ADGROUP
+
+
+        **Performance** (21 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AverageCPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `AveragePosition` | Avg. Pos. | FLOAT | Avg. Pos. |
+
+        | `CPM` | CPM | MONETARY | CPM |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conversion` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `ConversionRate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `CostConversion` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Engagement` | Engagement | INTEGER | The number of user engagements with your ads. |
+
+        | `Impressions` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `ImprAbsTop` | Impr. (Abs.Top) % | PERCENT | The percentage of ad impressions that are shown as the very first ad above the organic search results |
+
+        | `ImprTop` | Impr. (Top) % | PERCENT | The percentage of ad impressions that are shown anywhere above the organic search results. |
+
+        | `ImpressionShare` | Impression Share (IS) | PERCENT | The percentage of ad impressions you''ve received divided by the estimated number of impressions you were eligible to receive. |
+
+        | `LostImpressionShareBudget` | Lost IS (Budget) | PERCENT | The percentage of impressions lost due to budget constraints. |
+
+        | `LostImpressionShareRank` | Lost IS (Rank) | PERCENT | The percentage of Impressions lost due to rank constraints. |
+
+        | `PostImpression` | Post Imps. Conv. | FLOAT | The number of impressions of your ads that led to a conversion. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `ROI` | ROI | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Revenue` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `RevConversion` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+
+        **Attributes** (37 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AccountName` | Account Name | STRING | Name of the account, if available, or the username configured in Skai to access the account |
+
+        | `AdGroupBudgetType` | Ad Group Budget Type | STRING | Daily or lifetime budget for publishers with budget at the ad group level. |
+
+        | `AdGroupId` | Ad Group ID | INTEGER | The ad group ID in Skai. |
+
+        | `AdGroupName` | Ad Group Name | STRING | The name of the ad group. |
+
+        | `AdGroupStartDate` | Ad Group Start Date | DATE | The date on which the ad group is scheduled to start serving. |
+
+        | `StatusToDisplay` | Ad Group Status | STRING | The status of the ad group. |
+
+        | `AD GROUP TYPE` | Ad Group Type | STRING | The type of ad group. |
+
+        | `Weekly Budget` | Ad Group Weekly Budget | MONETARY | The weekly ad spend limit. |
+
+        | `Attribute window` | Attribute window | STRING | A defined period of time in which a publisher can claim that a click or impression led to an install or conversion. |
+
+        | `bidType` | Bid Strategy | STRING | The type, or name, of the bid strategy. |
+
+        | `CampaignType` | Campaign Goal | STRING | The type of campaign. |
+
+        | `CampaignId` | Campaign ID | INTEGER | The campaign ID in Skai. |
+
+        | `CampaignName` | Campaign Name | STRING | The campaign name in Skai. |
+
+        | `CampaignStatusToDisplay` | Campaign Status | STRING | The status of the campaign. |
+
+        | `CampaignIdInChannel` | Channel Campaign ID | STRING | The campaign ID in the publisher. |
+
+        | `ContentBid` | Content Bid | MONETARY | The content bid amount for the ad group. |
+
+        | `SaleCountry` | Country of Sale | STRING | The App Store geographical locations where you’re promoting your app. |
+
+        | `CreateDate` | Creation Date | DATETIME | The date and time at which the Skai entity was created. |
+
+        | `Daily Budget` | Daily Budget | MONETARY | Daily budget of the campaign, in the currency of the profile. |
+
+        | `Delivery Method` | Delivery Method | STRING | Indicates how the budget is paced. |
+
+        | `DesktopBidAdjustment` | Desktop Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `Frequency Cap` | Frequency Cap | STRING | The number of times an ad can be served to a unique person during a specific time period. |
+
+        | `Max. CPC` | Max. CPC | MONETARY | Indicates how other advertisers are bidding on similar products. If the Benchmark Max CPC is significantly higher or lower than your maximum CPC, consider adjusting your bid. |
+
+        | `Max. CPM` | Max. CPM | MONETARY | The maximum supply bid |
+
+        | `MobileBidAdjustment` | Mobile Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `Monthly Budget` | Monthly Budget | MONETARY | The monthly budget limit. |
+
+        | `Modified` | Pending Upload | BOOLEAN | Indicates whether the campaign contains entity changes that need to be uploaded to the publisher. |
+
+        | `Placements` | Placements | STRING | The location on the website where an ad can be displayed. |
+
+        | `Priority` | Priority | STRING | The campaign selected to serve ads for the product when there are multiple campaigns that advertise the same product. |
+
+        | `ProfileId` | Profile ID | INTEGER | The Skai profile ID. |
+
+        | `ProfileName` | Profile Name | STRING | The Skai profile name. |
+
+        | `ProfileStatus` | Profile Status | STRING | The Skai profile status. |
+
+        | `Channel` | Publisher | STRING | The name of the publisher serving the ads. |
+
+        | `Retailer` | Retailer | STRING | The retailer to which the entity belongs. |
+
+        | `SearchBid` | Search Bid | MONETARY | The bid amount that applies to all keywords in an ad group that do not have individual bids set. Communicates the maximum amount the advertiser is willing to pay for an ad click. |
+
+        | `ShoppingCampaign` | Shopping Campaign | BOOLEAN | Indicates whether the campaign is a Shopping campaign. |
+
+        | `TabletBidAdjustment` | Tablet Bid Adj. | FLOAT | The tablet bid adjustment for the ad group. |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+        ##### KEYWORD
+
+
+        **Performance** (20 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AverageCPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `AveragePosition` | Avg. Pos. | FLOAT | Avg. Pos. |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conversion` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `ConversionRate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `CostConversion` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Impressions` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `ImprAbsTop` | Impr. (Abs.Top) % | PERCENT | The percentage of ad impressions that are shown as the very first ad above the organic search results |
+
+        | `ImprTop` | Impr. (Top) % | PERCENT | The percentage of ad impressions that are shown anywhere above the organic search results. |
+
+        | `SearchImprShare` | Impression Share (IS) | PERCENT | The percentage of ad impressions you''ve received divided by the estimated number of impressions you were eligible to receive. |
+
+        | `SearchLostISRank` | Lost IS (Rank) | PERCENT | The percentage of Impressions lost due to rank constraints. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `QualityScore` | Quality Score | INTEGER | Indicates how well the entity quality compares to other advertisers. |
+
+        | `ROI` | ROI | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Revenue` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `RevConversion` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+        | `SearchAbsTopIS` | Search (Abs.Top) IS | PERCENT | Search (Abs.Top) IS |
+
+        | `SearchTopIS` | Search (Top) IS | PERCENT | Search (Top) IS |
+
+
+        **Attributes** (40 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AccountName` | Account Name | STRING | Name of the account, if available, or the username configured in Skai to access the account |
+
+        | `AdGroupId` | Ad Group ID | INTEGER | The ad group ID in Skai. |
+
+        | `AdGroupName` | Ad Group Name | STRING | The name of the ad group. |
+
+        | `AdGroupStatusToDisplay` | Ad Group Status | STRING | The status of the ad group. |
+
+        | `Bid` | Bid | MONETARY | The entity bid amount in the currency defined for the Skai profile. |
+
+        | `CampaignType` | Campaign Goal | STRING | The type of campaign. |
+
+        | `CampaignId` | Campaign ID | INTEGER | The campaign ID in Skai. |
+
+        | `CampaignName` | Campaign Name | STRING | The campaign name in Skai. |
+
+        | `CampaignStatusToDisplay` | Campaign Status | STRING | The status of the campaign. |
+
+        | `ChannelAccountId` | Channel Account ID | INTEGER | The publisher account ID in Skai. |
+
+        | `AdGroupIdInChannel` | Channel Ad Group ID | STRING | The ad group ID in the publisher. |
+
+        | `CampaignIdInChannel` | Channel Campaign ID | STRING | The campaign ID in the publisher. |
+
+        | `KeywordIdInTarget` | Channel Keyword ID | STRING | The keyword ID in the publisher. |
+
+        | `CreateDate` | Creation Date | DATETIME | The date and time at which the Skai entity was created. |
+
+        | `CustomParameter1Key` | Custom Parameter 1 Key | STRING | The name of the first custom parameter, if any, for an ad. |
+
+        | `CustomParameter1Value` | Custom Parameter 1 Value | STRING | The value assigned to the first custom parameter, if any, for an ad. |
+
+        | `CustomParameter2Key` | Custom Parameter 2 Key | STRING | The name of the second custom parameter, if any, for an ad |
+
+        | `CustomParameter2Value` | Custom Parameter 2 Value | STRING | The value assigned to the second custom parameter, if any, for an ad. |
+
+        | `CustomParameter3Key` | Custom Parameter 3 Key | STRING | The name of the third custom parameter, if any, for an ad. |
+
+        | `CustomParameter3Value` | Custom Parameter 3 Value | STRING | The value assigned to the third custom parameter, if any, for an ad. |
+
+        | `DisapprovalReason` | Disapproval Reason | STRING | Why the publisher disapproved the ad. |
+
+        | `FailureReason` | Failure Reason | STRING | The latest error recorded upon a failed attempt to sync entity changes to the publisher. |
+
+        | `Keyword` | Keyword | STRING | The text of the keyword to be created or edited. |
+
+        | `KeywordId` | Keyword ID | INTEGER | The keyword ID in Skai. |
+
+        | `StatusToDisplay` | Keyword Status | STRING | The status of the keyword to be created or edited. |
+
+        | `LandUrl` | Landing URL | STRING | The destination URL (for non-upgraded ads) or final URL (for upgraded ads). |
+
+        | `MatchType` | Match Type | STRING | The match type of the keyword to be created. |
+
+        | `Max. bid` | Max. bid | MONETARY | The maximum bid amount for your keywords as required by the publisher. |
+
+        | `FirstPageCPC` | Min. Bid | MONETARY | The minimum bid amount you can use for your keywords. |
+
+        | `MobileBidAdjustment` | Mobile Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `MobileUrl` | Mobile URL | STRING | The final mobile device-specific URL, if any. |
+
+        | `Modified` | Modified | BOOLEAN | Indicates an edited entity. |
+
+        | `Product Pages Bid Adj.` | Product Pages Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `ProfileId` | Profile ID | INTEGER | The Skai profile ID. |
+
+        | `ProfileName` | Profile Name | STRING | The Skai profile name. |
+
+        | `ProfileStatus` | Profile Status | STRING | The Skai profile status. |
+
+        | `Channel` | Publisher | STRING | The name of the publisher serving the ads. |
+
+        | `Recommended bid amount` | Recommended bid amount | MONETARY | The recommended bid amount to set for your keywords. |
+
+        | `Top of Search Bid Adj.` | Top of Search Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `TrackingTemplate` | Tracking Template | STRING | Information added to the base URL for tracking purposes. Applicable for upgraded URLs. |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+        ##### AD
+
+
+        **Performance** (18 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AverageCPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `AveragePosition` | Avg. Pos. | FLOAT | Avg. Pos. |
+
+        | `CPM` | CPM | MONETARY | CPM |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conversion` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `ConversionRate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `CostConversion` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Engagement` | Engagement | INTEGER | The number of user engagements with your ads. |
+
+        | `Impressions` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `ImprAbsTop` | Impr. (Abs.Top) % | PERCENT | The percentage of ad impressions that are shown as the very first ad above the organic search results |
+
+        | `ImprTop` | Impr. (Top) % | PERCENT | The percentage of ad impressions that are shown anywhere above the organic search results. |
+
+        | `PostImpression` | Post Imps. Conv. | FLOAT | The number of impressions of your ads that led to a conversion. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `ROI` | ROI | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Revenue` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `RevConversion` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+
+        **Attributes** (50 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AccountName` | Account Name | STRING | Name of the account, if available, or the username configured in Skai to access the account |
+
+        | `AdGroupId` | Ad Group ID | INTEGER | The ad group ID in Skai. |
+
+        | `AdGroupName` | Ad Group Name | STRING | The name of the ad group. |
+
+        | `AdGroupStatusToDisplay` | Ad Group Status | STRING | The status of the ad group. |
+
+        | `AdGroupType` | Ad Group Type | STRING | The type of ad group. |
+
+        | `AdId` | Ad ID | INTEGER | The ad ID in Skai. |
+
+        | `adCreativeName` | Ad Name | STRING | The name of the ad. |
+
+        | `StatusToDisplay` | Ad Status | STRING | Whether an ad is active, and the reason for its status. |
+
+        | `AdTypeName` | Ad Type | STRING | The type of ad in the publisher. |
+
+        | `adStrength` | Ad strength | STRING | How well an ad creative follows the publisher''s best practices for optimal performance. |
+
+        | `Ad subtype` | Ad subtype | STRING | Describes the lower-level types for ad types that includes an additional level of types. |
+
+        | `Brand Name` | Brand Name | STRING | The brand of the product linked to the ad. |
+
+        | `Campaign Bid Method` | Campaign Bid Method | STRING | The campaign spending policy. |
+
+        | `CampaignId` | Campaign ID | INTEGER | The campaign ID in Skai. |
+
+        | `CampaignName` | Campaign Name | STRING | The campaign name in Skai. |
+
+        | `CampaignStatusToDisplay` | Campaign Status | STRING | The status of the campaign. |
+
+        | `AdGroupIdInChannel` | Channel Ad Group ID | STRING | The ad group ID in the publisher. |
+
+        | `AdIdInTarget` | Channel Ad ID | STRING | The publisher ad ID. |
+
+        | `CampaignIdInChannel` | Channel Campaign ID | STRING | The campaign ID in the publisher. |
+
+        | `CreateDate` | Creation Date | DATETIME | The date and time at which the Skai entity was created. |
+
+        | `CustomParameter1Key` | Custom Parameter 1 Key | STRING | The name of the first custom parameter, if any, for an ad. |
+
+        | `CustomParameter1Value` | Custom Parameter 1 Value | STRING | The value assigned to the first custom parameter, if any, for an ad. |
+
+        | `CustomParameter2Key` | Custom Parameter 2 Key | STRING | The name of the second custom parameter, if any, for an ad |
+
+        | `CustomParameter2Value` | Custom Parameter 2 Value | STRING | The value assigned to the second custom parameter, if any, for an ad. |
+
+        | `CustomParameter3Key` | Custom Parameter 3 Key | STRING | The name of the third custom parameter, if any, for an ad. |
+
+        | `CustomParameter3Value` | Custom Parameter 3 Value | STRING | The value assigned to the third custom parameter, if any, for an ad. |
+
+        | `DevicePreference` | Device Preference | STRING | Indicates whether the ad was created for or will appear on mobile devices. |
+
+        | `DisapprovalReason` | Disapproval Reason | STRING | Why the publisher disapproved the ad. |
+
+        | `DisplayUrl` | Display URL | STRING | The display URL of the ad. |
+
+        | `FailureReason` | Failure Reason | STRING | The latest error recorded upon a failed attempt to sync entity changes to the publisher. |
+
+        | `ImageName` | Image Name | STRING | A name that describes the image used in the ad. |
+
+        | `ImageSize` | Image Size | STRING | The image size in the ad. |
+
+        | `ImageUrl` | Image Url | STRING | The image URL in the ad. |
+
+        | `Landing Page Type` | Landing Page Type | STRING | The landing page is where shoppers are directed after they interact with your ad. |
+
+        | `Landing Url` | Landing URL | STRING | The destination URL (for non-upgraded ads) or final URL (for upgraded ads). |
+
+        | `MobileUrl` | Mobile URL | STRING | The final mobile device-specific URL, if any. |
+
+        | `Modified` | Modified | BOOLEAN | Indicates an edited entity. |
+
+        | `Path1` | Path 1 | STRING | The text that can appear alongside the ad''s display URL. |
+
+        | `Path2` | Path 2 | STRING | Additional text that can appear alongside the ad''s display URL. |
+
+        | `Product ID` | Product ID  | STRING | The unique identifier of the product in the publisher. |
+
+        | `Product ID 2` | Product ID 2 | STRING | The ID of the second product promoted by the ad. |
+
+        | `Product ID 3` | Product ID 3 | STRING | The ID of the third product promoted by the ad. |
+
+        | `ProfileId` | Profile ID | INTEGER | The Skai profile ID. |
+
+        | `ProfileName` | Profile name | STRING | The Skai profile name. |
+
+        | `ProfileStatus` | Profile status | STRING | The Skai profile status. |
+
+        | `PromotionLine` | Promotion Line | STRING | For Google Shopping Campaigns, the promotion line shown with the ad. |
+
+        | `Channel` | Publisher | STRING | The name of the publisher serving the ads. |
+
+        | `Publisher asset ID` | Publisher asset ID | STRING | The ID of an image on the publisher''s website. |
+
+        | `Serving Error` | Serving Error | STRING | Serving errors of the product that was promoted in each ad, for retail media publishers. |
+
+        | `TrackingTemplate` | Tracking Template | STRING | Information added to the base URL for tracking purposes. Applicable for upgraded URLs. |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+        **Product Attributes** (26 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `#1 best seller (legacy)` | #1 best seller (legacy) | BOOLEAN | #1 best seller (legacy) |
+
+        | `Amazon''s choice (legacy)` | Amazon''s choice (legacy) | BOOLEAN | Amazon''s choice (legacy) |
+
+        | `Best sellers category 1 name` | Best sellers category 1 name | STRING | Best sellers category 1 name |
+
+        | `Best sellers category 2 name` | Best sellers category 2 name | STRING | Best sellers category 2 name |
+
+        | `Brand` | Brand | STRING | Brand |
+
+        | `Buy box winner (legacy)` | Buy box winner (legacy) | BOOLEAN | Indicates if you are the Buy Box winner for a given product |
+
+        | `Buy box winner price (Walmart)` | Buy box winner price (Walmart) | FLOAT | Buy box winner price (Walmart) |
+
+        | `Climate pledge friendly (legacy)` | Climate pledge friendly (legacy) | BOOLEAN | Climate pledge friendly (legacy) |
+
+        | `Color` | Color | STRING | The color of the product listing linked to the ad. |
+
+        | `Item last updated` | Item last updated | DATE | Item last updated |
+
+        | `Lowest Sale Price` | Lowest Sale Price | MONETARY | Lowest Sale Price |
+
+        | `Manufacturer` | Manufacturer | STRING | The brand that manufactures the advertised product. |
+
+        | `Min. Bid` | Min. Bid | MONETARY | Min. Bid |
+
+        | `Model` | Model | STRING | The model of the product. |
+
+        | `Availability` | Number of sellers | INTEGER | The number of sellers selling this product. |
+
+        | `Price` | Price | MONETARY | The price of the product. |
+
+        | `Product Target URL` | Product Target URL | STRING | Product Target URL |
+
+        | `Product availability` | Product availability | STRING | Product availability |
+
+        | `Product Image` | Product image | STRING | The URL for the main image of your product. |
+
+        | `Product page status` | Product page status | STRING | Product page status |
+
+        | `Product status` | Product status | STRING | Product status |
+
+        | `Promoting Status` | Promoting status | STRING | Promoting status |
+
+        | `Replenishment status` | Replenishment status | STRING | Replenishment status |
+
+        | `Shipped by` | Shipped by | STRING | Indicates the vendor or seller shipping this product. |
+
+        | `Sold by` | Sold by | STRING | Indicates the vendor or seller selling this product |
+
+        | `Title` | Title | STRING | The name of the product promoted in the campaign. |
+
+
+        **Product Performance Data** (3 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `Advertised revenue share` | Advertised revenue share | PERCENT | How much your ad revenue is contributing to your total revenue, calculated as total product ad revenue divided by product ordered revenue. |
+
+        | `Ordered Revenue` | Ordered Revenue | MONETARY | The revenue generated by a customer order with adjustments made for prior sales, such as returns or cancellations. Expressed as price times ordered units. |
+
+        | `TACoS` | TACoS | PERCENT | The total advertising cost of sale, calculated as total ad cost divided by product ordered revenue. |
+
+
+        **Product Identifiers** (6 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `Base & variants` | Base & variants | STRING | Base & variants |
+
+        | `Ean` | EAN | STRING | European Article Number. |
+
+        | `GTIN` | GTIN | STRING | GTIN |
+
+        | `Mpn` | MPN | STRING | Manufacturer Part Number. |
+
+        | `Parent Product ID` | Parent Product ID | STRING | The product ID of the parent product, if one exists |
+
+        | `Upc` | UPC | STRING | The Amazon UPC code. |
+
+
+        ##### PORTFOLIO
+
+
+        **Performance** (18 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AverageCPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `AveragePosition` | Avg. Pos. | FLOAT | Avg. Pos. |
+
+        | `CPM` | CPM | MONETARY | CPM |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conversion` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `ConversionRate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `CostConversion` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Impressions` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `ImpressionShare` | Imp. Share (IS) | PERCENT | The percentage of ad impressions you''ve received divided by the estimated number of impressions you were eligible to receive. |
+
+        | `LostImpressionShareBudget` | Lost IS (Budget) | PERCENT | The percentage of impressions lost due to budget constraints. |
+
+        | `LostImpressionShareRank` | Lost IS (Rank) | PERCENT | The percentage of Impressions lost due to rank constraints. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `ROI` | ROAS | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Revenue` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `RevConversion` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+        | `SpendPlan` | Planned Budget | MONETARY | Planned Budget |
+
+
+        **Attributes** (35 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `ActualSpendToDate` | Actual Spend to Date | MONETARY | On Budget Pacing portfolios only — the amount of actual spend from the beginning of the cycle up to today. |
+
+        | `ActualVsExpectedSpend` | Actual vs Expected Spend | PERCENT | The ratio between actual and expected spend to date. Above 100 = overspending; below 100 = underspending. |
+
+        | `ActualVsExpectedSpendRange` | Actual vs Expected Spend (range) | STRING | Segmentation into groups of 10% of the above column. |
+
+        | `Agency` | Agency | STRING | Agency |
+
+        | `BidStrategyTarget` | Bid Strategy Target | STRING | The value for your publisher-optimized campaigns. |
+
+        | `BusinessCycle` | Business Cycle | STRING | Classification of the budget duration of a portfolio. |
+
+        | `CostGoalValue` | Cycle Budget | MONETARY | Cycle Budget |
+
+        | `CreateDate` | Creation Date | DATETIME | The date and time at which the Skai entity was created. |
+
+        | `CycleEndDate` | Cycle End Date | STRING | Cycle End Date |
+
+        | `CycleProgress` | Cycle Progress | PERCENT | Cycle Progress |
+
+        | `CycleStartDate` | Cycle Start Date | STRING | Cycle Start Date |
+
+        | `ExpectedSpendToDate` | Expected Spend to Date | MONETARY | For Budget Pacing portfolios, the amount of expected spend from the beginning of the cycle until today. |
+
+        | `IntradayBidding` | Intraday Bidding | STRING | Indicates whether Skai is optimizing at an intraday level of up to 8 times a day. |
+
+        | `KPI value` | KPI value | FLOAT | KPI value |
+
+        | `MaxEffectiveBid` | Max Effective Bid | FLOAT | Max Effective Bid |
+
+        | `NextCycleBudget` | Next Cycle Budget | MONETARY | For Budget Pacing portfolios only, the budget for the next cycle. |
+
+        | `OptimizeWithBudgetCaps` | Budget Pacing | BOOLEAN | Budget Pacing |
+
+        | `Policy Last Accept Day` | Policy Last Accept Day | DATE | Policy Last Accept Day |
+
+        | `Policy Last Run Description` | Policy Last Run Description | STRING | Policy Last Run Description |
+
+        | `Policy Last Run Results` | Policy Last Run Results | STRING | Policy Last Run Results |
+
+        | `Policy Last Run Status` | Policy Last Run Status | STRING | Indicates the status of the last time the bidding and/or budgeting policy ran for a given portfolio. |
+
+        | `Policy Last run Day` | Policy Last run Day | DATE | Policy Last run Day |
+
+        | `Policy Scheduling` | Portfolio Status | STRING | Portfolio Status |
+
+        | `PolicyName` | Bid Policy | STRING | Bid Policy |
+
+        | `Portfolio min. CPC` | Portfolio min. CPC | MONETARY | Portfolio min. CPC |
+
+        | `PortfolioAlerts` | Portfolio Alerts | STRING | For Budget Pacing portfolios, displays alerts about the performance and health of the portfolio. |
+
+        | `PortfolioId` | Portfolio ID | INTEGER | The ID of the Skai portfolio. |
+
+        | `PortfolioName` | Portfolio Name | STRING | The name of the Skai portfolio. |
+
+        | `PortfolioType` | Type | STRING | Type |
+
+        | `ProfileId` | Profile ID | STRING | The Skai profile ID. |
+
+        | `ProfileName` | Profile Name | STRING | The Skai profile name. |
+
+        | `ProfileStatus` | Profile Status | STRING | The Skai profile status. |
+
+        | `Rollover` | Rollover | MONETARY | Rollover |
+
+        | `SignalEnhancementStatus` | Signal Enhancement | STRING | Signal Enhancement |
+
+        | `isDefault` | Default Portfolio | BOOLEAN | Default Portfolio |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+        ##### PRODUCT_ASSET
+
+
+        *Called "Products" in the Skai UI — the product-level grid for retail media publishers.*
+
+
+        **Performance** (12 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `AverageCPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conversion` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `ConversionRate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `CostConversion` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Impressions` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `ROI` | ROI | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Revenue` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `RevConversion` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+
+        **Attributes** (18 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `Additional images` | Additional images | STRING | Links to up to 20 additional images of your item, separated by a comma (,), semicolon (;), space ( ) or vertical bar (|). |
+
+        | `Additional images (cdn)` | Additional images (CDN) | STRING | Additional image URLs of the product, hosted on CDN. |
+
+        | `Brand` | Brand | STRING | The brand of the product. |
+
+        | `Buy box winner (legacy)` | Buy box winner (legacy) | BOOLEAN | Indicates if you are the Buy Box winner for a given product |
+
+        | `Color` | Color | STRING | The color of the product listing linked to the ad. |
+
+        | `Inventory` | Inventory | INTEGER | The current availability of the item. |
+
+        | `Manufacturer` | Manufacturer | STRING | The brand that manufactures the advertised product. |
+
+        | `Marketplace` | Marketplace | STRING | A geographical marketplace where products are sold. |
+
+        | `Material` | Material | STRING | The material the item is made from, such as cotton, polyester, denim or leather. |
+
+        | `Model` | Model | STRING | The model of the product. |
+
+        | `# Of Ads` | Number of ads | INTEGER | The number of ads promoting this product |
+
+        | `Availability` | Number of sellers | INTEGER | The number of sellers selling this product. |
+
+        | `Price` | Price | MONETARY | The price of the product. |
+
+        | `Product images` | Product images | STRING | The URL for the main image of your product. |
+
+        | `Publisher` | Publisher | STRING | The name of the publisher serving the ads. |
+
+        | `Shipped by` | Shipped by | STRING | Indicates the vendor or seller shipping this product. |
+
+        | `Sold by` | Sold by | STRING | Indicates the vendor or seller selling this product |
+
+        | `Title` | Title | STRING | The name of the product promoted in the campaign. |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+        **Product Identifiers** (8 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `Base & variants` | Base & variants | STRING | Base & variants |
+
+        | `Ean` | EAN | STRING | European Article Number. |
+
+        | `GTIN` | GTIN | STRING | Global Trade Item Number. |
+
+        | `Mpn` | MPN | STRING | Manufacturer Part Number. |
+
+        | `Parent Product ID` | Parent Product ID | STRING | The product ID of the parent product, if one exists. |
+
+        | `Parent Product` | Parent product | STRING | The product ID of the parent product, if one exists. |
+
+        | `Product Id` | Product ID | STRING | The unique identifier of the product in the publisher. |
+
+        | `Upc` | UPC | STRING | The Amazon UPC code. |
+
+        ##### PRODUCT_TARGETING
+
+
+        *Product targeting entities — keywords, ASINs, categories, and product attributes used in retail media targeting.*
+
+
+        > **Note:** Column names for PRODUCT_TARGETING use display-name style (e.g. `Avg.CPC`, `Conv.`) rather than camelCase. Use these exact strings in your API requests.
+
+
+        **Performance** (12 standard columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `Avg.CPC` | Avg. CPC | MONETARY | The average cost per click expressed as the number of clicks divided by cost. |
+
+        | `CTR` | CTR | PERCENT | The click-through rate, expressed as the number of clicks on the ad divided by the times it was shown. |
+
+        | `Clicks` | Clicks | INTEGER | The number of clicks reported by the publisher. |
+
+        | `Conv.` | Conv. | FLOAT | An aggregation of all conversion actions coming from publishers, Skai pixel, and 3rd-party integration, or from actions you select. |
+
+        | `Conv. Rate` | Conv. Rate | PERCENT | The conversion rate, expressed as the number of conversions divided by the number of clicks. |
+
+        | `Cost` | Cost | MONETARY | The publisher cost, in the currency of the Skai profile. |
+
+        | `Cost/Conv.` | Cost/Conv. | MONETARY | The cost of each conversion, expressed as cost divided by the number of conversions. |
+
+        | `Imp.` | Imp. | INTEGER | The number of impressions reported by the publisher. |
+
+        | `Profit` | Profit | MONETARY | Profit = revenue - cost |
+
+        | `ROI` | ROI | FLOAT | Return on investment. The formula is: ROI = revenue / cost |
+
+        | `Rev` | Rev. | MONETARY | An aggregation of all monetary value of conversion actions, coming from publishers, Skai''s pixel, and 3rd-party integration. |
+
+        | `Rev./Conv.` | Rev./Conv. | MONETARY | The revenue amount divided by the number of conversions. |
+
+
+        **Attributes** (30 columns)
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `Ad Group Name` | Ad Group Name | STRING | The name of the ad group. |
+
+        | `AdGroupId` | Ad Group ID | INTEGER | The ad group ID in Skai. |
+
+        | `AdGroupStatusToDisplay` | Ad Group Status | STRING | The status of the ad group. |
+
+        | `Bid` | Bid | MONETARY | The entity bid amount in the currency defined for the Skai profile. |
+
+        | `Brand` | Brand | STRING | The brand of the product. |
+
+        | `Campaign ID` | Campaign ID | INTEGER | The campaign ID in Skai. |
+
+        | `Campaign Name` | Campaign Name | STRING | The campaign name in Skai. |
+
+        | `CampaignStatusToDisplay` | Campaign Status | STRING | The status of the campaign. |
+
+        | `CampaignType` | Campaign Goal | STRING | The type of campaign. |
+
+        | `Category id` | Category id | STRING | Category id |
+
+        | `Channel` | Publisher | STRING | The name of the publisher serving the ads. |
+
+        | `Channel Target ID` | Channel Target ID | STRING | The target ID in the publisher. |
+
+        | `FailureReason` | Failure Reason | STRING | The latest error recorded upon a failed attempt to sync entity changes to the publisher. |
+
+        | `Max. Price` | Max. Price | MONETARY | Maximum price filter for product targeting. |
+
+        | `Max. Rating` | Max. Rating | FLOAT | Maximum customer rating filter for product targeting. |
+
+        | `Min. Price` | Min. Price | MONETARY | Minimum price filter for product targeting. |
+
+        | `Min. Rating` | Min. Rating | FLOAT | Minimum customer rating filter for product targeting. |
+
+        | `Modified` | Modified | BOOLEAN | Indicates an edited entity. |
+
+        | `Product Pages Bid Adj.` | Product Pages Bid Adj. | FLOAT | A percentage increase or decrease in the bid for this placement. |
+
+        | `Profile Id` | Profile ID | INTEGER | The Skai profile ID. |
+
+        | `Profile Name` | Profile Name | STRING | The Skai profile name. |
+
+        | `ProfileStatus` | Profile Status | STRING | The Skai profile status. |
+
+        | `Rest of Search Bid Adj.` | Rest of Search Bid Adj. | FLOAT | A percentage increase or decrease in the bid for placements outside top of search. |
+
+        | `Shipping Eligibility` | Shipping Eligibility | STRING | Shipping eligibility status for the targeted product. |
+
+        | `Target` | Target | STRING | The targeting expression (keyword, ASIN, category, or product attribute). |
+
+        | `Target ID` | Target ID | INTEGER | The targeting ID in Skai. |
+
+        | `Target Type` | Target Type | STRING | The type of targeting (e.g. keyword, ASIN, category, product attribute). |
+
+        | `Targeting Status` | Targeting Status | STRING | The status of the targeting entity. |
+
+        | `Title` | Title | STRING | The name of the product promoted in the campaign. |
+
+        | `Top of Search Bid Adj.` | Top of Search Bid Adj. | FLOAT | A percentage increase or decrease in the bid for top-of-search placement. |
+
+
+        **Account-configured columns** *(vary by account — call this endpoint authenticated to see yours)*
+
+
+        | Column name | Display name | Type | Description |
+
+        |---|---|---|---|
+
+        | `[Your Dimension Name]` | *(your label)* | STRING | A custom tagging label you define in Skai (e.g. "Brand", "Region", "Campaign Theme"). Applied to entities; any value you''ve set appears here. |
+
+        | `[Publisher / Pixel / 3rd-party Conversion]` | *(event name)* | FLOAT | Each tracked conversion event appears as two columns: a **count** column (number of conversions) and a **revenue** column (monetary value). Names are set in Settings → Conversions. |
+
+        | `[Your Custom Metric]` | *(formula name)* | FLOAT | A formula-based column your team defines (e.g. ROAS = Revenue / Cost). Available in the *Custom Metrics+* and *Custom Metrics (legacy)* groups. |
+
+
+
+        ---
+
+        Ready to query? Use these column names in [Synchronous Reports](#operation/fetchReport) or [Async Analysis Reports](#operation/asyncAnalysisReport).'
+      operationId: getAvailableColumns
+      parameters:
+      - name: entity
+        in: path
+        description: 'Important: For product grids use entity=PRODUCT_ASSET. For product targeting use entity=PRODUCT_TARGETING.'
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          enum:
+          - CAMPAIGN
+          - ADGROUP
+          - KEYWORD
+          - AD
+          - PORTFOLIO
+          - PRODUCT_ASSET
+          - PRODUCT_TARGETING
+      - $ref: '#/components/parameters/ks'
+      - name: profile_id
+        in: query
+        description: "For _Cross-Profile_ columns, use `profile_id=0`. \nFor _Single-Profile_ columns, use the id of a single profile, like `profile_id=412`.\n"
+        required: true
+        style: form
+        explode: true
+        example: 412
+      responses:
+        200:
+          description: The operation was completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportColumnsResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ReportColumnsResponse:
+      type: object
+      example:
+        columnsInfo:
+          Attributes:
+          - name: Status
+            id: S3009
+            display_name: Status
+            value_type: STRING
+            report_supported: true
+          - name: ChannelType
+            id: S3029
+            display_name: ChannelType
+            value_type: STRING
+            report_supported: true
+          ConversionTypes:
+          - name: Calls
+            id: T2105
+            value_type: INTEGER
+            report_supported: true
+          - name: Calls $
+            id: R2105
+            value_type: MONETARY
+            report_supported: true
+          - name: Conversions
+            id: T2106
+            value_type: FLOAT
+            report_supported: true
+          - column_name: Conversions $
+            id: R2106
+            value_type: MONETARY
+            report_supported: false
+          Performance:
+          - name: Date
+            id: S3035
+            display_name: Date
+            value_type: DATE
+            report_supported: true
+          - name: Impressions
+            id: S3012
+            display_name: Impressions
+            value_type: BIG_INTEGER
+            report_supported: true
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+  responses:
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+  parameters:
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
+x-tagGroups:
+- name: Reporting
+  tags:
+  - Available Columns
+  - Synchronous Reports
+  - Asynchronous Reports
+- name: Bulk Operations
+  tags:
+  - Jobs
+  - Bulk Update
+- name: AI & MCP
+  tags:
+  - MCP
+- name: Objects
+  tags:
+  - Profile
+  - Campaigns
+  - Ad Groups
+  - Ads
+  - Product Groups
+  - Portfolios
+  - Meta Campaigns
+  - Meta Ad Groups
+  - Meta Ads
+  - Columns
