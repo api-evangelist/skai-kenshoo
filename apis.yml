@@ -74,7 +74,7 @@ tags:
 - Commerce Media
 - Reporting
 - MCP
-- agent-native
+- Agent Native
 - Omnichannel
 tags_raw:
 - Company
@@ -107,7 +107,7 @@ apis:
   baseURL: https://mcp.kenshoo.com
   tags:
   - MCP
-  - agent-native
+  - Agent Native
   - Reporting
   - Campaign Management
   tags_raw:
@@ -130,6 +130,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Account
+  tags_raw:
   - Accounts
   properties:
   - type: OpenAPI
@@ -201,6 +203,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Addons
+  tags_raw:
   - Add Ons
   properties:
   - type: OpenAPI
@@ -886,6 +890,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
@@ -1175,6 +1181,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Portfolio
+  tags_raw:
   - Portfolios
   properties:
   - type: OpenAPI
@@ -1475,6 +1483,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Task
+  tags_raw:
   - Tasks
   properties:
   - type: OpenAPI
