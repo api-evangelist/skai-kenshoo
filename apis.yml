@@ -74,7 +74,7 @@ tags:
 - Commerce Media
 - Reporting
 - MCP
-- Agent Native
+- agent-native
 - Omnichannel
 tags_raw:
 - Company
@@ -107,7 +107,7 @@ apis:
   baseURL: https://mcp.kenshoo.com
   tags:
   - MCP
-  - Agent Native
+  - agent-native
   - Reporting
   - Campaign Management
   tags_raw:
