@@ -1063,6 +1063,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Operator
+  tags_raw:
   - Operators
   properties:
   - type: OpenAPI
@@ -1289,6 +1291,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Profiles
+  tags_raw:
   - Profile
   properties:
   - type: OpenAPI
@@ -1563,6 +1567,8 @@ apis:
   humanURL: https://developers.skai.io/
   baseURL: https://services.kenshoo.com
   tags:
+  - Tokens
+  tags_raw:
   - Token
   properties:
   - type: OpenAPI
