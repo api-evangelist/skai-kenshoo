@@ -1,0 +1,114 @@
+slug: skai-kenshoo
+provider: Skai (Kenshoo)
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 10
+edges:
+- tag: Ad Groups
+  spec_file: skai-kenshoo-ad-groups-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.85
+  evidence: POST /api/v1/ad_groups createAdGroups 'Create a new ad group'; schemas AdgroupBiddingMethod,
+    AdgroupBudgetType, PinterestTargetingParams
+  reason: Operations create/edit advertising ad groups with bidding, budget and targeting parameters across
+    search/social/retail media publishers — paid media campaign structure management, i.e. digital marketing
+    management.
+- tag: Ads
+  spec_file: skai-kenshoo-ads-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.85
+  evidence: POST /api/v1/ads createAds 'Create a new product ad'
+  reason: Creates product ads on paid media publishers — creative/ad asset activation within digital advertising
+    campaigns.
+- tag: Campaigns
+  spec_file: skai-kenshoo-campaigns-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.85
+  evidence: POST /api/v1/campaigns createCampaigns 'Create a new campaign'; 'campaign management across
+    Search, Social, and Retail Media publishers'
+  reason: Operations create/edit/read advertising campaigns across paid search, social and retail media
+    publishers — squarely digital marketing campaign management, not a generic 'campaign' homograph.
+- tag: Meta Ad Groups
+  spec_file: skai-kenshoo-meta-ad-groups-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.85
+  evidence: POST /api/v2/ad_groups Create a new ad group; schemas facebookTargeting, facebookAdgroupBudget,
+    AdgroupBiddingMethod
+  reason: Operations create/edit Meta (Facebook) ad groups with targeting, budget and bidding — paid social
+    media buying, i.e. digital marketing execution.
+- tag: Meta Ads
+  spec_file: skai-kenshoo-meta-ads-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.85
+  evidence: POST /api/v2/ads Create a new ad; schemas facebookAdCreativeDTO, facebookAdTracking, facebookAdBid
+  reason: Creation and editing of paid social ad creatives and their tracking/bids — digital/paid media
+    management.
+- tag: Meta Campaigns
+  spec_file: skai-kenshoo-meta-campaigns-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.85
+  evidence: POST /api/v2/campaigns Create a new campaign; schemas facebookCampaignBudget, facebookCampaignBid
+  reason: Paid social campaign lifecycle management (create/edit campaigns, budgets, bids) on Meta — digital
+    marketing / paid media management.
+- tag: Entities Creator
+  spec_file: skai-kenshoo-entities-creator-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.8
+  evidence: bulkCreateCampaignAmazonDsp 'Create AmazonDSP Campaign'; bulkCreateAdGroupAmazonDsp 'Create
+    AmazonDSP Ad Group'
+  reason: Bulk creation/editing of Amazon DSP campaigns, ad groups, line items and inventory — programmatic
+    paid-media activation, i.e. digital marketing execution.
+- tag: Homepage
+  spec_file: skai-kenshoo-homepage-api-openapi.yml
+  capability_id: BC-400.50
+  capability_id_l1: BC-400
+  capability_name: Marketing Operations Management
+  confidence: 0.7
+  evidence: POST /api/v1/homepage/([0-9]+)/budget_oversight createBudgetOversight 'Create budget oversight';
+    'Get is pacing monitor name unique'
+  reason: Creation and monitoring of advertising budget oversight / pacing monitors — marketing budget
+    and spend management, a marketing operations concern. Some ambiguity as the surface is a UI 'homepage'
+    widget.
+- tag: Pacing Monitor
+  spec_file: skai-kenshoo-pacing-monitor-api-openapi.yml
+  capability_id: BC-400.50
+  capability_id_l1: BC-400
+  capability_name: Marketing Operations Management
+  confidence: 0.7
+  evidence: getBudgetOversightByOwner  Get all the budget oversight plans owned by the current user; exportMediaPlan  Export
+    Media plan.
+  reason: Budget oversight and media-plan import/export for advertising spend pacing — marketing operations
+    (marketing budget and measurement) rather than campaign execution itself.
+- tag: Portfolio Manager
+  spec_file: skai-kenshoo-portfolio-manager-api-openapi.yml
+  capability_id: BC-400.50
+  capability_id_l1: BC-400
+  capability_name: Marketing Operations Management
+  confidence: 0.7
+  evidence: getManualPacing  Get manual pacing settings; PUT .../portfolios/{portfolioId}/planned-budgets  Update
+    planned budgets
+  reason: Planned budgets and spend pacing settings for advertising portfolios — marketing budget/operations
+    management within the ad platform.
