@@ -141,14 +141,83 @@ paths:
                 paging: null
                 error_message: null
 components:
+  parameters:
+    ProfileId:
+      name: profile_id
+      in: path
+      description: The id of profile to edit
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
   schemas:
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
+    SourceProfile:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          description: The copied profile id
+          format: int64
+        master_accounts:
+          type: array
+          description: Master account ID
+          items:
+            $ref: '#/components/schemas/MasterAccount'
+      description: The copied profile details
+    EditProfile:
+      type: object
+      properties:
+        external_id:
+          type: string
+          description: New external profile ID
+        profile_name:
+          type: string
+          description: New profile name
+      description: The properties for the edited profile
+      example:
+      - external_id: '1111'
+        profile_name: profile example
+    MasterAccount:
+      type: object
+      properties:
+        channel_type:
+          type: string
+          description: The channel
+          enum:
+          - GOOGLE
+          - MSN
+          - PINTEREST
+        master_account_id:
+          type: string
+          description: The master account id in kenshoo
+      description: The master accounts used to create channel accounts in the created profile
+    EditProfileResponseEntities:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Profile ID
+          format: int64
+        success:
+          type: boolean
+          description: Indicates if edit profile was completed successfully
+        errors:
+          type: array
+          description: Array, where each item contains an error field and an error code (description) in the case that there are errors
+          items:
+            $ref: '#/components/schemas/ErrorField'
+      description: The details of the edited profile
     Profile:
       type: object
       properties:
@@ -178,35 +247,6 @@ components:
           master_accounts:
           - master_account_id: '1'
             channel_type: FB
-    SourceProfile:
-      type: object
-      properties:
-        profile_id:
-          type: integer
-          description: The copied profile id
-          format: int64
-        master_accounts:
-          type: array
-          description: Master account ID
-          items:
-            $ref: '#/components/schemas/MasterAccount'
-      description: The copied profile details
-    EditProfileResponseEntities:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Profile ID
-          format: int64
-        success:
-          type: boolean
-          description: Indicates if edit profile was completed successfully
-        errors:
-          type: array
-          description: Array, where each item contains an error field and an error code (description) in the case that there are errors
-          items:
-            $ref: '#/components/schemas/ErrorField'
-      description: The details of the edited profile
     EditProfileResponseApi:
       type: object
       properties:
@@ -220,19 +260,19 @@ components:
           $ref: '#/components/schemas/Paging'
         error_message:
           type: string
-    EditProfile:
+    CreatedAccount:
       type: object
       properties:
-        external_id:
+        id:
           type: string
-          description: New external profile ID
-        profile_name:
+          description: Channel account id
+        channelType:
           type: string
-          description: New profile name
-      description: The properties for the edited profile
-      example:
-      - external_id: '1111'
-        profile_name: profile example
+          description: The channel
+        uniqueIdInTarget:
+          type: string
+          description: The account id in the channel
+      description: details of channel account copied in the copy profile process
     Paging:
       type: object
       properties:
@@ -242,20 +282,13 @@ components:
         next_page:
           type: string
           readOnly: true
-    MasterAccount:
-      type: object
-      properties:
-        channel_type:
-          type: string
-          description: The channel
-          enum:
-          - GOOGLE
-          - MSN
-          - PINTEREST
-        master_account_id:
-          type: string
-          description: The master account id in kenshoo
-      description: The master accounts used to create channel accounts in the created profile
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     ErrorField:
       type: object
       properties:
@@ -270,19 +303,6 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
-    CreatedAccount:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Channel account id
-        channelType:
-          type: string
-          description: The channel
-        uniqueIdInTarget:
-          type: string
-          description: The account id in the channel
-      description: details of channel account copied in the copy profile process
     ProfileResponse:
       type: object
       properties:
@@ -307,34 +327,7 @@ components:
           type: string
           description: New profile token in case profile creation finished successfully
       description: The details of the created profile
-  parameters:
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
-    ProfileId:
-      name: profile_id
-      in: path
-      description: The id of profile to edit
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: integer
   requestBodies:
-    EditProfile:
-      description: The profile details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/EditProfile'
-      required: true
     Profile:
       description: The profile details
       content:
@@ -342,11 +335,18 @@ components:
           schema:
             $ref: '#/components/schemas/Profile'
       required: true
+    EditProfile:
+      description: The profile details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EditProfile'
+      required: true
   responses:
-    ProfileApiResponse:
-      $ref: '#/components/schemas/ProfileResponse'
     EditProfileApiResponse:
       $ref: '#/components/schemas/EditProfileResponseApi'
+    ProfileApiResponse:
+      $ref: '#/components/schemas/ProfileResponse'
 x-tagGroups:
 - name: Reporting
   tags:

@@ -69,12 +69,12 @@ tags:
 - Paid Search
 - Paid Social
 - Marketing Analytics
-- Advertising Technology
+- AdTech
 - Campaign Management
 - Commerce Media
 - Reporting
 - MCP
-- agent-native
+- Agent-Native
 - Omnichannel
 tags_raw:
 - Company
@@ -92,6 +92,7 @@ tags_raw:
 - MCP
 - Agent Native
 - Omnichannel
+- agent-native
 apis:
 - name: Skai MCP Servers
   description: >-
@@ -107,7 +108,7 @@ apis:
   baseURL: https://mcp.kenshoo.com
   tags:
   - MCP
-  - agent-native
+  - Agent-Native
   - Reporting
   - Campaign Management
   tags_raw:
@@ -115,6 +116,7 @@ apis:
   - Agent Native
   - Reporting
   - Campaign Management
+  - agent-native
   properties:
   - type: MCPServer
     url: mcp/skai-kenshoo-mcp.yml

@@ -52,38 +52,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    ProductGroupNode:
-      required:
-      - dimension
-      type: object
-      properties:
-        level:
-          type: integer
-          description: Required for Google. Defines which level each path represents on the tree.
-        type:
-          $ref: '#/components/schemas/ProductGroupType'
-        dimension:
-          type: string
-          description: The value of the filter name
-        catalog_id:
-          type: integer
-          description: Required for Pinterest - this represents the ID of the organic product group
     Productgroup:
       required:
       - ad_group_id
@@ -126,6 +94,22 @@ components:
           catalog_id: '12345678'
         ad_group_id: 5678
         tracking_url: www.my-url.com
+    ProductGroupNode:
+      required:
+      - dimension
+      type: object
+      properties:
+        level:
+          type: integer
+          description: Required for Google. Defines which level each path represents on the tree.
+        type:
+          $ref: '#/components/schemas/ProductGroupType'
+        dimension:
+          type: string
+          description: The value of the filter name
+        catalog_id:
+          type: integer
+          description: Required for Pinterest - this represents the ID of the organic product group
     EntityResponse:
       type: object
       properties:
@@ -138,6 +122,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorField'
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     ErrorField:
       type: object
       properties:
@@ -184,29 +184,7 @@ components:
       - TYPE_FULL
       - UNSUPPORTED
       - NONE
-  requestBodies:
-    Productgroup:
-      description: The product group details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Productgroup'
-      required: true
   responses:
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: name
-                error: ILLEGAL_NAME
     InternalServerError:
       description: Server error
       content:
@@ -222,6 +200,20 @@ components:
               - field_name: ServerError
                 error: Unexpected error occurred.
                 parameters: {}
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
     EntitySuccessResponse:
       description: The entity operations succeeded
       content:
@@ -247,6 +239,14 @@ components:
       schema:
         type: string
       example: '1234'
+  requestBodies:
+    Productgroup:
+      description: The product group details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Productgroup'
+      required: true
 x-tagGroups:
 - name: Reporting
   tags:

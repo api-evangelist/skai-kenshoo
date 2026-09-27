@@ -33,6 +33,185 @@ paths:
       - Automated Actions
 components:
   schemas:
+    ReportFilter:
+      required:
+      - field
+      - operator
+      - values
+      type: object
+      properties:
+        field:
+          type: string
+          description: Field name to be fetched
+        operator:
+          type: string
+          enum:
+          - EQUALS
+          - NOT_EQUALS
+          - IN
+          - NOT_IN
+          - GREATER_THAN
+          - GREATER_THAN_EQUALS
+          - LESS_THAN
+          - LESS_THAN_EQUALS
+          - STARTS_WITH
+          - CONTAINS
+          - DOES_NOT_CONTAIN
+          - CONTAINS_ANY
+          - CONTAINS_NONE
+          - ENDS_WITH
+          - IS_EMPTY
+          - IS_NOT_EMPTY
+          - BETWEEN
+        values:
+          type: array
+          items:
+            type: string
+        group:
+          type: string
+          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
+          enum:
+          - ATTRIBUTES
+          - PERFORMANCE
+          - DIMENSIONS
+          - CUSTOM_METRICS
+          - CUSTOM_METRICS_PLUS
+          - CONVERSION_TYPES
+          - CHANNEL_CUSTOMER_CONVERSION_TYPES
+          - PROXY_CUSTOMER_CONVERSION_TYPES
+          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
+      description: Name of the field to which the condition will apply with certain values.
+      example:
+      - field: StatusToDisplay
+        group: ATTRIBUTES
+        operator: In
+        values:
+        - Approved
+        - Active
+      - field: CampaignName
+        group: ATTRIBUTES
+        operator: CONTAINS
+        values:
+        - New
+      - field: Impressions
+        group: PERFORMANCE
+        operator: GREATER_THAN
+        values:
+        - '0'
+    ReportSort:
+      required:
+      - field
+      - group
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field to be sorted
+        order:
+          type: string
+          enum:
+          - ASCENDING
+          - DESCENDING
+          default: ASCENDING
+        group:
+          type: string
+          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
+          enum:
+          - ATTRIBUTES
+          - PERFORMANCE
+          - DIMENSIONS
+          - CUSTOM_METRICS
+          - CUSTOM_METRICS_PLUS
+          - CONVERSION_TYPES
+          - CHANNEL_CUSTOMER_CONVERSION_TYPES
+          - PROXY_CUSTOMER_CONVERSION_TYPES
+          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
+      description: The properties of the sort
+      example:
+        field: CampaignId
+        group: ATTRIBUTES
+        order: DESCENDING
+    Column:
+      required:
+      - group
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Field name to be fetched
+        group:
+          type: string
+          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
+          enum:
+          - Attributes
+          - Performance
+          - Dimensions
+          - CustomMetrics
+          - CustomMetricsPlus
+          - ConversionTypes
+          - ChannelCustomerConversionTypes
+          - ProxyCustomerConversionTypes
+          - ExternalCustomerConversionTypes
+        id:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        value_type:
+          type: string
+          readOnly: true
+          enum:
+          - STRING
+          - INTEGER
+          - FLOAT
+          - BOOLEAN
+          - DATE
+      description: The properties of a field
+      example:
+      - name: Clicks
+        group: Performance
+    DateRange:
+      required:
+      - end_date
+      - start_date
+      type: object
+      properties:
+        start_date:
+          type: string
+          description: Start date in YYYY-MM-dd format
+        end_date:
+          type: string
+          description: End date in YYYY-MM-dd format
+        exclude_dates:
+          type: array
+          items:
+            type: string
+            description: Dates to exclude in YYYY-MM-dd format
+            readOnly: true
+      description: The properties of the date range.
+      example:
+      - start_date: '2026-01-01'
+        end_date: '2026-01-14'
+        exclude_dates:
+        - '2026-01-07'
+    ReportEntity:
+      type: string
+      description: The base entity for the report, indicated in the analysis grid name. Important - When using the API for product grids, refer to the entity as "PRODUCT_ASSET".
+      enum:
+      - CAMPAIGN
+      - ADGROUP
+      - KEYWORD
+      - AD
+      - PORTFOLIO
+      - PRODUCT_ASSET
+      - LOCATIONS
+      - NEGATIVE_KEYWORDS
+      - SITELINK
+      - CREATIVE_ASSET
+      - PRODUCT_TARGETING
+      - ASSET_GROUP
     ReportRequest:
       required:
       - date_range
@@ -131,120 +310,6 @@ components:
           order: DESCENDING
         limit: 1000
         page: 0
-    DateRange:
-      required:
-      - end_date
-      - start_date
-      type: object
-      properties:
-        start_date:
-          type: string
-          description: Start date in YYYY-MM-dd format
-        end_date:
-          type: string
-          description: End date in YYYY-MM-dd format
-        exclude_dates:
-          type: array
-          items:
-            type: string
-            description: Dates to exclude in YYYY-MM-dd format
-            readOnly: true
-      description: The properties of the date range.
-      example:
-      - start_date: '2026-01-01'
-        end_date: '2026-01-14'
-        exclude_dates:
-        - '2026-01-07'
-    Column:
-      required:
-      - group
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          description: Field name to be fetched
-        group:
-          type: string
-          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
-          enum:
-          - Attributes
-          - Performance
-          - Dimensions
-          - CustomMetrics
-          - CustomMetricsPlus
-          - ConversionTypes
-          - ChannelCustomerConversionTypes
-          - ProxyCustomerConversionTypes
-          - ExternalCustomerConversionTypes
-        id:
-          type: string
-          readOnly: true
-        display_name:
-          type: string
-          readOnly: true
-        value_type:
-          type: string
-          readOnly: true
-          enum:
-          - STRING
-          - INTEGER
-          - FLOAT
-          - BOOLEAN
-          - DATE
-      description: The properties of a field
-      example:
-      - name: Clicks
-        group: Performance
-    ReportEntity:
-      type: string
-      description: The base entity for the report, indicated in the analysis grid name. Important - When using the API for product grids, refer to the entity as "PRODUCT_ASSET".
-      enum:
-      - CAMPAIGN
-      - ADGROUP
-      - KEYWORD
-      - AD
-      - PORTFOLIO
-      - PRODUCT_ASSET
-      - LOCATIONS
-      - NEGATIVE_KEYWORDS
-      - SITELINK
-      - CREATIVE_ASSET
-      - PRODUCT_TARGETING
-      - ASSET_GROUP
-    ReportSort:
-      required:
-      - field
-      - group
-      type: object
-      properties:
-        field:
-          type: string
-          description: The field to be sorted
-        order:
-          type: string
-          enum:
-          - ASCENDING
-          - DESCENDING
-          default: ASCENDING
-        group:
-          type: string
-          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
-          enum:
-          - ATTRIBUTES
-          - PERFORMANCE
-          - DIMENSIONS
-          - CUSTOM_METRICS
-          - CUSTOM_METRICS_PLUS
-          - CONVERSION_TYPES
-          - CHANNEL_CUSTOMER_CONVERSION_TYPES
-          - PROXY_CUSTOMER_CONVERSION_TYPES
-          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
-      description: The properties of the sort
-      example:
-        field: CampaignId
-        group: ATTRIBUTES
-        order: DESCENDING
     AutomatedAction:
       type: object
       properties:
@@ -294,71 +359,14 @@ components:
         action_type: SET_BID_STRATEGY
         notificationType: ALWAYS
         recipients: _devSocialPegasus@kenshoo.com
-    ReportFilter:
-      required:
-      - field
-      - operator
-      - values
-      type: object
-      properties:
-        field:
-          type: string
-          description: Field name to be fetched
-        operator:
-          type: string
-          enum:
-          - EQUALS
-          - NOT_EQUALS
-          - IN
-          - NOT_IN
-          - GREATER_THAN
-          - GREATER_THAN_EQUALS
-          - LESS_THAN
-          - LESS_THAN_EQUALS
-          - STARTS_WITH
-          - CONTAINS
-          - DOES_NOT_CONTAIN
-          - CONTAINS_ANY
-          - CONTAINS_NONE
-          - ENDS_WITH
-          - IS_EMPTY
-          - IS_NOT_EMPTY
-          - BETWEEN
-        values:
-          type: array
-          items:
-            type: string
-        group:
-          type: string
-          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
-          enum:
-          - ATTRIBUTES
-          - PERFORMANCE
-          - DIMENSIONS
-          - CUSTOM_METRICS
-          - CUSTOM_METRICS_PLUS
-          - CONVERSION_TYPES
-          - CHANNEL_CUSTOMER_CONVERSION_TYPES
-          - PROXY_CUSTOMER_CONVERSION_TYPES
-          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
-      description: Name of the field to which the condition will apply with certain values.
-      example:
-      - field: StatusToDisplay
-        group: ATTRIBUTES
-        operator: In
-        values:
-        - Approved
-        - Active
-      - field: CampaignName
-        group: ATTRIBUTES
-        operator: CONTAINS
-        values:
-        - New
-      - field: Impressions
-        group: PERFORMANCE
-        operator: GREATER_THAN
-        values:
-        - '0'
+  requestBodies:
+    CreateAutomatedAction:
+      description: The automated action details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AutomatedAction'
+      required: true
   parameters:
     ks:
       name: ks
@@ -370,14 +378,6 @@ components:
       schema:
         type: string
       example: '1234'
-  requestBodies:
-    CreateAutomatedAction:
-      description: The automated action details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AutomatedAction'
-      required: true
 x-tagGroups:
 - name: Reporting
   tags:

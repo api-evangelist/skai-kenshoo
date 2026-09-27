@@ -169,62 +169,20 @@ paths:
                   errorMessage:
                     type: string
 components:
-  parameters:
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
-    ProfileIds:
-      name: profileId
-      in: query
-      description: Filter by profile ID. Returns the custom columns assigned to this profile.
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: integer
-    SourceNames:
-      name: sourceName
-      in: query
-      description: 'The data source name. Currently, `FlexibleColumns` is the only supported value
-
-        '
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-    ColumnName:
-      name: columnName
-      in: query
-      description: 'Filter by column name. Returns the custom columns name equals this input.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
   requestBodies:
-    EditDynamicColumnsRequest:
-      description: Edit custom column
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ExtraConfig'
-      required: true
     DynamicColumnsDeleteRequest:
       description: Delete custom columns
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/DynamicColumnsToDelete'
+      required: true
+    EditDynamicColumnsRequest:
+      description: Edit custom column
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExtraConfig'
       required: true
     DynamicColumnsRequest:
       description: Create custom columns
@@ -234,13 +192,21 @@ components:
             $ref: '#/components/schemas/DynamicColumns'
       required: true
   schemas:
-    ExtraConfig:
+    DynamicColumnsDeleteResponse:
       type: object
       properties:
-        profile_ids:
+        columns:
+          uniqueItems: true
           type: array
-          description: The IDs of Skai profiles to enable the column for.
-      description: Additional custom column configurations.
+          description: '[array of objects]'
+          items:
+            $ref: '#/components/schemas/DynamicColumnDeleteResponse'
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        error_message:
+          type: string
+          readOnly: true
+      description: '[array of objects]'
     DynamicColumnDeleteResponse:
       type: object
       properties:
@@ -257,6 +223,29 @@ components:
           type: string
           description: Reason for failure
       description: The properties of a column
+    DynamicColumnToDelete:
+      required:
+      - column_id
+      type: object
+      properties:
+        column_id:
+          type: integer
+          description: The custom column ID. Must be unique.
+      description: The properties of a column
+    ExtraConfig:
+      type: object
+      properties:
+        profile_ids:
+          type: array
+          description: The IDs of Skai profiles to enable the column for.
+      description: Additional custom column configurations.
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     DynamicColumnsResponse:
       type: object
       properties:
@@ -272,42 +261,6 @@ components:
           type: string
           readOnly: true
       description: '[array of objects]'
-    DynamicColumnsDeleteResponse:
-      type: object
-      properties:
-        columns:
-          uniqueItems: true
-          type: array
-          description: '[array of objects]'
-          items:
-            $ref: '#/components/schemas/DynamicColumnDeleteResponse'
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        error_message:
-          type: string
-          readOnly: true
-      description: '[array of objects]'
-    DynamicColumnsToDelete:
-      required:
-      - columns
-      - source_name
-      type: object
-      properties:
-        columns:
-          uniqueItems: true
-          type: array
-          description: '[array of objects]'
-          items:
-            $ref: '#/components/schemas/DynamicColumnToDelete'
-        source_name:
-          type: string
-          description: The data source name. Currently, only FlexibleColumns is supported.
-      description: The properties for the custom columns request
-      example:
-        columns:
-        - column_id: 1
-        - column_id: 2
-        source_name: FlexibleColumns
     DynamicColumnResponse:
       type: object
       properties:
@@ -350,22 +303,6 @@ components:
         extra_config:
           $ref: '#/components/schemas/ExtraConfig'
       description: The properties of a column
-    DynamicColumnToDelete:
-      required:
-      - column_id
-      type: object
-      properties:
-        column_id:
-          type: integer
-          description: The custom column ID. Must be unique.
-      description: The properties of a column
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     DynamicColumns:
       required:
       - columns
@@ -398,23 +335,70 @@ components:
             profile_ids:
             - 401
         source_name: FlexibleColumns
+    DynamicColumnsToDelete:
+      required:
+      - columns
+      - source_name
+      type: object
+      properties:
+        columns:
+          uniqueItems: true
+          type: array
+          description: '[array of objects]'
+          items:
+            $ref: '#/components/schemas/DynamicColumnToDelete'
+        source_name:
+          type: string
+          description: The data source name. Currently, only FlexibleColumns is supported.
+      description: The properties for the custom columns request
+      example:
+        columns:
+        - column_id: 1
+        - column_id: 2
+        source_name: FlexibleColumns
+  parameters:
+    SourceNames:
+      name: sourceName
+      in: query
+      description: 'The data source name. Currently, `FlexibleColumns` is the only supported value
+
+        '
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
+    ProfileIds:
+      name: profileId
+      in: query
+      description: Filter by profile ID. Returns the custom columns assigned to this profile.
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+    ColumnName:
+      name: columnName
+      in: query
+      description: 'Filter by column name. Returns the custom columns name equals this input.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
   responses:
-    DynamicColumnsDeleteResponse:
-      description: The custom columns were deleted successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DynamicColumnsDeleteResponse'
-          example:
-          - id: 1
-            status: SUCCESS
-            error_message: null
-          - id: 2
-            status: SUCCESS
-            error_message: null
-          - id: 3
-            status: SUCCESS
-            error_message: null
     GetDynamicColumnsResponse:
       description: The custom columns were retrieved successfully
       content:
@@ -465,6 +449,22 @@ components:
             extra_config:
               profile_ids:
               - 401
+            status: SUCCESS
+            error_message: null
+    DynamicColumnsDeleteResponse:
+      description: The custom columns were deleted successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DynamicColumnsDeleteResponse'
+          example:
+          - id: 1
+            status: SUCCESS
+            error_message: null
+          - id: 2
+            status: SUCCESS
+            error_message: null
+          - id: 3
             status: SUCCESS
             error_message: null
 x-tagGroups:

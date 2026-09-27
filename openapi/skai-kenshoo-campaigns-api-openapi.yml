@@ -179,20 +179,22 @@ components:
           merchant_id: '8740'
           sales_country: US
           priority: LOW
-    ErrorField:
+    Paging:
       type: object
       properties:
-        fieldName:
+        previous_page:
           type: string
-          description: The error field
-        error:
+          readOnly: true
+        next_page:
           type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
+          readOnly: true
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     shoppingSettings:
       type: object
       properties:
@@ -223,6 +225,120 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorField'
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    CampaignDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the campaign
+        channel_campaign_id:
+          type: string
+          description: Publisher ID of the campaign
+        channel_account_id:
+          type: integer
+          description: Skai ID of the publisher account
+        profile_id:
+          type: integer
+          description: Skai ID of the profile
+        channel_type:
+          type: string
+          description: Campaign channel type
+          enum:
+          - Google
+          - Microsoft
+          - Universal
+          - Yandex
+          - Baidu
+          - YahooJapan
+          - YahooGemini
+          - Pinterest
+          - Amazon
+          - Facebook
+          - Walmart
+        campaign_name:
+          type: string
+          description: Campaign name
+        budget:
+          type: number
+          description: Campaign budget in the profile's currency
+        budget_type:
+          type: string
+          description: Budget type
+          enum:
+          - DEFAULT
+          - DAILY_FOR_ADGROUP
+          - MONTHLY_FOR_CAMPAIGN
+          - LIFETIME
+        search_bid:
+          type: number
+          description: Default search bid in the profile's currency
+        content_bid:
+          type: number
+          description: Default content bid in the profile's currency
+        status:
+          type: string
+          description: Campaign status
+          enum:
+          - ACTIVE
+          - PAUSED
+          - DELETED
+          - REVIEW
+          default: ACTIVE
+        order_line:
+          type: string
+          description: Order line of the campaign
+        start_date:
+          type: string
+          description: Campaign start date
+          format: yyyy-MM-dd
+        end_date:
+          type: string
+          description: Campaign end date
+          format: yyyy-MM-dd
+        tracking_level:
+          type: string
+          description: Campaign tracking level
+          enum:
+          - NONE
+          - PROFILE_DEFAULT
+          - CAMPAIGN
+          - ADS
+          - KEYWORDS
+          - ADS_AND_KEYWORDS
+          default: PROFILE_DEFAULT
+        campaign_type:
+          type: string
+          description: Campaign type
+          enum:
+          - TEXT_CAMPAIGN
+          - SMART_SHOPPING
+          - SHOPPING_STANDARD
+          default: TEXT_CAMPAIGN
+        shopping_settings:
+          $ref: '#/components/schemas/shoppingSettings'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
     GetCampaignApiResponse:
       type: object
       properties:
@@ -329,203 +445,7 @@ components:
           merchant_id: '8740'
           sales_country: US
           priority: LOW
-    CampaignDTO:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the campaign
-        channel_campaign_id:
-          type: string
-          description: Publisher ID of the campaign
-        channel_account_id:
-          type: integer
-          description: Skai ID of the publisher account
-        profile_id:
-          type: integer
-          description: Skai ID of the profile
-        channel_type:
-          type: string
-          description: Campaign channel type
-          enum:
-          - Google
-          - Microsoft
-          - Universal
-          - Yandex
-          - Baidu
-          - YahooJapan
-          - YahooGemini
-          - Pinterest
-          - Amazon
-          - Facebook
-          - Walmart
-        campaign_name:
-          type: string
-          description: Campaign name
-        budget:
-          type: number
-          description: Campaign budget in the profile's currency
-        budget_type:
-          type: string
-          description: Budget type
-          enum:
-          - DEFAULT
-          - DAILY_FOR_ADGROUP
-          - MONTHLY_FOR_CAMPAIGN
-          - LIFETIME
-        search_bid:
-          type: number
-          description: Default search bid in the profile's currency
-        content_bid:
-          type: number
-          description: Default content bid in the profile's currency
-        status:
-          type: string
-          description: Campaign status
-          enum:
-          - ACTIVE
-          - PAUSED
-          - DELETED
-          - REVIEW
-          default: ACTIVE
-        order_line:
-          type: string
-          description: Order line of the campaign
-        start_date:
-          type: string
-          description: Campaign start date
-          format: yyyy-MM-dd
-        end_date:
-          type: string
-          description: Campaign end date
-          format: yyyy-MM-dd
-        tracking_level:
-          type: string
-          description: Campaign tracking level
-          enum:
-          - NONE
-          - PROFILE_DEFAULT
-          - CAMPAIGN
-          - ADS
-          - KEYWORDS
-          - ADS_AND_KEYWORDS
-          default: PROFILE_DEFAULT
-        campaign_type:
-          type: string
-          description: Campaign type
-          enum:
-          - TEXT_CAMPAIGN
-          - SMART_SHOPPING
-          - SHOPPING_STANDARD
-          default: TEXT_CAMPAIGN
-        shopping_settings:
-          $ref: '#/components/schemas/shoppingSettings'
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
   parameters:
-    profileId:
-      name: profile_id
-      in: query
-      description: 'Filter by profile ID.
-
-        Returns the campaigns whose profile ID equals your profile ID.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
-    channelTypes:
-      name: channel_types
-      in: query
-      description: 'Filter by channel type.
-
-        Returns the campaigns whose channel types are included in the list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - Google
-          - Microsoft
-          - Universal
-          - Yandex
-          - Baidu
-          - YahooJapan
-          - YahooGemini
-          - Pinterest
-          - Amazon
-          - Facebook
-          - Walmart
-    campaignIds:
-      name: ids
-      in: query
-      description: 'Filter by campaign ID.
-
-        Returns the campaigns whose campaign IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
-    pageId:
-      name: page_id
-      in: query
-      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
-
-        To return the first page, do not include page_id in the request.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: Mg==
     channelCampaignIds:
       name: channel_campaign_ids
       in: query
@@ -574,16 +494,87 @@ components:
           - Pending
           - Suspended
           - PausedBudgetDepleted
-  requestBodies:
-    createCampaigns:
-      description: The campaigns to create
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/createCampaign'
+    pageId:
+      name: page_id
+      in: query
+      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
+
+        To return the first page, do not include page_id in the request.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: Mg==
+    channelTypes:
+      name: channel_types
+      in: query
+      description: 'Filter by channel type.
+
+        Returns the campaigns whose channel types are included in the list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - Google
+          - Microsoft
+          - Universal
+          - Yandex
+          - Baidu
+          - YahooJapan
+          - YahooGemini
+          - Pinterest
+          - Amazon
+          - Facebook
+          - Walmart
+    profileId:
+      name: profile_id
+      in: query
+      description: 'Filter by profile ID.
+
+        Returns the campaigns whose profile ID equals your profile ID.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
       required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
+    campaignIds:
+      name: ids
+      in: query
+      description: 'Filter by campaign ID.
+
+        Returns the campaigns whose campaign IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
+  requestBodies:
     editCampaigns:
       description: The campaigns to update
       content:
@@ -592,6 +583,15 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/editCampaign'
+      required: true
+    createCampaigns:
+      description: The campaigns to create
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/createCampaign'
       required: true
   responses:
     GetCampaignEntitySuccessResponse:
@@ -638,6 +638,17 @@ components:
               errors:
               - field_name: name
                 error: ILLEGAL_NAME
+    GetCampaignBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetCampaignApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
     EntitySuccessResponse:
       description: The entity operations succeeded
       content:
@@ -652,17 +663,6 @@ components:
               errors: []
     ApiResponse:
       $ref: '#/components/schemas/ApiResponse'
-    GetCampaignBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GetCampaignApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
     InternalServerError:
       description: Server error
       content:
