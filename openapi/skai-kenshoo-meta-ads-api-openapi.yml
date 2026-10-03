@@ -171,6 +171,305 @@ components:
           pixel_ids:
           - 4308
           use_kenshoo_tracking: true
+    getAdApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/adDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    facebookAdPostType:
+      type: string
+      description: Ad post type
+      enum:
+      - LINK
+      - VIDEO
+    getFacebookAdApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/facebookAdDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    tag:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Tag name
+        category:
+          type: string
+          description: Category name
+    editEntityTagsRequest:
+      required:
+      - id
+      - operation_type
+      - tags
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
+          type: array
+          description: Tags
+          items:
+            $ref: '#/components/schemas/tag'
+        operation_type:
+          $ref: '#/components/schemas/operationType'
+      description: The properties for editing entity tags
+      example:
+      - id: 100
+        tags:
+        - name: tag1
+          category: cat
+        - name: tag2
+          category: dog
+        operation_type: ATTACH
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+    facebookAdType:
+      type: string
+      description: Ad type
+      enum:
+      - PAGE_POST
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    facebookAdBid:
+      type: object
+      properties:
+        bid_amount:
+          type: number
+          description: Bid amount
+      description: Bid
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    facebookAdCreativeDTO:
+      type: object
+      properties:
+        ad_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdType'
+        post_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdPostType'
+        post_text:
+          type: string
+          description: Post text
+        description:
+          type: string
+          description: Description
+        headline:
+          type: string
+          description: Headline
+        call_to_action:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdCallToAction'
+        link:
+          type: string
+          description: Destination URL
+        caption:
+          type: string
+          description: Display link
+        image_name:
+          type: string
+          description: Image name
+        video_name:
+          type: string
+          description: Video name
+        video_thumbnail_name:
+          type: string
+          description: Video thumbnail name
+        page_id:
+          type: integer
+          description: Page id
+        instagram_actor_id:
+          type: integer
+          description: Instagram actor id
+      description: Ad creative
+    Paging:
+      type: object
+      properties:
+        previous_page:
+          type: string
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
+    getEntityTagsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/tag'
+    facebookEditAdCreative:
+      type: object
+      properties:
+        post_text:
+          type: string
+          description: Post text
+        description:
+          type: string
+          description: Description
+        headline:
+          type: string
+          description: Headline
+        call_to_action:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdCallToAction'
+        link:
+          type: string
+          description: Destination URL
+        caption:
+          type: string
+          description: Display link
+        image_name:
+          type: string
+          description: Image name
+        video_name:
+          type: string
+          description: Video name
+        video_thumbnail_name:
+          type: string
+          description: Video thumbnail name
+        page_id:
+          type: integer
+          description: Page id
+        instagram_actor_id:
+          type: integer
+          description: Instagram actor id
+      description: Ad creative
+    facebookAdDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the ad
+        ad_group_id:
+          type: integer
+          description: Skai ID of the ad group
+        name:
+          type: string
+          description: Ad name
+        status:
+          type: string
+          description: Status
+          enum:
+          - ACTIVE
+          - PAUSED
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdBid'
+        creative:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdCreativeDTO'
+        tracking:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdTracking'
+    adDTO:
+      type: object
+      properties:
+        ad_group_id:
+          type: integer
+          description: Skai ID of the ad group
+        name:
+          type: string
+          description: Ad name
+        status:
+          type: string
+          description: Status
+          enum:
+          - ACTIVE
+          - PAUSED
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdBid'
+        creative:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdCreativeDTO'
+        tracking:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdTracking'
+      description: The properties for the newly created ad
+      example:
+      - name: New Ad
+        ad_group_id: 12345
+        status: ACTIVE
+        bid:
+          bid_amount: 23.05
+        creative:
+          ad_type: PAGE_POST
+          post_type: LINK
+          post_text: ad body
+          description: ad description
+          headline: ad headline
+          call_to_action: DOWNLOAD
+          link: skai.io
+          caption: skai.io
+          image_name: theBestImage
+          page_id: 21
+          instagram_actor_id: 33
+        tracking:
+          pixel_ids:
+          - 4308
+          use_kenshoo_tracking: true
     facebookAdCallToAction:
       type: string
       description: Call to action
@@ -224,143 +523,24 @@ components:
       - INSTAGRAM_MESSAGE
       - START_ORDER
       - TRY_IN_CAMERA
-    facebookAdPostType:
-      type: string
-      description: Ad post type
-      enum:
-      - LINK
-      - VIDEO
-    facebookAdType:
-      type: string
-      description: Ad type
-      enum:
-      - PAGE_POST
-    facebookEditAdCreative:
+    facebookAdTracking:
       type: object
       properties:
-        post_text:
-          type: string
-          description: Post text
-        description:
-          type: string
-          description: Description
-        headline:
-          type: string
-          description: Headline
-        call_to_action:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdCallToAction'
-        link:
-          type: string
-          description: Destination URL
-        caption:
-          type: string
-          description: Display link
-        image_name:
-          type: string
-          description: Image name
-        video_name:
-          type: string
-          description: Video name
-        video_thumbnail_name:
-          type: string
-          description: Video thumbnail name
-        page_id:
-          type: integer
-          description: Page id
-        instagram_actor_id:
-          type: integer
-          description: Instagram actor id
-      description: Ad creative
-    getEntityTagsResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the entity
-        tags:
+        pixel_ids:
           type: array
-          readOnly: true
+          description: Facebook pixel ids
           items:
-            $ref: '#/components/schemas/tag'
-    adDTO:
-      type: object
-      properties:
-        ad_group_id:
-          type: integer
-          description: Skai ID of the ad group
-        name:
-          type: string
-          description: Ad name
-        status:
-          type: string
-          description: Status
-          enum:
-          - ACTIVE
-          - PAUSED
-        bid:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdBid'
-        creative:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdCreativeDTO'
-        tracking:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdTracking'
-      description: The properties for the newly created ad
-      example:
-      - name: New Ad
-        ad_group_id: 12345
-        status: ACTIVE
-        bid:
-          bid_amount: 23.05
-        creative:
-          ad_type: PAGE_POST
-          post_type: LINK
-          post_text: ad body
-          description: ad description
-          headline: ad headline
-          call_to_action: DOWNLOAD
-          link: skai.io
-          caption: skai.io
-          image_name: theBestImage
-          page_id: 21
-          instagram_actor_id: 33
-        tracking:
-          pixel_ids:
-          - 4308
-          use_kenshoo_tracking: true
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    getEntityTagsApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/getEntityTagsResponse'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-          readOnly: true
-    ApiResponseStatus:
+            type: integer
+        use_kenshoo_tracking:
+          type: boolean
+          description: Use kenshoo tracking
+      description: Tracking
+    operationType:
       type: string
-      readOnly: true
+      description: Operation type
       enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
+      - ATTACH
+      - DETACH
     editFacebookAd:
       required:
       - id
@@ -411,96 +591,7 @@ components:
           pixel_ids:
           - 450
           use_kenshoo_tracking: false
-    facebookAdTracking:
-      type: object
-      properties:
-        pixel_ids:
-          type: array
-          description: Facebook pixel ids
-          items:
-            type: integer
-        use_kenshoo_tracking:
-          type: boolean
-          description: Use kenshoo tracking
-      description: Tracking
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    facebookAdCreativeDTO:
-      type: object
-      properties:
-        ad_type:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdType'
-        post_type:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdPostType'
-        post_text:
-          type: string
-          description: Post text
-        description:
-          type: string
-          description: Description
-        headline:
-          type: string
-          description: Headline
-        call_to_action:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdCallToAction'
-        link:
-          type: string
-          description: Destination URL
-        caption:
-          type: string
-          description: Display link
-        image_name:
-          type: string
-          description: Image name
-        video_name:
-          type: string
-          description: Video name
-        video_thumbnail_name:
-          type: string
-          description: Video thumbnail name
-        page_id:
-          type: integer
-          description: Page id
-        instagram_actor_id:
-          type: integer
-          description: Instagram actor id
-      description: Ad creative
-    operationType:
-      type: string
-      description: Operation type
-      enum:
-      - ATTACH
-      - DETACH
-    facebookAdBid:
-      type: object
-      properties:
-        bid_amount:
-          type: number
-          description: Bid amount
-      description: Bid
-    getAdApiResponse:
+    getEntityTagsApiResponse:
       type: object
       properties:
         status:
@@ -509,36 +600,7 @@ components:
           type: array
           readOnly: true
           items:
-            $ref: '#/components/schemas/adDTO'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-          readOnly: true
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    getFacebookAdApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/facebookAdDTO'
+            $ref: '#/components/schemas/getEntityTagsResponse'
         paging:
           $ref: '#/components/schemas/Paging'
         error_message:
@@ -594,104 +656,9 @@ components:
           type: integer
           description: Instagram actor id
       description: Ad creative
-    editEntityTagsRequest:
-      required:
-      - id
-      - operation_type
-      - tags
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the entity
-        tags:
-          type: array
-          description: Tags
-          items:
-            $ref: '#/components/schemas/tag'
-        operation_type:
-          $ref: '#/components/schemas/operationType'
-      description: The properties for editing entity tags
-      example:
-      - id: 100
-        tags:
-        - name: tag1
-          category: cat
-        - name: tag2
-          category: dog
-        operation_type: ATTACH
-    facebookAdDTO:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the ad
-        ad_group_id:
-          type: integer
-          description: Skai ID of the ad group
-        name:
-          type: string
-          description: Ad name
-        status:
-          type: string
-          description: Status
-          enum:
-          - ACTIVE
-          - PAUSED
-        bid:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdBid'
-        creative:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdCreativeDTO'
-        tracking:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdTracking'
-    tag:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Tag name
-        category:
-          type: string
-          description: Category name
-  requestBodies:
-    editFacebookAd:
-      description: The ad details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/editFacebookAd'
-      required: true
-    createFacebookAd:
-      description: The ad details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/createFacebookAd'
-      required: true
-    editEntityTagsRequest:
-      description: The entity tags edit request details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/editEntityTagsRequest'
-      required: true
   responses:
-    getEntityTagsBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getEntityTagsApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
+    InternalServerError:
+      description: Server error
       content:
         application/json:
           schema:
@@ -702,22 +669,9 @@ components:
             - id: null
               success: false
               errors:
-              - field_name: name
-                error: ILLEGAL_NAME
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
     getFacebookAdEntitySuccessResponse:
       description: The operation was completed successfully
       content:
@@ -754,21 +708,20 @@ components:
               previous_page: null
               next_page: MQ==
             error_message: null
-    InternalServerError:
-      description: Server error
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+    EntitySuccessResponse:
+      description: The entity operations succeeded
       content:
         application/json:
           schema:
             $ref: '#/components/responses/ApiResponse'
           example:
-            status: FAILED
+            status: SUCCESS
             entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
+            - id: 1234
+              success: true
+              errors: []
     getEntityTagsSuccessResponse:
       description: The operation was completed successfully
       content:
@@ -782,6 +735,17 @@ components:
               category: cat
             - name: tag2
               category: dog
+    getEntityTagsBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
     getAdBadRequest:
       description: Bad request (usually indicates validation failure for client input)
       content:
@@ -793,7 +757,57 @@ components:
             entities: []
             paging: null
             error_message: The value in page_id is invalid
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+  requestBodies:
+    editFacebookAd:
+      description: The ad details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/editFacebookAd'
+      required: true
+    editEntityTagsRequest:
+      description: The entity tags edit request details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/editEntityTagsRequest'
+      required: true
+    createFacebookAd:
+      description: The ad details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/createFacebookAd'
+      required: true
   parameters:
+    pageId:
+      name: page_id
+      in: query
+      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
+
+        To return the first page, do not include page_id in the request.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: Mg==
     adIds:
       name: ids
       in: query
@@ -810,29 +824,6 @@ components:
         type: array
         items:
           type: string
-    pageId:
-      name: page_id
-      in: query
-      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
-
-        To return the first page, do not include page_id in the request.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: Mg==
-    limit:
-      name: limit
-      in: query
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: integer
-        format: int32
     ksV2:
       name: ks
       in: query
@@ -858,6 +849,15 @@ components:
         type: array
         items:
           type: string
+    limit:
+      name: limit
+      in: query
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
 x-tagGroups:
 - name: Reporting
   tags:

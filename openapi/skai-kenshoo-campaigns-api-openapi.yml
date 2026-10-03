@@ -96,135 +96,92 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 components:
+  responses:
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    GetCampaignBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetCampaignApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    GetCampaignEntitySuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetCampaignApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 18204
+              channel_campaign_id: '7247592'
+              profile_id: 96
+              channel_account_id: 718
+              channel_type: Google
+              campaign_name: name
+              budget: 1000.0
+              budget_type: DEFAULT
+              search_bid: 0.0
+              content_bid: 0.0
+              status: DELETED
+              order_line: null
+              start_date: '2026-01-01'
+              end_date: '9999-12-31'
+              tracking_level: KEYWORDS
+              campaign_type: null
+              shopping_settings: {}
+            paging:
+              previous_page: null
+              next_page: MQ==
+            error_message: null
   schemas:
-    editCampaign:
-      required:
-      - id
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the campaign
-        channel_account_id:
-          type: integer
-          description: Skai ID of the publisher account
-        campaign_name:
-          type: string
-          description: Campaign name
-        budget:
-          type: number
-          description: Campaign budget in the profile's currency
-        budget_type:
-          type: string
-          description: Budget type
-          enum:
-          - DEFAULT
-          - DAILY_FOR_ADGROUP
-          - MONTHLY_FOR_CAMPAIGN
-          - LIFETIME
-        search_bid:
-          type: number
-          description: Default search bid in the profile's currency
-        content_bid:
-          type: number
-          description: Default content bid in the profile's currency
-        status:
-          type: string
-          description: Campaign status
-          enum:
-          - ACTIVE
-          - PAUSED
-          - DELETED
-          - REVIEW
-        order_line:
-          type: string
-          description: Order line of the campaign
-        start_date:
-          type: string
-          description: Campaign start date. If specified, must be in the future.
-          format: yyyy-MM-dd
-        end_date:
-          type: string
-          description: Campaign end date. If specified, must be in the future and later than the campaign start date.
-          format: yyyy-MM-dd
-        tracking_level:
-          type: string
-          description: Campaign tracking level
-          enum:
-          - NONE
-          - PROFILE_DEFAULT
-          - CAMPAIGN
-          - ADS
-          - KEYWORDS
-          - ADS_AND_KEYWORDS
-        shopping_settings:
-          $ref: '#/components/schemas/shoppingSettings'
-        default_geographical_targeting:
-          type: string
-          description: Geographical targeting inheritance options
-          enum:
-          - INHERIT_FROM_PROFILE
-          - ENTIRE_WORLD
-      description: The properties for the updated campaign
-      example:
-        channel_account_id: '14411'
-        campaign_name: Edit Campaign
-        budget: '153000.0'
-        search_bid: '1.0'
-        content_bid: '1.0'
-        start_date: '2026-01-01'
-        end_date: '3000-09-28'
-        campaign_type: SHOPPING_STANDARD
-        shopping_settings:
-          merchant_id: '8740'
-          sales_country: US
-          priority: LOW
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    shoppingSettings:
-      type: object
-      properties:
-        merchant_id:
-          type: number
-          description: Merchant center account ID
-        sales_country:
-          type: string
-          description: Country of sale for the shopping campaign
-        priority:
-          type: string
-          description: Priority of the shopping campaign
-          enum:
-          - LOW
-          - MEDIUM
-          - HIGH
-          - SMART_SHOPPING_CAMPAIGN
-      description: Campaign shopping settings
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
     ApiResponse:
       type: object
       properties:
@@ -234,126 +191,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EntityResponse'
-    CampaignDTO:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the campaign
-        channel_campaign_id:
-          type: string
-          description: Publisher ID of the campaign
-        channel_account_id:
-          type: integer
-          description: Skai ID of the publisher account
-        profile_id:
-          type: integer
-          description: Skai ID of the profile
-        channel_type:
-          type: string
-          description: Campaign channel type
-          enum:
-          - Google
-          - Microsoft
-          - Universal
-          - Yandex
-          - Baidu
-          - YahooJapan
-          - YahooGemini
-          - Pinterest
-          - Amazon
-          - Facebook
-          - Walmart
-        campaign_name:
-          type: string
-          description: Campaign name
-        budget:
-          type: number
-          description: Campaign budget in the profile's currency
-        budget_type:
-          type: string
-          description: Budget type
-          enum:
-          - DEFAULT
-          - DAILY_FOR_ADGROUP
-          - MONTHLY_FOR_CAMPAIGN
-          - LIFETIME
-        search_bid:
-          type: number
-          description: Default search bid in the profile's currency
-        content_bid:
-          type: number
-          description: Default content bid in the profile's currency
-        status:
-          type: string
-          description: Campaign status
-          enum:
-          - ACTIVE
-          - PAUSED
-          - DELETED
-          - REVIEW
-          default: ACTIVE
-        order_line:
-          type: string
-          description: Order line of the campaign
-        start_date:
-          type: string
-          description: Campaign start date
-          format: yyyy-MM-dd
-        end_date:
-          type: string
-          description: Campaign end date
-          format: yyyy-MM-dd
-        tracking_level:
-          type: string
-          description: Campaign tracking level
-          enum:
-          - NONE
-          - PROFILE_DEFAULT
-          - CAMPAIGN
-          - ADS
-          - KEYWORDS
-          - ADS_AND_KEYWORDS
-          default: PROFILE_DEFAULT
-        campaign_type:
-          type: string
-          description: Campaign type
-          enum:
-          - TEXT_CAMPAIGN
-          - SMART_SHOPPING
-          - SHOPPING_STANDARD
-          default: TEXT_CAMPAIGN
-        shopping_settings:
-          $ref: '#/components/schemas/shoppingSettings'
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    GetCampaignApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/CampaignDTO'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-          readOnly: true
     createCampaign:
       required:
       - campaign_name
@@ -445,23 +282,274 @@ components:
           merchant_id: '8740'
           sales_country: US
           priority: LOW
-  parameters:
-    channelCampaignIds:
-      name: channel_campaign_ids
-      in: query
-      description: 'Filter by channel campaign ID.
-
-        Returns the campaigns whose channel campaign IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
           type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    Paging:
+      type: object
+      properties:
+        previous_page:
+          type: string
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
+    shoppingSettings:
+      type: object
+      properties:
+        merchant_id:
+          type: number
+          description: Merchant center account ID
+        sales_country:
+          type: string
+          description: Country of sale for the shopping campaign
+        priority:
+          type: string
+          description: Priority of the shopping campaign
+          enum:
+          - LOW
+          - MEDIUM
+          - HIGH
+          - SMART_SHOPPING_CAMPAIGN
+      description: Campaign shopping settings
+    editCampaign:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the campaign
+        channel_account_id:
+          type: integer
+          description: Skai ID of the publisher account
+        campaign_name:
+          type: string
+          description: Campaign name
+        budget:
+          type: number
+          description: Campaign budget in the profile's currency
+        budget_type:
+          type: string
+          description: Budget type
+          enum:
+          - DEFAULT
+          - DAILY_FOR_ADGROUP
+          - MONTHLY_FOR_CAMPAIGN
+          - LIFETIME
+        search_bid:
+          type: number
+          description: Default search bid in the profile's currency
+        content_bid:
+          type: number
+          description: Default content bid in the profile's currency
+        status:
+          type: string
+          description: Campaign status
+          enum:
+          - ACTIVE
+          - PAUSED
+          - DELETED
+          - REVIEW
+        order_line:
+          type: string
+          description: Order line of the campaign
+        start_date:
+          type: string
+          description: Campaign start date. If specified, must be in the future.
+          format: yyyy-MM-dd
+        end_date:
+          type: string
+          description: Campaign end date. If specified, must be in the future and later than the campaign start date.
+          format: yyyy-MM-dd
+        tracking_level:
+          type: string
+          description: Campaign tracking level
+          enum:
+          - NONE
+          - PROFILE_DEFAULT
+          - CAMPAIGN
+          - ADS
+          - KEYWORDS
+          - ADS_AND_KEYWORDS
+        shopping_settings:
+          $ref: '#/components/schemas/shoppingSettings'
+        default_geographical_targeting:
+          type: string
+          description: Geographical targeting inheritance options
+          enum:
+          - INHERIT_FROM_PROFILE
+          - ENTIRE_WORLD
+      description: The properties for the updated campaign
+      example:
+        channel_account_id: '14411'
+        campaign_name: Edit Campaign
+        budget: '153000.0'
+        search_bid: '1.0'
+        content_bid: '1.0'
+        start_date: '2026-01-01'
+        end_date: '3000-09-28'
+        campaign_type: SHOPPING_STANDARD
+        shopping_settings:
+          merchant_id: '8740'
+          sales_country: US
+          priority: LOW
+    GetCampaignApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/CampaignDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    CampaignDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the campaign
+        channel_campaign_id:
+          type: string
+          description: Publisher ID of the campaign
+        channel_account_id:
+          type: integer
+          description: Skai ID of the publisher account
+        profile_id:
+          type: integer
+          description: Skai ID of the profile
+        channel_type:
+          type: string
+          description: Campaign channel type
+          enum:
+          - Google
+          - Microsoft
+          - Universal
+          - Yandex
+          - Baidu
+          - YahooJapan
+          - YahooGemini
+          - Pinterest
+          - Amazon
+          - Facebook
+          - Walmart
+        campaign_name:
+          type: string
+          description: Campaign name
+        budget:
+          type: number
+          description: Campaign budget in the profile's currency
+        budget_type:
+          type: string
+          description: Budget type
+          enum:
+          - DEFAULT
+          - DAILY_FOR_ADGROUP
+          - MONTHLY_FOR_CAMPAIGN
+          - LIFETIME
+        search_bid:
+          type: number
+          description: Default search bid in the profile's currency
+        content_bid:
+          type: number
+          description: Default content bid in the profile's currency
+        status:
+          type: string
+          description: Campaign status
+          enum:
+          - ACTIVE
+          - PAUSED
+          - DELETED
+          - REVIEW
+          default: ACTIVE
+        order_line:
+          type: string
+          description: Order line of the campaign
+        start_date:
+          type: string
+          description: Campaign start date
+          format: yyyy-MM-dd
+        end_date:
+          type: string
+          description: Campaign end date
+          format: yyyy-MM-dd
+        tracking_level:
+          type: string
+          description: Campaign tracking level
+          enum:
+          - NONE
+          - PROFILE_DEFAULT
+          - CAMPAIGN
+          - ADS
+          - KEYWORDS
+          - ADS_AND_KEYWORDS
+          default: PROFILE_DEFAULT
+        campaign_type:
+          type: string
+          description: Campaign type
+          enum:
+          - TEXT_CAMPAIGN
+          - SMART_SHOPPING
+          - SHOPPING_STANDARD
+          default: TEXT_CAMPAIGN
+        shopping_settings:
+          $ref: '#/components/schemas/shoppingSettings'
+  requestBodies:
+    createCampaigns:
+      description: The campaigns to create
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/createCampaign'
+      required: true
+    editCampaigns:
+      description: The campaigns to update
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/editCampaign'
+      required: true
+  parameters:
     campaignStatuses:
       name: statuses
       in: query
@@ -508,6 +596,35 @@ components:
       schema:
         type: string
       example: Mg==
+    profileId:
+      name: profile_id
+      in: query
+      description: 'Filter by profile ID.
+
+        Returns the campaigns whose profile ID equals your profile ID.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    channelCampaignIds:
+      name: channel_campaign_ids
+      in: query
+      description: 'Filter by channel campaign ID.
+
+        Returns the campaigns whose channel campaign IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
     channelTypes:
       name: channel_types
       in: query
@@ -535,19 +652,6 @@ components:
           - Amazon
           - Facebook
           - Walmart
-    profileId:
-      name: profile_id
-      in: query
-      description: 'Filter by profile ID.
-
-        Returns the campaigns whose profile ID equals your profile ID.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
     ks:
       name: ks
       in: query
@@ -574,110 +678,6 @@ components:
         type: array
         items:
           type: string
-  requestBodies:
-    editCampaigns:
-      description: The campaigns to update
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/editCampaign'
-      required: true
-    createCampaigns:
-      description: The campaigns to create
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/createCampaign'
-      required: true
-  responses:
-    GetCampaignEntitySuccessResponse:
-      description: The operation was completed successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GetCampaignApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 18204
-              channel_campaign_id: '7247592'
-              profile_id: 96
-              channel_account_id: 718
-              channel_type: Google
-              campaign_name: name
-              budget: 1000.0
-              budget_type: DEFAULT
-              search_bid: 0.0
-              content_bid: 0.0
-              status: DELETED
-              order_line: null
-              start_date: '2026-01-01'
-              end_date: '9999-12-31'
-              tracking_level: KEYWORDS
-              campaign_type: null
-              shopping_settings: {}
-            paging:
-              previous_page: null
-              next_page: MQ==
-            error_message: null
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: name
-                error: ILLEGAL_NAME
-    GetCampaignBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GetCampaignApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
 x-tagGroups:
 - name: Reporting
   tags:

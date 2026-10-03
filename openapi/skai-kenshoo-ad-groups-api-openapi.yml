@@ -96,240 +96,98 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 components:
-  parameters:
-    adGroupCampaignIds:
-      name: campaign_ids
-      in: query
-      description: 'Filter by campaign ID.
-
-        Returns the ad groups whose campaign IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 200
-        type: array
-        items:
-          type: string
-    adGroupProfileId:
-      name: profile_id
-      in: query
-      description: 'Filter by profile ID.
-
-        Returns the ad groups whose profile ID equals your profile ID.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-    pageId:
-      name: page_id
-      in: query
-      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
-
-        To return the first page, do not include page_id in the request.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: Mg==
-    adGroupChannelCampaignIds:
-      name: channel_campaign_ids
-      in: query
-      description: 'Filter by channel campaign ID.
-
-        Returns the ad groups whose channel campaign IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 200
-        type: array
-        items:
-          type: string
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
-    adGroupStatuses:
-      name: statuses
-      in: query
-      description: 'Filter by status.
-
-        Returns the ad groups whose statuses are included in the list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - Active
-          - Approved
-          - Paused
-          - Deleted
-          - Failed
-          - Review
-          - ToPause
-          - ToDelete
-          - FailedToPause
-          - FailedToDelete
-          - Unknown
-          - Scheduled
-          - Expired
-          - Pending
-          - Disapproved
-    adGroupIds:
-      name: ids
-      in: query
-      description: 'Filter by ad group ID.
-
-        Returns ad groups whose IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
-    channelAdGroupIds:
-      name: channel_ad_group_ids
-      in: query
-      description: 'Filter by channel ad group ID.
-
-        Returns the ad groups whose channel ad group IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
-    adGroupChannelTypes:
-      name: channel_types
-      in: query
-      description: 'Filter by channel type.
-
-        Returns the ad groups whose channel types are included in the list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-          enum:
-          - Google
-          - Microsoft
-          - Universal
-          - Yandex
-          - Baidu
-          - YahooJapan
-          - YahooGemini
-          - Pinterest
-          - Amazon
-          - Facebook
-          - Walmart
+  responses:
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    getAdGroupBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getAdGroupApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    getAdGroupEntitySuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getAdGroupApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 15324
+              channel_ad_group_id: '1674257480'
+              name: name
+              campaign_id: 106
+              channel_campaign_id: '60600800'
+              profile_id: 12
+              channel_type: Google
+              search_bid: 1.0
+              bidding_method: NOT_SET
+              status: ACTIVE
+              start_date: '2026-01-01'
+              end_date: '9999-12-30'
+              budget: 100.0
+              budget_type: DAILY
+            paging:
+              previous_page: null
+              next_page: MQ==
+            error_message: null
   schemas:
-    PinterestAdgroupExtensions:
+    ApiResponse:
       type: object
       properties:
-        delivery_method:
-          type: string
-          description: Delivery method
-          enum:
-          - STANDARD
-          - ACCELERATED
-        conversion_parameters:
-          $ref: '#/components/schemas/AdgroupConversionParams'
-        targeting_parameters:
-          $ref: '#/components/schemas/PinterestTargetingParams'
-      description: For Pinterest Shopping campaigns only
-    AdgroupConversionParams:
-      type: object
-      properties:
-        conversion_tag_id:
-          type: string
-          description: The tag ID
-        conversion_event:
-          type: string
-          description: Conversion event
-          enum:
-          - CHECKOUT
-          - SIGNUP
-          - LEAD
-          - APP_INSTALL
-          - ADD_TO_CART
-        conversion_attribute_window:
-          type: string
-          description: Attribution window
-          enum:
-          - WIN_30_30_1
-          - WIN_7_7_1
-          - WIN_7_0_0
-          - WIN_1_1_1
-          - WIN_1_0_0
-        conversion_averaget_cpa:
-          type: number
-          description: Average CPA
-      description: Conversion parameters
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    AdgroupBudgetType:
-      type: string
-      enum:
-      - DAILY
-      - LIFETIME
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    AdgroupBiddingMethod:
-      type: string
-      description: Will inherit from the campaign's bidding method, if not included
-      enum:
-      - ManualCPC
-      - ManualCPM
-      - ENHANCED_CPC
-      - TARGET_CPA
-      - TARGET_SPEND
-      - TARGET_ROAS
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
     CreateAdgroup:
       required:
       - campaign_id
@@ -406,35 +264,20 @@ components:
             placements: ALL
             countries:
             - US
-    AdgroupStatus:
-      type: string
-      description: Status
-      enum:
-      - ACTIVE
-      - PAUSED
-      - DELETED
-      - REVIEW
-    EntityResponse:
+    PinterestAdgroupExtensions:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
+        delivery_method:
+          type: string
+          description: Delivery method
+          enum:
+          - STANDARD
+          - ACCELERATED
+        conversion_parameters:
+          $ref: '#/components/schemas/AdgroupConversionParams'
+        targeting_parameters:
+          $ref: '#/components/schemas/PinterestTargetingParams'
+      description: For Pinterest Shopping campaigns only
     ErrorField:
       type: object
       properties:
@@ -449,68 +292,67 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
-    getAdGroupApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/AdGroupDTO'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-          readOnly: true
-    EditAdgroup:
-      required:
-      - campaign_id
-      - id
+    EntityResponse:
       type: object
       properties:
         id:
           type: integer
-          description: The ad group ID
-        name:
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    AdgroupBudgetType:
+      type: string
+      enum:
+      - DAILY
+      - LIFETIME
+    Paging:
+      type: object
+      properties:
+        previous_page:
           type: string
-          description: The new name of the ad group
-        campaign_id:
-          type: integer
-          description: The ID of the campaign of this ad group
-        search_bid:
-          type: integer
-          description: Default search bid in the profile's currency
-        status:
-          $ref: '#/components/schemas/AdgroupStatus'
-        start_date:
+          readOnly: true
+        next_page:
           type: string
-          description: Ad group start date. If not specified, will start immediately. If specified, must be in the future.
-          format: yyyy-MM-dd
-        end_date:
+          readOnly: true
+    AdgroupConversionParams:
+      type: object
+      properties:
+        conversion_tag_id:
           type: string
-          description: Ad group end date. If specified, must be in the future and later than the campaign start date.
-          format: yyyy-MM-dd
-        bidding_method:
-          $ref: '#/components/schemas/AdgroupBiddingMethod'
-        budget:
-          type: integer
-          description: Budget, in the profile's currency
-        budget_type:
-          $ref: '#/components/schemas/AdgroupBudgetType'
-      description: The properties for the edited ad group
-      example:
-      - id: 1111
-        name: adgroup example
-        campaign_id: 1234
-        search_bid: 12.2
-        status: ACTIVE
-        start_date: '2026-01-01'
-        end_date: '2026-12-31'
-        bidding_method: ManualCPC
-        budget: 50.1
-        budget_type: LIFETIME
+          description: The tag ID
+        conversion_event:
+          type: string
+          description: Conversion event
+          enum:
+          - CHECKOUT
+          - SIGNUP
+          - LEAD
+          - APP_INSTALL
+          - ADD_TO_CART
+        conversion_attribute_window:
+          type: string
+          description: Attribution window
+          enum:
+          - WIN_30_30_1
+          - WIN_7_7_1
+          - WIN_7_0_0
+          - WIN_1_1_1
+          - WIN_1_0_0
+        conversion_averaget_cpa:
+          type: number
+          description: Average CPA
+      description: Conversion parameters
     AdGroupDTO:
       type: object
       properties:
@@ -567,6 +409,86 @@ components:
           description: Ad group budget in the profile's currency
         budget_type:
           $ref: '#/components/schemas/AdgroupBudgetType'
+    EditAdgroup:
+      required:
+      - campaign_id
+      - id
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ad group ID
+        name:
+          type: string
+          description: The new name of the ad group
+        campaign_id:
+          type: integer
+          description: The ID of the campaign of this ad group
+        search_bid:
+          type: integer
+          description: Default search bid in the profile's currency
+        status:
+          $ref: '#/components/schemas/AdgroupStatus'
+        start_date:
+          type: string
+          description: Ad group start date. If not specified, will start immediately. If specified, must be in the future.
+          format: yyyy-MM-dd
+        end_date:
+          type: string
+          description: Ad group end date. If specified, must be in the future and later than the campaign start date.
+          format: yyyy-MM-dd
+        bidding_method:
+          $ref: '#/components/schemas/AdgroupBiddingMethod'
+        budget:
+          type: integer
+          description: Budget, in the profile's currency
+        budget_type:
+          $ref: '#/components/schemas/AdgroupBudgetType'
+      description: The properties for the edited ad group
+      example:
+      - id: 1111
+        name: adgroup example
+        campaign_id: 1234
+        search_bid: 12.2
+        status: ACTIVE
+        start_date: '2026-01-01'
+        end_date: '2026-12-31'
+        bidding_method: ManualCPC
+        budget: 50.1
+        budget_type: LIFETIME
+    AdgroupStatus:
+      type: string
+      description: Status
+      enum:
+      - ACTIVE
+      - PAUSED
+      - DELETED
+      - REVIEW
+    AdgroupBiddingMethod:
+      type: string
+      description: Will inherit from the campaign's bidding method, if not included
+      enum:
+      - ManualCPC
+      - ManualCPM
+      - ENHANCED_CPC
+      - TARGET_CPA
+      - TARGET_SPEND
+      - TARGET_ROAS
+    getAdGroupApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/AdGroupDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
     PinterestTargetingParams:
       type: object
       properties:
@@ -613,88 +535,166 @@ components:
           items:
             type: string
       description: Pinterest-specific targeting parameters
-  responses:
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: name
-                error: ILLEGAL_NAME
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
-    getAdGroupEntitySuccessResponse:
-      description: The operation was completed successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getAdGroupApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 15324
-              channel_ad_group_id: '1674257480'
-              name: name
-              campaign_id: 106
-              channel_campaign_id: '60600800'
-              profile_id: 12
-              channel_type: Google
-              search_bid: 1.0
-              bidding_method: NOT_SET
-              status: ACTIVE
-              start_date: '2026-01-01'
-              end_date: '9999-12-30'
-              budget: 100.0
-              budget_type: DAILY
-            paging:
-              previous_page: null
-              next_page: MQ==
-            error_message: null
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
-    getAdGroupBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getAdGroupApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
+  parameters:
+    adGroupChannelTypes:
+      name: channel_types
+      in: query
+      description: 'Filter by channel type.
+
+        Returns the ad groups whose channel types are included in the list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - Google
+          - Microsoft
+          - Universal
+          - Yandex
+          - Baidu
+          - YahooJapan
+          - YahooGemini
+          - Pinterest
+          - Amazon
+          - Facebook
+          - Walmart
+    adGroupCampaignIds:
+      name: campaign_ids
+      in: query
+      description: 'Filter by campaign ID.
+
+        Returns the ad groups whose campaign IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 200
+        type: array
+        items:
+          type: string
+    adGroupChannelCampaignIds:
+      name: channel_campaign_ids
+      in: query
+      description: 'Filter by channel campaign ID.
+
+        Returns the ad groups whose channel campaign IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 200
+        type: array
+        items:
+          type: string
+    pageId:
+      name: page_id
+      in: query
+      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
+
+        To return the first page, do not include page_id in the request.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: Mg==
+    channelAdGroupIds:
+      name: channel_ad_group_ids
+      in: query
+      description: 'Filter by channel ad group ID.
+
+        Returns the ad groups whose channel ad group IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
+    adGroupProfileId:
+      name: profile_id
+      in: query
+      description: 'Filter by profile ID.
+
+        Returns the ad groups whose profile ID equals your profile ID.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    adGroupIds:
+      name: ids
+      in: query
+      description: 'Filter by ad group ID.
+
+        Returns ad groups whose IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
+    adGroupStatuses:
+      name: statuses
+      in: query
+      description: 'Filter by status.
+
+        Returns the ad groups whose statuses are included in the list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - Active
+          - Approved
+          - Paused
+          - Deleted
+          - Failed
+          - Review
+          - ToPause
+          - ToDelete
+          - FailedToPause
+          - FailedToDelete
+          - Unknown
+          - Scheduled
+          - Expired
+          - Pending
+          - Disapproved
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
   requestBodies:
     CreateAdgroup:
       description: The ad group details

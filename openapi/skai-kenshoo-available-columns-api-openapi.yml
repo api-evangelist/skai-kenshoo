@@ -76,6 +76,8 @@ components:
               - field_name: ServerError
                 error: Unexpected error occurred.
                 parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
     BadRequest:
       description: Bad request (usually indicates validation failure for client input)
       content:
@@ -90,21 +92,23 @@ components:
               errors:
               - field_name: name
                 error: ILLEGAL_NAME
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
   schemas:
-    EntityResponse:
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    ApiResponse:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
           type: array
           items:
-            $ref: '#/components/schemas/ErrorField'
+            $ref: '#/components/schemas/EntityResponse'
     ReportColumnsResponse:
       type: object
       example:
@@ -148,22 +152,6 @@ components:
             display_name: Impressions
             value_type: BIG_INTEGER
             report_supported: true
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     ErrorField:
       type: object
       properties:
@@ -178,6 +166,18 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
   parameters:
     ks:
       name: ks

@@ -141,26 +141,6 @@ paths:
                 paging: null
                 error_message: null
 components:
-  parameters:
-    ProfileId:
-      name: profile_id
-      in: path
-      description: The id of profile to edit
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: integer
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
   schemas:
     SourceProfile:
       type: object
@@ -175,33 +155,73 @@ components:
           items:
             $ref: '#/components/schemas/MasterAccount'
       description: The copied profile details
-    EditProfile:
+    ErrorField:
       type: object
       properties:
-        external_id:
+        fieldName:
           type: string
-          description: New external profile ID
-        profile_name:
+          description: The error field
+        error:
           type: string
-          description: New profile name
-      description: The properties for the edited profile
-      example:
-      - external_id: '1111'
-        profile_name: profile example
-    MasterAccount:
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    ProfileResponse:
       type: object
       properties:
-        channel_type:
+        id:
+          type: integer
+          description: New profile ID in case profile creation finished successfully
+          format: int64
+        success:
+          type: boolean
+          description: Indicates if onboarding profile creation was completed successfully
+        errors:
+          type: array
+          description: Array, where each item contains an error field and an error code (description) in the case that there are errors
+          items:
+            $ref: '#/components/schemas/ErrorField'
+        created_accounts:
+          type: array
+          description: Array containing the details of the copied channel accounts
+          items:
+            $ref: '#/components/schemas/CreatedAccount'
+        profile_token:
           type: string
-          description: The channel
-          enum:
-          - GOOGLE
-          - MSN
-          - PINTEREST
-        master_account_id:
+          description: New profile token in case profile creation finished successfully
+      description: The details of the created profile
+    Paging:
+      type: object
+      properties:
+        previous_page:
           type: string
-          description: The master account id in kenshoo
-      description: The master accounts used to create channel accounts in the created profile
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
+    EditProfileResponseApi:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditProfileResponseEntities'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
     EditProfileResponseEntities:
       type: object
       properties:
@@ -218,6 +238,32 @@ components:
           items:
             $ref: '#/components/schemas/ErrorField'
       description: The details of the edited profile
+    EditProfile:
+      type: object
+      properties:
+        external_id:
+          type: string
+          description: New external profile ID
+        profile_name:
+          type: string
+          description: New profile name
+      description: The properties for the edited profile
+      example:
+      - external_id: '1111'
+        profile_name: profile example
+    CreatedAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Channel account id
+        channelType:
+          type: string
+          description: The channel
+        uniqueIdInTarget:
+          type: string
+          description: The account id in the channel
+      description: details of channel account copied in the copy profile process
     Profile:
       type: object
       properties:
@@ -247,94 +293,21 @@ components:
           master_accounts:
           - master_account_id: '1'
             channel_type: FB
-    EditProfileResponseApi:
+    MasterAccount:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EditProfileResponseEntities'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-    CreatedAccount:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Channel account id
-        channelType:
+        channel_type:
           type: string
           description: The channel
-        uniqueIdInTarget:
+          enum:
+          - GOOGLE
+          - MSN
+          - PINTEREST
+        master_account_id:
           type: string
-          description: The account id in the channel
-      description: details of channel account copied in the copy profile process
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    ProfileResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: New profile ID in case profile creation finished successfully
-          format: int64
-        success:
-          type: boolean
-          description: Indicates if onboarding profile creation was completed successfully
-        errors:
-          type: array
-          description: Array, where each item contains an error field and an error code (description) in the case that there are errors
-          items:
-            $ref: '#/components/schemas/ErrorField'
-        created_accounts:
-          type: array
-          description: Array containing the details of the copied channel accounts
-          items:
-            $ref: '#/components/schemas/CreatedAccount'
-        profile_token:
-          type: string
-          description: New profile token in case profile creation finished successfully
-      description: The details of the created profile
+          description: The master account id in kenshoo
+      description: The master accounts used to create channel accounts in the created profile
   requestBodies:
-    Profile:
-      description: The profile details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Profile'
-      required: true
     EditProfile:
       description: The profile details
       content:
@@ -342,11 +315,38 @@ components:
           schema:
             $ref: '#/components/schemas/EditProfile'
       required: true
+    Profile:
+      description: The profile details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Profile'
+      required: true
   responses:
-    EditProfileApiResponse:
-      $ref: '#/components/schemas/EditProfileResponseApi'
     ProfileApiResponse:
       $ref: '#/components/schemas/ProfileResponse'
+    EditProfileApiResponse:
+      $ref: '#/components/schemas/EditProfileResponseApi'
+  parameters:
+    ProfileId:
+      name: profile_id
+      in: path
+      description: The id of profile to edit
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
 x-tagGroups:
 - name: Reporting
   tags:

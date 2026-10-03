@@ -78,23 +78,137 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 components:
+  responses:
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
+    GetPortfolioBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetPortfolioApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            kenshoo_trace_id: null
+            error_message: The value in page_id is invalid
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    GetPortfolioEntitySuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetPortfolioApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - profile_id: 183
+              profile_name: profile_name
+              id: 8574
+              portfolio_name: name
+              description: description
+              default_portfolio: false
+              business_cycle: Rolling
+              rolling_cycle_days: 5
+              rolling_cycle_start_date: '2026-01-01'
+              weekly_cycle_start_day: null
+              monthly_cycle_start_day: null
+              budget: 50.0
+              next_cycle_budget: 100.0
+              first_monitor_metric: CLICKS
+              first_monitor_value: 5.0
+              second_monitor_metric: ROI
+              second_monitor_value: 12.0
+              rollover: 0.0
+              optimize_with_budget_caps: true
+              optimize_with_keyword_bids: true
+              optimize_for: CLICKS
+              max_effective_bid: 5.0
+              bid_strategy_target: 0.0
+              publisher_bid_strategy: false
+              signal_enhancement: []
+              budget_pacing: pace evenly
+              day_parting_monday: 'on'
+              day_parting_tuesday: 'off'
+              day_parting_wednesday: 'off'
+              day_parting_thursday: 'on'
+              day_parting_friday: 'on'
+              day_parting_saturday: 'on'
+              day_parting_sunday: 'on'
+              allow_cycle_budget_rollover: true
+              campaign_min_daily_budget: null
+              campaign_max_daily_budget: null
+              pause_campaign_setting: true
+            paging:
+              previous_page: null
+              next_page: MQ==
+            kenshoo_trace_id: null
+            error_message: null
   schemas:
-    Paging:
+    ApiResponse:
       type: object
       properties:
-        previous_page:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
           type: string
-          readOnly: true
-        next_page:
+          description: The error field
+        error:
           type: string
-          readOnly: true
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
     EntityResponse:
       type: object
       properties:
@@ -107,6 +221,205 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorField'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    Paging:
+      type: object
+      properties:
+        previous_page:
+          type: string
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
+    createPortfolio:
+      required:
+      - portfolio_name
+      - profile_id
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          description: Skai ID of the profile
+        profile_name:
+          type: string
+          description: Profile name
+        portfolio_name:
+          type: string
+          description: Portfolio name
+        description:
+          type: string
+          description: Portfolio description
+        default_portfolio:
+          type: boolean
+          description: Indicates if this is the default portfolio
+        business_cycle:
+          type: string
+          description: The cycle length of the portfolio
+          enum:
+          - Rolling
+          - Weekly
+          - Monthly
+        rolling_cycle_days:
+          type: integer
+          description: Number between 2 and 100
+        rolling_cycle_start_date:
+          type: string
+          description: The cycle start date
+          format: yyyy-MM-dd
+        weekly_cycle_start_day:
+          type: string
+          description: The weekly cycle start date
+          enum:
+          - sunday
+          - monday
+          - tuesday
+          - wednesday
+          - thursday
+          - friday
+          - saturday
+        monthly_cycle_start_day:
+          type: integer
+          description: The day of the month on which the monthly cycle should start
+        budget:
+          type: number
+          description: The portfolio's budget for the cycle
+        next_cycle_budget:
+          type: number
+          description: The portfolio's budget for the next cycle
+        first_monitor_metric:
+          type: string
+          description: The first of two optional goals
+          enum:
+          - CLICKS
+          - CONVERSION
+          - ROI
+        second_monitor_metric:
+          type: string
+          description: The second of two optional goals
+          enum:
+          - CLICKS
+          - CONVERSION
+          - ROI
+        first_monitor_value:
+          type: number
+          description: The first monitor metric's target value for the cycle
+        second_monitor_value:
+          type: number
+          description: The second monitor metric's target value for the cycle
+        rollover:
+          type: number
+          description: The amount of unspent budget from the previous cycle to add to the current cycle's budget. Available only if Allow Cycle Budget Rollover is set to TRUE
+        optimize_with_budget_caps:
+          type: boolean
+          description: When set to TRUE, Skai automatically optimizes to spend your budget for the cycle by updating the daily budget caps for your campaigns.
+        optimize_with_keyword_bids:
+          type: boolean
+          description: When set to TRUE, Skai automatically optimizes keyword-level bids to maximize clicks while meeting the spend goal for the portfolio. This process will run only if Optimize with Budget Caps is also set to TRUE and a Max Effective Bid is specified.
+        optimize_for:
+          type: string
+          description: The goal the portfolio optimizes for
+          enum:
+          - CLICKS
+          - CONVERSIONS
+          - REVENUE
+          - VISIBILITY
+        max_effective_bid:
+          type: number
+          description: Upper bid limit for each keyword in the portfolio
+        publisher_bid_strategy:
+          type: boolean
+          description: Indicates if the portfolio uses publisher automated bidding
+        signal_enhancement:
+          type: array
+          description: Defines whether the portfolio uses Signal Enhancement and syncs conversions to Google, Microsoft, or none of the publishers. Send an empty array to define as none.
+          items:
+            type: string
+            enum:
+            - Google
+            - Microsoft
+        budget_pacing:
+          type: string
+          description: Defines budget pacing during a cycle. Available only if Optimize with Budget Caps is set to TRUE.
+          enum:
+          - pace evenly
+          - pace early
+          - pace late
+          default: pace evenly
+        day_parting_monday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Mondays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        day_parting_tuesday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Tuesdays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        day_parting_wednesday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Wednesdays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        day_parting_thursday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Thursdays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        day_parting_friday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Fridays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        day_parting_saturday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Saturdays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        day_parting_sunday:
+          type: string
+          description: Defines whether campaigns included in the portfolio are active or paused on Sundays
+          enum:
+          - 'true'
+          - 'false'
+          default: 'true'
+        allow_cycle_budget_rollover:
+          type: boolean
+          description: Defines whether any remaining unspent budget is automatically rolled over to the next cycle. Available only if Optimize with Budget Caps is set to TRUE
+          default: false
+        campaign_min_daily_budget:
+          type: number
+          description: Set a minimum campaign daily budget for all campaigns within this portfolio. Valid values for this setting may vary by publisher.
+        campaign_max_daily_budget:
+          type: number
+          description: Set a maximum campaign daily budget for all campaigns within this portfolio. Valid values for this setting may vary by publisher.
+        pause_campaign_setting:
+          type: boolean
+          description: Defines whether campaigns in the portfolio will automatically pause when budget issues are detected. Available only if there is no campaign_min_daily_budget or campaign_max_daily_budget set for the portfolio.
+          default: false
+      description: The properties for the created portfolio
+      example:
+        profile_id: '123'
+        portfolio_name: My portfolio
+        description: my desc
+        default_portfolio: 'true'
     GetPortfolioApiResponse:
       type: object
       properties:
@@ -125,15 +438,6 @@ components:
         error_message:
           type: string
           readOnly: true
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
     editPortfolio:
       required:
       - id
@@ -330,203 +634,6 @@ components:
         portfolio_name: My portfolio
         budget: '1000'
         next_cycle_budget: '1100'
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    createPortfolio:
-      required:
-      - portfolio_name
-      - profile_id
-      type: object
-      properties:
-        profile_id:
-          type: integer
-          description: Skai ID of the profile
-        profile_name:
-          type: string
-          description: Profile name
-        portfolio_name:
-          type: string
-          description: Portfolio name
-        description:
-          type: string
-          description: Portfolio description
-        default_portfolio:
-          type: boolean
-          description: Indicates if this is the default portfolio
-        business_cycle:
-          type: string
-          description: The cycle length of the portfolio
-          enum:
-          - Rolling
-          - Weekly
-          - Monthly
-        rolling_cycle_days:
-          type: integer
-          description: Number between 2 and 100
-        rolling_cycle_start_date:
-          type: string
-          description: The cycle start date
-          format: yyyy-MM-dd
-        weekly_cycle_start_day:
-          type: string
-          description: The weekly cycle start date
-          enum:
-          - sunday
-          - monday
-          - tuesday
-          - wednesday
-          - thursday
-          - friday
-          - saturday
-        monthly_cycle_start_day:
-          type: integer
-          description: The day of the month on which the monthly cycle should start
-        budget:
-          type: number
-          description: The portfolio's budget for the cycle
-        next_cycle_budget:
-          type: number
-          description: The portfolio's budget for the next cycle
-        first_monitor_metric:
-          type: string
-          description: The first of two optional goals
-          enum:
-          - CLICKS
-          - CONVERSION
-          - ROI
-        second_monitor_metric:
-          type: string
-          description: The second of two optional goals
-          enum:
-          - CLICKS
-          - CONVERSION
-          - ROI
-        first_monitor_value:
-          type: number
-          description: The first monitor metric's target value for the cycle
-        second_monitor_value:
-          type: number
-          description: The second monitor metric's target value for the cycle
-        rollover:
-          type: number
-          description: The amount of unspent budget from the previous cycle to add to the current cycle's budget. Available only if Allow Cycle Budget Rollover is set to TRUE
-        optimize_with_budget_caps:
-          type: boolean
-          description: When set to TRUE, Skai automatically optimizes to spend your budget for the cycle by updating the daily budget caps for your campaigns.
-        optimize_with_keyword_bids:
-          type: boolean
-          description: When set to TRUE, Skai automatically optimizes keyword-level bids to maximize clicks while meeting the spend goal for the portfolio. This process will run only if Optimize with Budget Caps is also set to TRUE and a Max Effective Bid is specified.
-        optimize_for:
-          type: string
-          description: The goal the portfolio optimizes for
-          enum:
-          - CLICKS
-          - CONVERSIONS
-          - REVENUE
-          - VISIBILITY
-        max_effective_bid:
-          type: number
-          description: Upper bid limit for each keyword in the portfolio
-        publisher_bid_strategy:
-          type: boolean
-          description: Indicates if the portfolio uses publisher automated bidding
-        signal_enhancement:
-          type: array
-          description: Defines whether the portfolio uses Signal Enhancement and syncs conversions to Google, Microsoft, or none of the publishers. Send an empty array to define as none.
-          items:
-            type: string
-            enum:
-            - Google
-            - Microsoft
-        budget_pacing:
-          type: string
-          description: Defines budget pacing during a cycle. Available only if Optimize with Budget Caps is set to TRUE.
-          enum:
-          - pace evenly
-          - pace early
-          - pace late
-          default: pace evenly
-        day_parting_monday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Mondays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        day_parting_tuesday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Tuesdays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        day_parting_wednesday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Wednesdays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        day_parting_thursday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Thursdays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        day_parting_friday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Fridays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        day_parting_saturday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Saturdays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        day_parting_sunday:
-          type: string
-          description: Defines whether campaigns included in the portfolio are active or paused on Sundays
-          enum:
-          - 'true'
-          - 'false'
-          default: 'true'
-        allow_cycle_budget_rollover:
-          type: boolean
-          description: Defines whether any remaining unspent budget is automatically rolled over to the next cycle. Available only if Optimize with Budget Caps is set to TRUE
-          default: false
-        campaign_min_daily_budget:
-          type: number
-          description: Set a minimum campaign daily budget for all campaigns within this portfolio. Valid values for this setting may vary by publisher.
-        campaign_max_daily_budget:
-          type: number
-          description: Set a maximum campaign daily budget for all campaigns within this portfolio. Valid values for this setting may vary by publisher.
-        pause_campaign_setting:
-          type: boolean
-          description: Defines whether campaigns in the portfolio will automatically pause when budget issues are detected. Available only if there is no campaign_min_daily_budget or campaign_max_daily_budget set for the portfolio.
-          default: false
-      description: The properties for the created portfolio
-      example:
-        profile_id: '123'
-        portfolio_name: My portfolio
-        description: my desc
-        default_portfolio: 'true'
     PortfolioDTO:
       type: object
       properties:
@@ -707,6 +814,25 @@ components:
           type: boolean
           description: Defines whether campaigns in the portfolio will automatically pause when budget issues are detected. Available only if there is no campaign_min_daily_budget or campaign_max_daily_budget set for the portfolio.
           default: false
+  requestBodies:
+    createPortfolios:
+      description: The portfolios to create
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/createPortfolio'
+      required: true
+    editPortfolios:
+      description: The portfolios to update
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/editPortfolio'
+      required: true
   parameters:
     pageId:
       name: page_id
@@ -722,6 +848,22 @@ components:
       schema:
         type: string
       example: Mg==
+    portfolioIds:
+      name: ids
+      in: query
+      description: 'Filter by portfolio ID.
+
+        Returns the portfolios whose IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
     profileId:
       name: profile_id
       in: query
@@ -745,148 +887,6 @@ components:
       schema:
         type: string
       example: '1234'
-    portfolioIds:
-      name: ids
-      in: query
-      description: 'Filter by portfolio ID.
-
-        Returns the portfolios whose IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
-  responses:
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: name
-                error: ILLEGAL_NAME
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
-    GetPortfolioBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GetPortfolioApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            kenshoo_trace_id: null
-            error_message: The value in page_id is invalid
-    GetPortfolioEntitySuccessResponse:
-      description: The operation was completed successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GetPortfolioApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - profile_id: 183
-              profile_name: profile_name
-              id: 8574
-              portfolio_name: name
-              description: description
-              default_portfolio: false
-              business_cycle: Rolling
-              rolling_cycle_days: 5
-              rolling_cycle_start_date: '2026-01-01'
-              weekly_cycle_start_day: null
-              monthly_cycle_start_day: null
-              budget: 50.0
-              next_cycle_budget: 100.0
-              first_monitor_metric: CLICKS
-              first_monitor_value: 5.0
-              second_monitor_metric: ROI
-              second_monitor_value: 12.0
-              rollover: 0.0
-              optimize_with_budget_caps: true
-              optimize_with_keyword_bids: true
-              optimize_for: CLICKS
-              max_effective_bid: 5.0
-              bid_strategy_target: 0.0
-              publisher_bid_strategy: false
-              signal_enhancement: []
-              budget_pacing: pace evenly
-              day_parting_monday: 'on'
-              day_parting_tuesday: 'off'
-              day_parting_wednesday: 'off'
-              day_parting_thursday: 'on'
-              day_parting_friday: 'on'
-              day_parting_saturday: 'on'
-              day_parting_sunday: 'on'
-              allow_cycle_budget_rollover: true
-              campaign_min_daily_budget: null
-              campaign_max_daily_budget: null
-              pause_campaign_setting: true
-            paging:
-              previous_page: null
-              next_page: MQ==
-            kenshoo_trace_id: null
-            error_message: null
-  requestBodies:
-    editPortfolios:
-      description: The portfolios to update
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/editPortfolio'
-      required: true
-    createPortfolios:
-      description: The portfolios to create
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/createPortfolio'
-      required: true
 x-tagGroups:
 - name: Reporting
   tags:

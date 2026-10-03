@@ -124,18 +124,13 @@ components:
     ApiResponse:
       $ref: '#/components/schemas/ApiResponse'
   schemas:
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     ApiResponse:
       type: object
       properties:
@@ -145,13 +140,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EntityResponse'
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     ErrorField:
       type: object
       properties:
@@ -166,6 +154,18 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
   parameters:
     ks:
       name: ks
