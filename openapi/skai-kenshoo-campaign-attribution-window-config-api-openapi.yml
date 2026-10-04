@@ -64,21 +64,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   responses:
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
     ApiResponse:
       $ref: '#/components/schemas/ApiResponse'
     BadRequest:
@@ -95,6 +80,21 @@ components:
               errors:
               - field_name: name
                 error: ILLEGAL_NAME
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
     EntitySuccessResponse:
       description: The entity operations succeeded
       content:
@@ -108,48 +108,6 @@ components:
               success: true
               errors: []
   schemas:
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
     CreateUpdateAttribution:
       required:
       - campaign_id
@@ -181,16 +139,49 @@ components:
         campaign_id: '14411'
         click_attribution_window: TWENTY_EIGHT_DAYS
         view_attribution_window: SEVEN_DAYS
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
   parameters:
-    ksV2:
-      name: ks
-      in: query
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: social
     campaignIds:
       name: ids
       in: query
@@ -207,6 +198,15 @@ components:
         type: array
         items:
           type: string
+    ksV2:
+      name: ks
+      in: query
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: social
 x-tagGroups:
 - name: Reporting
   tags:

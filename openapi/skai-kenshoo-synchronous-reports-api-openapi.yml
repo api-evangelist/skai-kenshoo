@@ -70,6 +70,22 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   responses:
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
     InternalServerError:
       description: Server error
       content:
@@ -85,179 +101,7 @@ components:
               - field_name: ServerError
                 error: Unexpected error occurred.
                 parameters: {}
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: name
-                error: ILLEGAL_NAME
   schemas:
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    ReportEntity:
-      type: string
-      description: The base entity for the report, indicated in the analysis grid name. Important - When using the API for product grids, refer to the entity as "PRODUCT_ASSET".
-      enum:
-      - CAMPAIGN
-      - ADGROUP
-      - KEYWORD
-      - AD
-      - PORTFOLIO
-      - PRODUCT_ASSET
-      - LOCATIONS
-      - NEGATIVE_KEYWORDS
-      - SITELINK
-      - CREATIVE_ASSET
-      - PRODUCT_TARGETING
-      - ASSET_GROUP
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    ReportSort:
-      required:
-      - field
-      - group
-      type: object
-      properties:
-        field:
-          type: string
-          description: The field to be sorted
-        order:
-          type: string
-          enum:
-          - ASCENDING
-          - DESCENDING
-          default: ASCENDING
-        group:
-          type: string
-          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
-          enum:
-          - ATTRIBUTES
-          - PERFORMANCE
-          - DIMENSIONS
-          - CUSTOM_METRICS
-          - CUSTOM_METRICS_PLUS
-          - CONVERSION_TYPES
-          - CHANNEL_CUSTOMER_CONVERSION_TYPES
-          - PROXY_CUSTOMER_CONVERSION_TYPES
-          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
-      description: The properties of the sort
-      example:
-        field: CampaignId
-        group: ATTRIBUTES
-        order: DESCENDING
-    Column:
-      required:
-      - group
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          description: Field name to be fetched
-        group:
-          type: string
-          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
-          enum:
-          - Attributes
-          - Performance
-          - Dimensions
-          - CustomMetrics
-          - CustomMetricsPlus
-          - ConversionTypes
-          - ChannelCustomerConversionTypes
-          - ProxyCustomerConversionTypes
-          - ExternalCustomerConversionTypes
-        id:
-          type: string
-          readOnly: true
-        display_name:
-          type: string
-          readOnly: true
-        value_type:
-          type: string
-          readOnly: true
-          enum:
-          - STRING
-          - INTEGER
-          - FLOAT
-          - BOOLEAN
-          - DATE
-      description: The properties of a field
-      example:
-      - name: Clicks
-        group: Performance
-    DateRange:
-      required:
-      - end_date
-      - start_date
-      type: object
-      properties:
-        start_date:
-          type: string
-          description: Start date in YYYY-MM-dd format
-        end_date:
-          type: string
-          description: End date in YYYY-MM-dd format
-        exclude_dates:
-          type: array
-          items:
-            type: string
-            description: Dates to exclude in YYYY-MM-dd format
-            readOnly: true
-      description: The properties of the date range.
-      example:
-      - start_date: '2026-01-01'
-        end_date: '2026-01-14'
-        exclude_dates:
-        - '2026-01-07'
     ReportRequest:
       required:
       - date_range
@@ -356,45 +200,50 @@ components:
           order: DESCENDING
         limit: 1000
         page: 0
-    ReportRecord:
+    ReportSort:
+      required:
+      - field
+      - group
       type: object
       properties:
-        record_values:
-          type: object
-          additionalProperties:
-            type: string
-          readOnly: true
+        field:
+          type: string
+          description: The field to be sorted
+        order:
+          type: string
+          enum:
+          - ASCENDING
+          - DESCENDING
+          default: ASCENDING
+        group:
+          type: string
+          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
+          enum:
+          - ATTRIBUTES
+          - PERFORMANCE
+          - DIMENSIONS
+          - CUSTOM_METRICS
+          - CUSTOM_METRICS_PLUS
+          - CONVERSION_TYPES
+          - CHANNEL_CUSTOMER_CONVERSION_TYPES
+          - PROXY_CUSTOMER_CONVERSION_TYPES
+          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
+      description: The properties of the sort
       example:
-      - record_values:
-          CampaignName:
-          - group: ATTRIBUTES
-            value: My Campaign
-          Clicks:
-          - group: PERFORMANCE
-            value: '10'
-      - record_values:
-          CampaignName:
-          - group: ATTRIBUTES
-            value: New Campaign via API_UPDATED_TWICE
-          Clicks:
-          - group: PERFORMANCE
-            value: '5'
-    ReportRecordSummary:
+        field: CampaignId
+        group: ATTRIBUTES
+        order: DESCENDING
+    ReportResponseStructure:
       type: object
       properties:
-        record_values:
-          type: object
-          additionalProperties:
-            type: string
+        records:
+          $ref: '#/components/schemas/ReportRecord'
+        summary:
+          $ref: '#/components/schemas/ReportRecordSummary'
+        total:
+          type: integer
+          format: int64
           readOnly: true
-      example:
-        record_values:
-          CampaignName:
-          - group: ATTRIBUTES
-            value: ''
-          Clicks:
-          - group: PERFORMANCE
-            value: '15'
     ReportFilter:
       required:
       - field
@@ -460,6 +309,79 @@ components:
         operator: GREATER_THAN
         values:
         - '0'
+    Column:
+      required:
+      - group
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Field name to be fetched
+        group:
+          type: string
+          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
+          enum:
+          - Attributes
+          - Performance
+          - Dimensions
+          - CustomMetrics
+          - CustomMetricsPlus
+          - ConversionTypes
+          - ChannelCustomerConversionTypes
+          - ProxyCustomerConversionTypes
+          - ExternalCustomerConversionTypes
+        id:
+          type: string
+          readOnly: true
+        display_name:
+          type: string
+          readOnly: true
+        value_type:
+          type: string
+          readOnly: true
+          enum:
+          - STRING
+          - INTEGER
+          - FLOAT
+          - BOOLEAN
+          - DATE
+      description: The properties of a field
+      example:
+      - name: Clicks
+        group: Performance
+    ReportRecordSummary:
+      type: object
+      properties:
+        record_values:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
+      example:
+        record_values:
+          CampaignName:
+          - group: ATTRIBUTES
+            value: ''
+          Clicks:
+          - group: PERFORMANCE
+            value: '15'
+    ReportEntity:
+      type: string
+      description: The base entity for the report, indicated in the analysis grid name. Important - When using the API for product grids, refer to the entity as "PRODUCT_ASSET".
+      enum:
+      - CAMPAIGN
+      - ADGROUP
+      - KEYWORD
+      - AD
+      - PORTFOLIO
+      - PRODUCT_ASSET
+      - LOCATIONS
+      - NEGATIVE_KEYWORDS
+      - SITELINK
+      - CREATIVE_ASSET
+      - PRODUCT_TARGETING
+      - ASSET_GROUP
     ReportApiResponseDTO:
       type: object
       properties:
@@ -473,17 +395,95 @@ components:
         error_message:
           type: string
           readOnly: true
-    ReportResponseStructure:
+    DateRange:
+      required:
+      - end_date
+      - start_date
       type: object
       properties:
-        records:
-          $ref: '#/components/schemas/ReportRecord'
-        summary:
-          $ref: '#/components/schemas/ReportRecordSummary'
-        total:
+        start_date:
+          type: string
+          description: Start date in YYYY-MM-dd format
+        end_date:
+          type: string
+          description: End date in YYYY-MM-dd format
+        exclude_dates:
+          type: array
+          items:
+            type: string
+            description: Dates to exclude in YYYY-MM-dd format
+            readOnly: true
+      description: The properties of the date range.
+      example:
+      - start_date: '2026-01-01'
+        end_date: '2026-01-14'
+        exclude_dates:
+        - '2026-01-07'
+    ReportRecord:
+      type: object
+      properties:
+        record_values:
+          type: object
+          additionalProperties:
+            type: string
+          readOnly: true
+      example:
+      - record_values:
+          CampaignName:
+          - group: ATTRIBUTES
+            value: My Campaign
+          Clicks:
+          - group: PERFORMANCE
+            value: '10'
+      - record_values:
+          CampaignName:
+          - group: ATTRIBUTES
+            value: New Campaign via API_UPDATED_TWICE
+          Clicks:
+          - group: PERFORMANCE
+            value: '5'
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    EntityResponse:
+      type: object
+      properties:
+        id:
           type: integer
           format: int64
-          readOnly: true
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
   requestBodies:
     ReportRequest:
       description: The report request to create

@@ -78,48 +78,61 @@ paths:
         500:
           $ref: '#/components/responses/InternalServerError'
 components:
+  parameters:
+    pageId:
+      name: page_id
+      in: query
+      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
+
+        To return the first page, do not include page_id in the request.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: Mg==
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
+    portfolioIds:
+      name: ids
+      in: query
+      description: 'Filter by portfolio ID.
+
+        Returns the portfolios whose IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
+    profileId:
+      name: profile_id
+      in: query
+      description: 'Filter by profile ID.
+
+        Returns the campaigns whose profile ID equals your profile ID.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
   responses:
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
-    GetPortfolioBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/GetPortfolioApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            kenshoo_trace_id: null
-            error_message: The value in page_id is invalid
     BadRequest:
       description: Bad request (usually indicates validation failure for client input)
       content:
@@ -134,6 +147,32 @@ components:
               errors:
               - field_name: name
                 error: ILLEGAL_NAME
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+    GetPortfolioBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetPortfolioApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            kenshoo_trace_id: null
+            error_message: The value in page_id is invalid
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
     GetPortfolioEntitySuccessResponse:
       description: The operation was completed successfully
       content:
@@ -185,49 +224,22 @@ components:
               next_page: MQ==
             kenshoo_trace_id: null
             error_message: null
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
   schemas:
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     Paging:
       type: object
       properties:
@@ -237,12 +249,30 @@ components:
         next_page:
           type: string
           readOnly: true
-    createPortfolio:
-      required:
-      - portfolio_name
-      - profile_id
+    GetPortfolioApiResponse:
       type: object
       properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/PortfolioDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        kenshoo_trace_id:
+          type: string
+          readOnly: true
+        error_message:
+          type: string
+          readOnly: true
+    PortfolioDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the portfolio
         profile_id:
           type: integer
           description: Skai ID of the profile
@@ -332,6 +362,9 @@ components:
         max_effective_bid:
           type: number
           description: Upper bid limit for each keyword in the portfolio
+        bid_strategy_target:
+          type: number
+          description: The publisher automated bid strategy target value
         publisher_bid_strategy:
           type: boolean
           description: Indicates if the portfolio uses publisher automated bidding
@@ -414,30 +447,6 @@ components:
           type: boolean
           description: Defines whether campaigns in the portfolio will automatically pause when budget issues are detected. Available only if there is no campaign_min_daily_budget or campaign_max_daily_budget set for the portfolio.
           default: false
-      description: The properties for the created portfolio
-      example:
-        profile_id: '123'
-        portfolio_name: My portfolio
-        description: my desc
-        default_portfolio: 'true'
-    GetPortfolioApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/PortfolioDTO'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        kenshoo_trace_id:
-          type: string
-          readOnly: true
-        error_message:
-          type: string
-          readOnly: true
     editPortfolio:
       required:
       - id
@@ -634,12 +643,12 @@ components:
         portfolio_name: My portfolio
         budget: '1000'
         next_cycle_budget: '1100'
-    PortfolioDTO:
+    createPortfolio:
+      required:
+      - portfolio_name
+      - profile_id
       type: object
       properties:
-        id:
-          type: integer
-          description: Skai ID of the portfolio
         profile_id:
           type: integer
           description: Skai ID of the profile
@@ -729,9 +738,6 @@ components:
         max_effective_bid:
           type: number
           description: Upper bid limit for each keyword in the portfolio
-        bid_strategy_target:
-          type: number
-          description: The publisher automated bid strategy target value
         publisher_bid_strategy:
           type: boolean
           description: Indicates if the portfolio uses publisher automated bidding
@@ -814,16 +820,55 @@ components:
           type: boolean
           description: Defines whether campaigns in the portfolio will automatically pause when budget issues are detected. Available only if there is no campaign_min_daily_budget or campaign_max_daily_budget set for the portfolio.
           default: false
+      description: The properties for the created portfolio
+      example:
+        profile_id: '123'
+        portfolio_name: My portfolio
+        description: my desc
+        default_portfolio: 'true'
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
   requestBodies:
-    createPortfolios:
-      description: The portfolios to create
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/createPortfolio'
-      required: true
     editPortfolios:
       description: The portfolios to update
       content:
@@ -833,60 +878,15 @@ components:
             items:
               $ref: '#/components/schemas/editPortfolio'
       required: true
-  parameters:
-    pageId:
-      name: page_id
-      in: query
-      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
-
-        To return the first page, do not include page_id in the request.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: Mg==
-    portfolioIds:
-      name: ids
-      in: query
-      description: 'Filter by portfolio ID.
-
-        Returns the portfolios whose IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
-    profileId:
-      name: profile_id
-      in: query
-      description: 'Filter by profile ID.
-
-        Returns the campaigns whose profile ID equals your profile ID.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+    createPortfolios:
+      description: The portfolios to create
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/createPortfolio'
       required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
 x-tagGroups:
 - name: Reporting
   tags:

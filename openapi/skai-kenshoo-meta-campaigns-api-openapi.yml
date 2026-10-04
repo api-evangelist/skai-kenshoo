@@ -118,54 +118,53 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
-    facebookImpressionCaps:
+    operationType:
+      type: string
+      description: Operation type
+      enum:
+      - ATTACH
+      - DETACH
+    Paging:
       type: object
       properties:
-        daily_impression_cap:
-          type: integer
-          description: Daily impression cap
-        lifetime_impression_cap:
-          type: integer
-          description: Lifetime impression cap
-      description: Impression caps
-    facebookCampaignBudget:
-      type: object
-      properties:
-        type:
+        previous_page:
           type: string
-          description: Campaign budget type
-          enum:
-          - DAILY
-          - LIFETIME
-        budget:
-          type: number
-          description: Campaign budget
-        spend_cap:
-          type: number
-          description: Campaign spend cap
-        pacing_types:
-          type: array
-          description: Budget pacing types
-          items:
-            type: string
-            enum:
-            - STANDARD
-            - NO_PACING
-            - DAY_PARTING
-            - DISABLED
-        caps:
-          oneOf:
-          - $ref: '#/components/schemas/facebookImpressionCaps'
-      description: Campaign budget
-    ApiResponse:
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
+    facebookCampaignBid:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
+        strategy:
+          type: string
+          description: Campaign bid strategy
+          enum:
+          - LOWEST_COST_WITHOUT_CAP
+          - LOWEST_COST_WITH_BID_CAP
+          - COST_CAP
+          - LOWEST_COST_WITH_MIN_ROAS
+      description: Campaign bid
+    getEntityTagsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
           type: array
+          readOnly: true
           items:
-            $ref: '#/components/schemas/EntityResponse'
+            $ref: '#/components/schemas/tag'
+    tag:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Tag name
+        category:
+          type: string
+          description: Category name
     getFacebookCampaignApiResponse:
       type: object
       properties:
@@ -181,61 +180,6 @@ components:
         error_message:
           type: string
           readOnly: true
-    facebookPromotedObject:
-      type: object
-      properties:
-        page_id:
-          type: integer
-          description: Page ID
-        product_catalog_id:
-          type: integer
-          description: Product catalog ID
-      description: Promoted object
-    tag:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Tag name
-        category:
-          type: string
-          description: Category name
-    editEntityTagsRequest:
-      required:
-      - id
-      - operation_type
-      - tags
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the entity
-        tags:
-          type: array
-          description: Tags
-          items:
-            $ref: '#/components/schemas/tag'
-        operation_type:
-          $ref: '#/components/schemas/operationType'
-      description: The properties for editing entity tags
-      example:
-      - id: 100
-        tags:
-        - name: tag1
-          category: cat
-        - name: tag2
-          category: dog
-        operation_type: ATTACH
-    facebookCampaignStatus:
-      type: string
-      description: Campaign status
-      enum:
-      - ACTIVE
-      - PAUSED
-      - DELETED
-      - ARCHIVED
-      - WITH_ISSUES
-      - IN_PROCESS
     EntityResponse:
       type: object
       properties:
@@ -248,130 +192,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ErrorField'
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    facebookCampaign:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the campaign
-        channel_id:
-          type: string
-          description: Channel ID of the campaign
-        account_id:
-          type: integer
-          description: Skai ID of the publisher account
-        profile_token:
-          type: string
-          description: Skai profile token
-        name:
-          type: string
-          description: Campaign name
-        status:
-          oneOf:
-          - $ref: '#/components/schemas/facebookCampaignStatus'
-        budget:
-          oneOf:
-          - $ref: '#/components/schemas/facebookCampaignBudget'
-        bid:
-          oneOf:
-          - $ref: '#/components/schemas/facebookCampaignBid'
-        campaign_type:
-          oneOf:
-          - $ref: '#/components/schemas/facebookCampaignType'
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
-    facebookCampaignBid:
-      type: object
-      properties:
-        strategy:
-          type: string
-          description: Campaign bid strategy
-          enum:
-          - LOWEST_COST_WITHOUT_CAP
-          - LOWEST_COST_WITH_BID_CAP
-          - COST_CAP
-          - LOWEST_COST_WITH_MIN_ROAS
-      description: Campaign bid
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    facebookCampaignType:
-      type: object
-      properties:
-        objective:
-          type: string
-          description: Campaign objective
-          enum:
-          - OUTCOME_AWARENESS
-          - OUTCOME_ENGAGEMENT
-          - OUTCOME_LEADS
-          - OUTCOME_SALES
-          - OUTCOME_TRAFFIC
-          - OUTCOME_APP_PROMOTION
-        buying_type:
-          type: string
-          description: Campaign buying type
-          enum:
-          - AUCTION
-          - REACH_AND_FREQUENCY
-        promoted_object:
-          $ref: '#/components/schemas/facebookPromotedObject'
-        special_ad_categories:
-          type: array
-          items:
-            type: string
-            enum:
-            - NONE
-            - HOUSING
-            - CREDIT
-            - EMPLOYMENT
-            - ISSUES_ELECTIONS_POLITICS
-        portfolio_id:
-          type: integer
-          description: Portfolio ID
-      description: Campaign type
-    getEntityTagsResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the entity
-        tags:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/tag'
-    operationType:
-      type: string
-      description: Operation type
-      enum:
-      - ATTACH
-      - DETACH
     getEntityTagsApiResponse:
       type: object
       properties:
@@ -415,6 +235,142 @@ components:
         id: 232608652
         status: ACTIVE
         name: test name 123345
+    facebookCampaignType:
+      type: object
+      properties:
+        objective:
+          type: string
+          description: Campaign objective
+          enum:
+          - OUTCOME_AWARENESS
+          - OUTCOME_ENGAGEMENT
+          - OUTCOME_LEADS
+          - OUTCOME_SALES
+          - OUTCOME_TRAFFIC
+          - OUTCOME_APP_PROMOTION
+        buying_type:
+          type: string
+          description: Campaign buying type
+          enum:
+          - AUCTION
+          - REACH_AND_FREQUENCY
+        promoted_object:
+          $ref: '#/components/schemas/facebookPromotedObject'
+        special_ad_categories:
+          type: array
+          items:
+            type: string
+            enum:
+            - NONE
+            - HOUSING
+            - CREDIT
+            - EMPLOYMENT
+            - ISSUES_ELECTIONS_POLITICS
+        portfolio_id:
+          type: integer
+          description: Portfolio ID
+      description: Campaign type
+    facebookPromotedObject:
+      type: object
+      properties:
+        page_id:
+          type: integer
+          description: Page ID
+        product_catalog_id:
+          type: integer
+          description: Product catalog ID
+      description: Promoted object
+    facebookCampaignBudget:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Campaign budget type
+          enum:
+          - DAILY
+          - LIFETIME
+        budget:
+          type: number
+          description: Campaign budget
+        spend_cap:
+          type: number
+          description: Campaign spend cap
+        pacing_types:
+          type: array
+          description: Budget pacing types
+          items:
+            type: string
+            enum:
+            - STANDARD
+            - NO_PACING
+            - DAY_PARTING
+            - DISABLED
+        caps:
+          oneOf:
+          - $ref: '#/components/schemas/facebookImpressionCaps'
+      description: Campaign budget
+    facebookCampaignStatus:
+      type: string
+      description: Campaign status
+      enum:
+      - ACTIVE
+      - PAUSED
+      - DELETED
+      - ARCHIVED
+      - WITH_ISSUES
+      - IN_PROCESS
+    facebookImpressionCaps:
+      type: object
+      properties:
+        daily_impression_cap:
+          type: integer
+          description: Daily impression cap
+        lifetime_impression_cap:
+          type: integer
+          description: Lifetime impression cap
+      description: Impression caps
+    editEntityTagsRequest:
+      required:
+      - id
+      - operation_type
+      - tags
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
+          type: array
+          description: Tags
+          items:
+            $ref: '#/components/schemas/tag'
+        operation_type:
+          $ref: '#/components/schemas/operationType'
+      description: The properties for editing entity tags
+      example:
+      - id: 100
+        tags:
+        - name: tag1
+          category: cat
+        - name: tag2
+          category: dog
+        operation_type: ATTACH
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     createFacebookCampaign:
       required:
       - account_id
@@ -457,9 +413,118 @@ components:
         budget:
           type: LIFETIME
           budget: 100.54
+    facebookCampaign:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Skai ID of the campaign
+        channel_id:
+          type: string
+          description: Channel ID of the campaign
+        account_id:
+          type: integer
+          description: Skai ID of the publisher account
+        profile_token:
+          type: string
+          description: Skai profile token
+        name:
+          type: string
+          description: Campaign name
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/facebookCampaignStatus'
+        budget:
+          oneOf:
+          - $ref: '#/components/schemas/facebookCampaignBudget'
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookCampaignBid'
+        campaign_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookCampaignType'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
+  parameters:
+    pageId:
+      name: page_id
+      in: query
+      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
+
+        To return the first page, do not include page_id in the request.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: Mg==
+    adGroupIds:
+      name: ids
+      in: query
+      description: 'Filter by ad group ID.
+
+        Returns ad groups whose IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
+    limit:
+      name: limit
+      in: query
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: integer
+        format: int32
+    ksV2:
+      name: ks
+      in: query
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: social
+    campaignIds:
+      name: ids
+      in: query
+      description: 'Filter by campaign ID.
+
+        Returns the campaigns whose campaign IDs are included in your list.
+
+        '
+      required: false
+      style: form
+      explode: true
+      schema:
+        maxItems: 500
+        type: array
+        items:
+          type: string
   responses:
-    InternalServerError:
-      description: Server error
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
       content:
         application/json:
           schema:
@@ -470,53 +535,16 @@ components:
             - id: null
               success: false
               errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
+              - field_name: name
+                error: ILLEGAL_NAME
     ApiResponse:
       $ref: '#/components/schemas/ApiResponse'
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
     getFacebookCampaignBadRequest:
       description: Bad request (usually indicates validation failure for client input)
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/getFacebookCampaignApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
-    getEntityTagsSuccessResponse:
-      description: The operation was completed successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getEntityTagsApiResponse'
-          example:
-          - id: 100
-            tags:
-            - name: tag1
-              category: cat
-            - name: tag2
-              category: dog
-    getEntityTagsBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getEntityTagsApiResponse'
           example:
             status: FAILED
             entities: []
@@ -546,8 +574,44 @@ components:
               previous_page: null
               next_page: ZGZjY2UyMDQtOTQyNy00MDI3LThiMjctYWUxYzk5ZjIyMTg2
             error_message: null
-    BadRequest:
+    getEntityTagsSuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+          - id: 100
+            tags:
+            - name: tag1
+              category: cat
+            - name: tag2
+              category: dog
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
+    getEntityTagsBadRequest:
       description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    InternalServerError:
+      description: Server error
       content:
         application/json:
           schema:
@@ -558,18 +622,10 @@ components:
             - id: null
               success: false
               errors:
-              - field_name: name
-                error: ILLEGAL_NAME
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
   requestBodies:
-    editFacebookCampaigns:
-      description: The campaigns to update
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/editFacebookCampaign'
-      required: true
     createFacebookCampaigns:
       description: The campaigns to create
       content:
@@ -586,71 +642,15 @@ components:
           schema:
             $ref: '#/components/schemas/editEntityTagsRequest'
       required: true
-  parameters:
-    pageId:
-      name: page_id
-      in: query
-      description: 'Allows you to traverse pages by using the values for "next_page" and "previous_page" included under "paging" in the response.
-
-        To return the first page, do not include page_id in the request.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: Mg==
-    ksV2:
-      name: ks
-      in: query
+    editFacebookCampaigns:
+      description: The campaigns to update
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/editFacebookCampaign'
       required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: social
-    adGroupIds:
-      name: ids
-      in: query
-      description: 'Filter by ad group ID.
-
-        Returns ad groups whose IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
-    limit:
-      name: limit
-      in: query
-      required: false
-      style: form
-      explode: true
-      schema:
-        type: integer
-        format: int32
-    campaignIds:
-      name: ids
-      in: query
-      description: 'Filter by campaign ID.
-
-        Returns the campaigns whose campaign IDs are included in your list.
-
-        '
-      required: false
-      style: form
-      explode: true
-      schema:
-        maxItems: 500
-        type: array
-        items:
-          type: string
 x-tagGroups:
 - name: Reporting
   tags:

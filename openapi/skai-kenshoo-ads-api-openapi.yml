@@ -52,21 +52,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   responses:
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
     ApiResponse:
       $ref: '#/components/schemas/ApiResponse'
     BadRequest:
@@ -83,6 +68,21 @@ components:
               errors:
               - field_name: name
                 error: ILLEGAL_NAME
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
     EntitySuccessResponse:
       description: The entity operations succeeded
       content:
@@ -95,6 +95,17 @@ components:
             - id: 1234
               success: true
               errors: []
+  parameters:
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
   requestBodies:
     ads:
       description: The ads to create
@@ -106,13 +117,6 @@ components:
               $ref: '#/components/schemas/ad'
       required: true
   schemas:
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     ApiResponse:
       type: object
       properties:
@@ -122,6 +126,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
     ad:
       required:
       - ad_group_id
@@ -149,6 +160,18 @@ components:
         ad_group_id: '121232'
         ad_type: PRODUCT
         status: ACTIVE
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
     ErrorField:
       type: object
       properties:
@@ -163,29 +186,6 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-  parameters:
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
 x-tagGroups:
 - name: Reporting
   tags:

@@ -33,40 +33,42 @@ paths:
       summary: Create automated action
       x-summary-source: derived
 components:
+  parameters:
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
   schemas:
-    ReportSort:
+    DateRange:
       required:
-      - field
-      - group
+      - end_date
+      - start_date
       type: object
       properties:
-        field:
+        start_date:
           type: string
-          description: The field to be sorted
-        order:
+          description: Start date in YYYY-MM-dd format
+        end_date:
           type: string
-          enum:
-          - ASCENDING
-          - DESCENDING
-          default: ASCENDING
-        group:
-          type: string
-          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
-          enum:
-          - ATTRIBUTES
-          - PERFORMANCE
-          - DIMENSIONS
-          - CUSTOM_METRICS
-          - CUSTOM_METRICS_PLUS
-          - CONVERSION_TYPES
-          - CHANNEL_CUSTOMER_CONVERSION_TYPES
-          - PROXY_CUSTOMER_CONVERSION_TYPES
-          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
-      description: The properties of the sort
+          description: End date in YYYY-MM-dd format
+        exclude_dates:
+          type: array
+          items:
+            type: string
+            description: Dates to exclude in YYYY-MM-dd format
+            readOnly: true
+      description: The properties of the date range.
       example:
-        field: CampaignId
-        group: ATTRIBUTES
-        order: DESCENDING
+      - start_date: '2026-01-01'
+        end_date: '2026-01-14'
+        exclude_dates:
+        - '2026-01-07'
     ReportRequest:
       required:
       - date_range
@@ -165,22 +167,6 @@ components:
           order: DESCENDING
         limit: 1000
         page: 0
-    ReportEntity:
-      type: string
-      description: The base entity for the report, indicated in the analysis grid name. Important - When using the API for product grids, refer to the entity as "PRODUCT_ASSET".
-      enum:
-      - CAMPAIGN
-      - ADGROUP
-      - KEYWORD
-      - AD
-      - PORTFOLIO
-      - PRODUCT_ASSET
-      - LOCATIONS
-      - NEGATIVE_KEYWORDS
-      - SITELINK
-      - CREATIVE_ASSET
-      - PRODUCT_TARGETING
-      - ASSET_GROUP
     Column:
       required:
       - group
@@ -222,6 +208,104 @@ components:
       example:
       - name: Clicks
         group: Performance
+    ReportEntity:
+      type: string
+      description: The base entity for the report, indicated in the analysis grid name. Important - When using the API for product grids, refer to the entity as "PRODUCT_ASSET".
+      enum:
+      - CAMPAIGN
+      - ADGROUP
+      - KEYWORD
+      - AD
+      - PORTFOLIO
+      - PRODUCT_ASSET
+      - LOCATIONS
+      - NEGATIVE_KEYWORDS
+      - SITELINK
+      - CREATIVE_ASSET
+      - PRODUCT_TARGETING
+      - ASSET_GROUP
+    ReportSort:
+      required:
+      - field
+      - group
+      type: object
+      properties:
+        field:
+          type: string
+          description: The field to be sorted
+        order:
+          type: string
+          enum:
+          - ASCENDING
+          - DESCENDING
+          default: ASCENDING
+        group:
+          type: string
+          description: Each column belongs to a group. This list is partial - your account may have additional column groups. Group names are available in the getAvailableColumns endpoint
+          enum:
+          - ATTRIBUTES
+          - PERFORMANCE
+          - DIMENSIONS
+          - CUSTOM_METRICS
+          - CUSTOM_METRICS_PLUS
+          - CONVERSION_TYPES
+          - CHANNEL_CUSTOMER_CONVERSION_TYPES
+          - PROXY_CUSTOMER_CONVERSION_TYPES
+          - EXTERNAL_CUSTOMER_CONVERSION_TYPES
+      description: The properties of the sort
+      example:
+        field: CampaignId
+        group: ATTRIBUTES
+        order: DESCENDING
+    AutomatedAction:
+      type: object
+      properties:
+        id:
+          type: Integer
+        name:
+          type: string
+        status:
+          type: String
+        data_readiness:
+          type: boolean
+        hidden:
+          type: boolean
+        action_type:
+          type: String
+          enum:
+          - SET_BID_STRATEGY
+          - SEND_EMAIL
+        notificationType:
+          type: string
+          enum:
+          - ALWAYS
+          - ON_ANY_RESULT
+          - ON_ERRORS
+          - NEVER
+        recipients:
+          type: String
+        start_date:
+          type: String
+        timezone:
+          type: String
+        scheduling:
+          type: String
+          enum:
+          - DAILY
+          - WEEKLY
+          - MONTHLY
+          - SPECIFIC_DATE
+        reportRequestDTO:
+          $ref: '#/components/schemas/ReportRequest'
+        parameters:
+          type: String
+      example:
+        name: Set up target CPA
+        status: Active
+        data_readiness: 'false'
+        action_type: SET_BID_STRATEGY
+        notificationType: ALWAYS
+        recipients: _devSocialPegasus@kenshoo.com
     ReportFilter:
       required:
       - field
@@ -287,90 +371,6 @@ components:
         operator: GREATER_THAN
         values:
         - '0'
-    DateRange:
-      required:
-      - end_date
-      - start_date
-      type: object
-      properties:
-        start_date:
-          type: string
-          description: Start date in YYYY-MM-dd format
-        end_date:
-          type: string
-          description: End date in YYYY-MM-dd format
-        exclude_dates:
-          type: array
-          items:
-            type: string
-            description: Dates to exclude in YYYY-MM-dd format
-            readOnly: true
-      description: The properties of the date range.
-      example:
-      - start_date: '2026-01-01'
-        end_date: '2026-01-14'
-        exclude_dates:
-        - '2026-01-07'
-    AutomatedAction:
-      type: object
-      properties:
-        id:
-          type: Integer
-        name:
-          type: string
-        status:
-          type: String
-        data_readiness:
-          type: boolean
-        hidden:
-          type: boolean
-        action_type:
-          type: String
-          enum:
-          - SET_BID_STRATEGY
-          - SEND_EMAIL
-        notificationType:
-          type: string
-          enum:
-          - ALWAYS
-          - ON_ANY_RESULT
-          - ON_ERRORS
-          - NEVER
-        recipients:
-          type: String
-        start_date:
-          type: String
-        timezone:
-          type: String
-        scheduling:
-          type: String
-          enum:
-          - DAILY
-          - WEEKLY
-          - MONTHLY
-          - SPECIFIC_DATE
-        reportRequestDTO:
-          $ref: '#/components/schemas/ReportRequest'
-        parameters:
-          type: String
-      example:
-        name: Set up target CPA
-        status: Active
-        data_readiness: 'false'
-        action_type: SET_BID_STRATEGY
-        notificationType: ALWAYS
-        recipients: _devSocialPegasus@kenshoo.com
-  parameters:
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
   requestBodies:
     CreateAutomatedAction:
       description: The automated action details

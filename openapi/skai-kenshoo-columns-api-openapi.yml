@@ -170,66 +170,6 @@ paths:
                     type: string
 components:
   schemas:
-    DynamicColumnsToDelete:
-      required:
-      - columns
-      - source_name
-      type: object
-      properties:
-        columns:
-          uniqueItems: true
-          type: array
-          description: '[array of objects]'
-          items:
-            $ref: '#/components/schemas/DynamicColumnToDelete'
-        source_name:
-          type: string
-          description: The data source name. Currently, only FlexibleColumns is supported.
-      description: The properties for the custom columns request
-      example:
-        columns:
-        - column_id: 1
-        - column_id: 2
-        source_name: FlexibleColumns
-    DynamicColumnsResponse:
-      type: object
-      properties:
-        columns:
-          uniqueItems: true
-          type: array
-          description: '[array of objects]'
-          items:
-            $ref: '#/components/schemas/DynamicColumnResponse'
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        error_message:
-          type: string
-          readOnly: true
-      description: '[array of objects]'
-    DynamicColumnResponse:
-      type: object
-      properties:
-        column_name:
-          type: string
-          description: The custom column name.
-        column_type:
-          type: string
-          description: 'Valid values : BOOLEAN, STRING, INTEGER, LONG, BIG_DECIMAL, FLOAT, BIG_INTEGER, DATE, PERCENT.'
-        entity_type:
-          type: string
-          description: The entity level. Currently, `PRODUCT_ASSET` is the only supported value.
-        extra_config:
-          $ref: '#/components/schemas/ExtraConfig'
-        status:
-          type: string
-          readOnly: true
-          enum:
-          - SUCCESS
-          - FAILED
-        error_message:
-          type: string
-          description: Reason for failure
-      description: The properties of a column
     DynamicColumnToDelete:
       required:
       - column_id
@@ -239,13 +179,6 @@ components:
           type: integer
           description: The custom column ID. Must be unique.
       description: The properties of a column
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     DynamicColumnsDeleteResponse:
       type: object
       properties:
@@ -278,6 +211,51 @@ components:
           description: The entity level. Currently, `PRODUCT_ASSET` is the only supported value.
         extra_config:
           $ref: '#/components/schemas/ExtraConfig'
+      description: The properties of a column
+    DynamicColumnsToDelete:
+      required:
+      - columns
+      - source_name
+      type: object
+      properties:
+        columns:
+          uniqueItems: true
+          type: array
+          description: '[array of objects]'
+          items:
+            $ref: '#/components/schemas/DynamicColumnToDelete'
+        source_name:
+          type: string
+          description: The data source name. Currently, only FlexibleColumns is supported.
+      description: The properties for the custom columns request
+      example:
+        columns:
+        - column_id: 1
+        - column_id: 2
+        source_name: FlexibleColumns
+    DynamicColumnResponse:
+      type: object
+      properties:
+        column_name:
+          type: string
+          description: The custom column name.
+        column_type:
+          type: string
+          description: 'Valid values : BOOLEAN, STRING, INTEGER, LONG, BIG_DECIMAL, FLOAT, BIG_INTEGER, DATE, PERCENT.'
+        entity_type:
+          type: string
+          description: The entity level. Currently, `PRODUCT_ASSET` is the only supported value.
+        extra_config:
+          $ref: '#/components/schemas/ExtraConfig'
+        status:
+          type: string
+          readOnly: true
+          enum:
+          - SUCCESS
+          - FAILED
+        error_message:
+          type: string
+          description: Reason for failure
       description: The properties of a column
     DynamicColumnDeleteResponse:
       type: object
@@ -334,28 +312,28 @@ components:
           type: array
           description: The IDs of Skai profiles to enable the column for.
       description: Additional custom column configurations.
-  requestBodies:
-    EditDynamicColumnsRequest:
-      description: Edit custom column
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ExtraConfig'
-      required: true
-    DynamicColumnsDeleteRequest:
-      description: Delete custom columns
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DynamicColumnsToDelete'
-      required: true
-    DynamicColumnsRequest:
-      description: Create custom columns
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DynamicColumns'
-      required: true
+    DynamicColumnsResponse:
+      type: object
+      properties:
+        columns:
+          uniqueItems: true
+          type: array
+          description: '[array of objects]'
+          items:
+            $ref: '#/components/schemas/DynamicColumnResponse'
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        error_message:
+          type: string
+          readOnly: true
+      description: '[array of objects]'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
   responses:
     GetDynamicColumnsResponse:
       description: The custom columns were retrieved successfully
@@ -467,6 +445,28 @@ components:
       explode: true
       schema:
         type: integer
+  requestBodies:
+    DynamicColumnsDeleteRequest:
+      description: Delete custom columns
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DynamicColumnsToDelete'
+      required: true
+    DynamicColumnsRequest:
+      description: Create custom columns
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DynamicColumns'
+      required: true
+    EditDynamicColumnsRequest:
+      description: Edit custom column
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExtraConfig'
+      required: true
 x-tagGroups:
 - name: Reporting
   tags:

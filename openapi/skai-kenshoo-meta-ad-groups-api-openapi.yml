@@ -116,133 +116,26 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
-    facebookImpressionCaps:
-      type: object
-      properties:
-        daily_impression_cap:
-          type: integer
-          description: Daily impression cap
-        lifetime_impression_cap:
-          type: integer
-          description: Lifetime impression cap
-      description: Impression caps
-    facebookAdgroupSchedule:
-      type: object
-      properties:
-        start_time:
-          type: string
-          description: Adgroup start time
-        end_time:
-          type: string
-          description: Adgroup end time
-        specific_time:
-          $ref: '#/components/schemas/facebookAdgroupScheduling'
-      description: Adgroup schedule
-    ApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EntityResponse'
-    facebookPromotedObject:
-      type: object
-      properties:
-        page_id:
-          type: integer
-          description: Page ID
-        product_catalog_id:
-          type: integer
-          description: Product catalog ID
-      description: Promoted object
-    tag:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Tag name
-        category:
-          type: string
-          description: Category name
-    editEntityTagsRequest:
-      required:
-      - id
-      - operation_type
-      - tags
-      type: object
-      properties:
-        id:
-          type: integer
-          description: Skai ID of the entity
-        tags:
-          type: array
-          description: Tags
-          items:
-            $ref: '#/components/schemas/tag'
-        operation_type:
-          $ref: '#/components/schemas/operationType'
-      description: The properties for editing entity tags
-      example:
-      - id: 100
-        tags:
-        - name: tag1
-          category: cat
-        - name: tag2
-          category: dog
-        operation_type: ATTACH
-    ErrorField:
-      type: object
-      properties:
-        fieldName:
-          type: string
-          description: The error field
-        error:
-          type: string
-          description: Error message
-        parameters:
-          type: object
-          additionalProperties:
-            type: string
-          description: Error additional properties
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-    facebookAttributionSpec:
-      type: object
-      properties:
-        window_days:
-          type: integer
-          description: Window days
-        event:
-          type: string
-          description: Event
-          enum:
-          - CLICK_THROUGH
-          - VIEW_THROUGH
-      description: Attribution spec
-    ApiResponseStatus:
+    operationType:
       type: string
-      readOnly: true
+      description: Operation type
       enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
+      - ATTACH
+      - DETACH
     AdgroupBudgetType:
       type: string
       enum:
       - DAILY
       - LIFETIME
+    Paging:
+      type: object
+      properties:
+        previous_page:
+          type: string
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
     CreateFacebookAdgroup:
       required:
       - campaign_id
@@ -286,41 +179,46 @@ components:
           end_time: 2026-01-14 23:59
         targeting:
           targeting_id: 123
-    getFacebookAdGroupApiResponse:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/FacebookAdGroupDTO'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-          readOnly: true
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    getEntityTagsResponse:
+    FacebookAdGroupDTO:
       type: object
       properties:
         id:
           type: integer
-          description: Skai ID of the entity
-        tags:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/tag'
+          description: Skai ID of the ad group
+        channel_id:
+          type: string
+          description: Publisher ID of the ad group
+        campaign_id:
+          type: integer
+          description: Skai ID of the campaign
+        name:
+          type: string
+          description: Ad group name
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupStatus'
+        budget:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBudget'
+        bid:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupBid'
+        targeting:
+          oneOf:
+          - $ref: '#/components/schemas/facebookTargeting'
+        schedule:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupSchedule'
+        ad_group_type:
+          oneOf:
+          - $ref: '#/components/schemas/facebookAdgroupType'
+    facebookTargeting:
+      type: object
+      properties:
+        targeting_id:
+          type: integer
+          description: Targeting ID
+      description: Targeting
     facebookAdgroupBid:
       type: object
       properties:
@@ -391,98 +289,26 @@ components:
           type: integer
           description: Adgroup ROAS average floor
       description: Adgroup bid
-    facebookAdgroupBudget:
+    getEntityTagsResponse:
       type: object
       properties:
-        budget:
-          type: number
-          description: Ad group budget in the profile's currency
-        type:
+        id:
+          type: integer
+          description: Skai ID of the entity
+        tags:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/tag'
+    tag:
+      type: object
+      properties:
+        name:
           type: string
-          description: Budget type
-          enum:
-          - DAILY
-          - LIFETIME
-        pacing_types:
-          type: array
-          description: Budget pacing types
-          items:
-            type: string
-            enum:
-            - STANDARD
-            - NO_PACING
-            - DAY_PARTING
-            - DISABLED
-        spend_limit:
-          $ref: '#/components/schemas/facebookSpendLimit'
-        caps:
-          oneOf:
-          - $ref: '#/components/schemas/facebookImpressionCaps'
-      description: Adgroup budget
-    facebookTargeting:
-      type: object
-      properties:
-        targeting_id:
-          type: integer
-          description: Targeting ID
-      description: Targeting
-    facebookAdgroupScheduling:
-      type: object
-      properties:
-        days:
-          type: array
-          description: Scheduling days
-          items:
-            type: integer
-        start_minute:
-          type: integer
-          description: Scheduling start minute
-        end_minute:
-          type: integer
-          description: Scheduling end minute
-      description: Adgroup scheduling
-    facebookSpendLimit:
-      type: object
-      properties:
-        min:
-          type: number
-          description: Minimum spend limit
-        max:
-          type: number
-          description: Maximum spend limit
-      description: Budget spend limit
-    facebookAdgroupType:
-      type: object
-      properties:
-        promoted_object:
-          $ref: '#/components/schemas/facebookPromotedObject'
-        frequency_spec:
-          $ref: '#/components/schemas/facebookFrequencySpec'
-        attribution_spec:
-          type: array
-          description: Attribution spec
-          items:
-            $ref: '#/components/schemas/facebookAttributionSpec'
-        conversion_location:
+          description: Tag name
+        category:
           type: string
-          description: Conversion location
-          enum:
-          - WEBSITE
-          - APP
-          - MESSENGER
-          - APPLINKS_AUTOMATIC
-          - WHATSAPP
-          - SHOP_AUTOMATIC
-          - UNDEFINED
-          - INSTAGRAM_DIRECT
-          - PHONE_CALL
-          - MESSAGING_INSTAGRAM_DIRECT_MESSENGER
-          - ON_AD
-          - ON_POST
-          - ON_VIDEO
-          - ON_EVENT
-          - ON_PAGE
-      description: Adgroup type
+          description: Category name
     EditFacebookAdgroup:
       required:
       - id
@@ -517,28 +343,117 @@ components:
       - id: 100
         name: new name
         status: ACTIVE
-    operationType:
-      type: string
-      description: Operation type
-      enum:
-      - ATTACH
-      - DETACH
-    facebookFrequencySpec:
+    facebookAdgroupType:
       type: object
       properties:
-        interval_days:
+        promoted_object:
+          $ref: '#/components/schemas/facebookPromotedObject'
+        frequency_spec:
+          $ref: '#/components/schemas/facebookFrequencySpec'
+        attribution_spec:
+          type: array
+          description: Attribution spec
+          items:
+            $ref: '#/components/schemas/facebookAttributionSpec'
+        conversion_location:
+          type: string
+          description: Conversion location
+          enum:
+          - WEBSITE
+          - APP
+          - MESSENGER
+          - APPLINKS_AUTOMATIC
+          - WHATSAPP
+          - SHOP_AUTOMATIC
+          - UNDEFINED
+          - INSTAGRAM_DIRECT
+          - PHONE_CALL
+          - MESSAGING_INSTAGRAM_DIRECT_MESSENGER
+          - ON_AD
+          - ON_POST
+          - ON_VIDEO
+          - ON_EVENT
+          - ON_PAGE
+      description: Adgroup type
+    AdgroupBiddingMethod:
+      type: string
+      description: Will inherit from the campaign's bidding method, if not included
+      enum:
+      - ManualCPC
+      - ManualCPM
+      - ENHANCED_CPC
+      - TARGET_CPA
+      - TARGET_SPEND
+      - TARGET_ROAS
+    getEntityTagsApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/getEntityTagsResponse'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    facebookSpendLimit:
+      type: object
+      properties:
+        min:
+          type: number
+          description: Minimum spend limit
+        max:
+          type: number
+          description: Maximum spend limit
+      description: Budget spend limit
+    facebookAdgroupSchedule:
+      type: object
+      properties:
+        start_time:
+          type: string
+          description: Adgroup start time
+        end_time:
+          type: string
+          description: Adgroup end time
+        specific_time:
+          $ref: '#/components/schemas/facebookAdgroupScheduling'
+      description: Adgroup schedule
+    AdgroupStatus:
+      type: string
+      description: Status
+      enum:
+      - ACTIVE
+      - PAUSED
+      - DELETED
+      - REVIEW
+    facebookAttributionSpec:
+      type: object
+      properties:
+        window_days:
           type: integer
-          description: Interval days
-        max_frequency:
-          type: integer
-          description: Max frequency
+          description: Window days
         event:
           type: string
           description: Event
           enum:
-          - IMPRESSIONS
-          - VIDEO_VIEWS_2S
-      description: Frequency spec
+          - CLICK_THROUGH
+          - VIEW_THROUGH
+      description: Attribution spec
+    facebookAdgroupStatus:
+      type: string
+      description: Status
+      enum:
+      - ACTIVE
+      - PAUSED
+      - DELETED
+      - ARCHIVED
+      - WITH_ISSUES
+      - IN_PROCESS
+      - CAMPAIGN_PAUSED
     AdGroupDTO:
       type: object
       properties:
@@ -595,50 +510,16 @@ components:
           description: Ad group budget in the profile's currency
         budget_type:
           $ref: '#/components/schemas/AdgroupBudgetType'
-    AdgroupStatus:
-      type: string
-      description: Status
-      enum:
-      - ACTIVE
-      - PAUSED
-      - DELETED
-      - REVIEW
-    getEntityTagsApiResponse:
+    facebookPromotedObject:
       type: object
       properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          readOnly: true
-          items:
-            $ref: '#/components/schemas/getEntityTagsResponse'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
-          readOnly: true
-    AdgroupBiddingMethod:
-      type: string
-      description: Will inherit from the campaign's bidding method, if not included
-      enum:
-      - ManualCPC
-      - ManualCPM
-      - ENHANCED_CPC
-      - TARGET_CPA
-      - TARGET_SPEND
-      - TARGET_ROAS
-    facebookAdgroupStatus:
-      type: string
-      description: Status
-      enum:
-      - ACTIVE
-      - PAUSED
-      - DELETED
-      - ARCHIVED
-      - WITH_ISSUES
-      - IN_PROCESS
-      - CAMPAIGN_PAUSED
+        page_id:
+          type: integer
+          description: Page ID
+        product_catalog_id:
+          type: integer
+          description: Product catalog ID
+      description: Promoted object
     getAdGroupApiResponse:
       type: object
       properties:
@@ -654,140 +535,158 @@ components:
         error_message:
           type: string
           readOnly: true
-    FacebookAdGroupDTO:
+    facebookImpressionCaps:
+      type: object
+      properties:
+        daily_impression_cap:
+          type: integer
+          description: Daily impression cap
+        lifetime_impression_cap:
+          type: integer
+          description: Lifetime impression cap
+      description: Impression caps
+    facebookFrequencySpec:
+      type: object
+      properties:
+        interval_days:
+          type: integer
+          description: Interval days
+        max_frequency:
+          type: integer
+          description: Max frequency
+        event:
+          type: string
+          description: Event
+          enum:
+          - IMPRESSIONS
+          - VIDEO_VIEWS_2S
+      description: Frequency spec
+    facebookAdgroupBudget:
+      type: object
+      properties:
+        budget:
+          type: number
+          description: Ad group budget in the profile's currency
+        type:
+          type: string
+          description: Budget type
+          enum:
+          - DAILY
+          - LIFETIME
+        pacing_types:
+          type: array
+          description: Budget pacing types
+          items:
+            type: string
+            enum:
+            - STANDARD
+            - NO_PACING
+            - DAY_PARTING
+            - DISABLED
+        spend_limit:
+          $ref: '#/components/schemas/facebookSpendLimit'
+        caps:
+          oneOf:
+          - $ref: '#/components/schemas/facebookImpressionCaps'
+      description: Adgroup budget
+    getFacebookAdGroupApiResponse:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/FacebookAdGroupDTO'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
+          readOnly: true
+    editEntityTagsRequest:
+      required:
+      - id
+      - operation_type
+      - tags
       type: object
       properties:
         id:
           type: integer
-          description: Skai ID of the ad group
-        channel_id:
-          type: string
-          description: Publisher ID of the ad group
-        campaign_id:
-          type: integer
-          description: Skai ID of the campaign
-        name:
-          type: string
-          description: Ad group name
-        status:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdgroupStatus'
-        budget:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdgroupBudget'
-        bid:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdgroupBid'
-        targeting:
-          oneOf:
-          - $ref: '#/components/schemas/facebookTargeting'
-        schedule:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdgroupSchedule'
-        ad_group_type:
-          oneOf:
-          - $ref: '#/components/schemas/facebookAdgroupType'
-  responses:
-    InternalServerError:
-      description: Server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: ServerError
-                error: Unexpected error occurred.
-                parameters: {}
-    getFacebookAdGroupEntitySuccessResponse:
-      description: The operation was completed successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getFacebookAdGroupApiResponse'
-          example:
-          - status: SUCCESS
-            entities:
-            - id: 100
-              name: new name
-              status: ACTIVE
-              targeting:
-                targeting_id: 123
-              schedule:
-                start_time: 2026-01-01 00:00
-                end_time: 2026-01-14 23:59
-              campaign_id: 1
-            paging:
-              previous_page: null
-              next_page: MQ==
-            error_message: null
+          description: Skai ID of the entity
+        tags:
+          type: array
+          description: Tags
+          items:
+            $ref: '#/components/schemas/tag'
+        operation_type:
+          $ref: '#/components/schemas/operationType'
+      description: The properties for editing entity tags
+      example:
+      - id: 100
+        tags:
+        - name: tag1
+          category: cat
+        - name: tag2
+          category: dog
+        operation_type: ATTACH
     ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
-    EntitySuccessResponse:
-      description: The entity operations succeeded
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: SUCCESS
-            entities:
-            - id: 1234
-              success: true
-              errors: []
-    getEntityTagsSuccessResponse:
-      description: The operation was completed successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getEntityTagsApiResponse'
-          example:
-          - id: 100
-            tags:
-            - name: tag1
-              category: cat
-            - name: tag2
-              category: dog
-    getEntityTagsBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getEntityTagsApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
-    BadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/responses/ApiResponse'
-          example:
-            status: FAILED
-            entities:
-            - id: null
-              success: false
-              errors:
-              - field_name: name
-                error: ILLEGAL_NAME
-    getAdGroupBadRequest:
-      description: Bad request (usually indicates validation failure for client input)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/getAdGroupApiResponse'
-          example:
-            status: FAILED
-            entities: []
-            paging: null
-            error_message: The value in page_id is invalid
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    facebookAdgroupScheduling:
+      type: object
+      properties:
+        days:
+          type: array
+          description: Scheduling days
+          items:
+            type: integer
+        start_minute:
+          type: integer
+          description: Scheduling start minute
+        end_minute:
+          type: integer
+          description: Scheduling end minute
+      description: Adgroup scheduling
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
+    ErrorField:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: The error field
+        error:
+          type: string
+          description: Error message
+        parameters:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error additional properties
   parameters:
     pageId:
       name: page_id
@@ -803,15 +702,6 @@ components:
       schema:
         type: string
       example: Mg==
-    ksV2:
-      name: ks
-      in: query
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: social
     adGroupIds:
       name: ids
       in: query
@@ -837,14 +727,16 @@ components:
       schema:
         type: integer
         format: int32
-  requestBodies:
-    editEntityTagsRequest:
-      description: The entity tags edit request details
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/editEntityTagsRequest'
+    ksV2:
+      name: ks
+      in: query
       required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: social
+  requestBodies:
     CreateFacebookAdgroup:
       description: The ad group details
       content:
@@ -859,6 +751,114 @@ components:
           schema:
             $ref: '#/components/schemas/EditFacebookAdgroup'
       required: true
+    editEntityTagsRequest:
+      description: The entity tags edit request details
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/editEntityTagsRequest'
+      required: true
+  responses:
+    BadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: name
+                error: ILLEGAL_NAME
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
+    getAdGroupBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getAdGroupApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    getFacebookAdGroupEntitySuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getFacebookAdGroupApiResponse'
+          example:
+          - status: SUCCESS
+            entities:
+            - id: 100
+              name: new name
+              status: ACTIVE
+              targeting:
+                targeting_id: 123
+              schedule:
+                start_time: 2026-01-01 00:00
+                end_time: 2026-01-14 23:59
+              campaign_id: 1
+            paging:
+              previous_page: null
+              next_page: MQ==
+            error_message: null
+    getEntityTagsSuccessResponse:
+      description: The operation was completed successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+          - id: 100
+            tags:
+            - name: tag1
+              category: cat
+            - name: tag2
+              category: dog
+    EntitySuccessResponse:
+      description: The entity operations succeeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: SUCCESS
+            entities:
+            - id: 1234
+              success: true
+              errors: []
+    getEntityTagsBadRequest:
+      description: Bad request (usually indicates validation failure for client input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/getEntityTagsApiResponse'
+          example:
+            status: FAILED
+            entities: []
+            paging: null
+            error_message: The value in page_id is invalid
+    InternalServerError:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/responses/ApiResponse'
+          example:
+            status: FAILED
+            entities:
+            - id: null
+              success: false
+              errors:
+              - field_name: ServerError
+                error: Unexpected error occurred.
+                parameters: {}
 x-tagGroups:
 - name: Reporting
   tags:

@@ -106,6 +106,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 components:
   responses:
+    ApiResponse:
+      $ref: '#/components/schemas/ApiResponse'
     InternalServerError:
       description: Server error
       content:
@@ -121,16 +123,18 @@ components:
               - field_name: ServerError
                 error: Unexpected error occurred.
                 parameters: {}
-    ApiResponse:
-      $ref: '#/components/schemas/ApiResponse'
+  parameters:
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
   schemas:
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
     ApiResponse:
       type: object
       properties:
@@ -140,6 +144,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EntityResponse'
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    EntityResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        success:
+          type: boolean
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorField'
     ErrorField:
       type: object
       properties:
@@ -154,29 +177,6 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
-    EntityResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        success:
-          type: boolean
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorField'
-  parameters:
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
 x-tagGroups:
 - name: Reporting
   tags:

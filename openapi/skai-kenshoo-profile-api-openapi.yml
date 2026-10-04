@@ -141,20 +141,27 @@ paths:
                 paging: null
                 error_message: null
 components:
+  parameters:
+    ks:
+      name: ks
+      in: query
+      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: string
+      example: '1234'
+    ProfileId:
+      name: profile_id
+      in: path
+      description: The id of profile to edit
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
   schemas:
-    SourceProfile:
-      type: object
-      properties:
-        profile_id:
-          type: integer
-          description: The copied profile id
-          format: int64
-        master_accounts:
-          type: array
-          description: Master account ID
-          items:
-            $ref: '#/components/schemas/MasterAccount'
-      description: The copied profile details
     ErrorField:
       type: object
       properties:
@@ -169,13 +176,19 @@ components:
           additionalProperties:
             type: string
           description: Error additional properties
-    ApiResponseStatus:
-      type: string
-      readOnly: true
-      enum:
-      - SUCCESS
-      - FAILED
-      - PARTIAL_SUCCESS
+    EditProfileResponseApi:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ApiResponseStatus'
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditProfileResponseEntities'
+        paging:
+          $ref: '#/components/schemas/Paging'
+        error_message:
+          type: string
     ProfileResponse:
       type: object
       properties:
@@ -200,28 +213,6 @@ components:
           type: string
           description: New profile token in case profile creation finished successfully
       description: The details of the created profile
-    Paging:
-      type: object
-      properties:
-        previous_page:
-          type: string
-          readOnly: true
-        next_page:
-          type: string
-          readOnly: true
-    EditProfileResponseApi:
-      type: object
-      properties:
-        status:
-          $ref: '#/components/schemas/ApiResponseStatus'
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/EditProfileResponseEntities'
-        paging:
-          $ref: '#/components/schemas/Paging'
-        error_message:
-          type: string
     EditProfileResponseEntities:
       type: object
       properties:
@@ -238,6 +229,15 @@ components:
           items:
             $ref: '#/components/schemas/ErrorField'
       description: The details of the edited profile
+    Paging:
+      type: object
+      properties:
+        previous_page:
+          type: string
+          readOnly: true
+        next_page:
+          type: string
+          readOnly: true
     EditProfile:
       type: object
       properties:
@@ -251,19 +251,6 @@ components:
       example:
       - external_id: '1111'
         profile_name: profile example
-    CreatedAccount:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Channel account id
-        channelType:
-          type: string
-          description: The channel
-        uniqueIdInTarget:
-          type: string
-          description: The account id in the channel
-      description: details of channel account copied in the copy profile process
     Profile:
       type: object
       properties:
@@ -307,6 +294,44 @@ components:
           type: string
           description: The master account id in kenshoo
       description: The master accounts used to create channel accounts in the created profile
+    CreatedAccount:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Channel account id
+        channelType:
+          type: string
+          description: The channel
+        uniqueIdInTarget:
+          type: string
+          description: The account id in the channel
+      description: details of channel account copied in the copy profile process
+    ApiResponseStatus:
+      type: string
+      readOnly: true
+      enum:
+      - SUCCESS
+      - FAILED
+      - PARTIAL_SUCCESS
+    SourceProfile:
+      type: object
+      properties:
+        profile_id:
+          type: integer
+          description: The copied profile id
+          format: int64
+        master_accounts:
+          type: array
+          description: Master account ID
+          items:
+            $ref: '#/components/schemas/MasterAccount'
+      description: The copied profile details
+  responses:
+    EditProfileApiResponse:
+      $ref: '#/components/schemas/EditProfileResponseApi'
+    ProfileApiResponse:
+      $ref: '#/components/schemas/ProfileResponse'
   requestBodies:
     EditProfile:
       description: The profile details
@@ -322,31 +347,6 @@ components:
           schema:
             $ref: '#/components/schemas/Profile'
       required: true
-  responses:
-    ProfileApiResponse:
-      $ref: '#/components/schemas/ProfileResponse'
-    EditProfileApiResponse:
-      $ref: '#/components/schemas/EditProfileResponseApi'
-  parameters:
-    ProfileId:
-      name: profile_id
-      in: path
-      description: The id of profile to edit
-      required: true
-      style: simple
-      explode: false
-      schema:
-        type: integer
-    ks:
-      name: ks
-      in: query
-      description: The KS to refer the request to. You can find this ID in the Skai platform under _Administration_ -> _About Skai_ -> _Server ID_
-      required: true
-      style: form
-      explode: true
-      schema:
-        type: string
-      example: '1234'
 x-tagGroups:
 - name: Reporting
   tags:
