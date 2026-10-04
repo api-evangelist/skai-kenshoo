@@ -1,31 +1,30 @@
-# Kin Score artifact — skai-kenshoo — 2026-09-02T224043
+# Kin Score artifact — skai-kenshoo — 2026-09-23T000603
 # The API Evangelist rating (https://github.com/api-evangelist/kin-score). Generated; do not edit.
 ---
 kin_score:
   slug: skai-kenshoo
-  schema_version: 0.18.0
-  scored_at: '2026-09-02'
-  run_ts: 2026-09-02T224043
-  composite: 51.6
-  band: developing
+  schema_version: 0.22.0
+  scored_at: '2026-09-23'
+  run_ts: 2026-09-23T000603
+  composite: 56.4
+  band: strong
   facets:
-    discoverability: 44.4
-    contract_quality: 43.1
-    governance: 18.2
+    discoverability: 63.0
+    contract_quality: 46.6
+    contract_governance: 18.2
     operational_transparency: 50.0
     developer_ergonomics: 53.0
-    commercial_clarity: 85.5
-    contract_governance: 18.2
     access_clarity: 85.5
   agent_readiness:
-    score: 30.6
+    score: 47.7
     band: agent-ready
+    band_gated_from: agent-native
     dimensions:
       spec_presence: true
       agentic_access: false
       reversibility_documented: false
-      mcp_server: documented
-      auth_clarity: bearer
+      mcp_server: verified
+      auth_clarity: served
       idempotency: false
       error_semantics: verified
       openapi_examples: partial
@@ -36,8 +35,8 @@ kin_score:
       consent_identity: false
       agent_card: false
       dry_run_mode: false
-      delegated_identity: false
-      protected_resource_metadata: false
+      delegated_identity: served
+      protected_resource_metadata: verified
       dynamic_client_registration: false
       agentic_commerce: false
   provenance:
@@ -45,7 +44,7 @@ kin_score:
     skills: derived
     conformance: first-party
     contracts:
-      total: 49
+      total: 50
       derived: 0
       coverage: 0.0
       callable: 100.0
